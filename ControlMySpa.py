@@ -161,6 +161,15 @@ class ControlMySpa:
             "state": "LOCK_PANEL" if locked else "UNLOCK_PANEL"
         })
 
+    async def setLightState(self, deviceNumber, desiredState):
+        return await self.setComponentState(deviceNumber, desiredState, 'light')
+
+    async def setJetState(self, deviceNumber, desiredState):
+        return await self.setComponentState(deviceNumber, desiredState, 'jet')
+
+    async def setBlowerState(self, deviceNumber, desiredState):
+        return await self.setComponentState(deviceNumber, desiredState, 'blower')
+
     async def setComponentState(self, deviceNumber, desiredState, componentType):
         return await self._postAndRefresh("/spa-commands/component-state", {
             "deviceNumber": deviceNumber,
