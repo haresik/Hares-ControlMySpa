@@ -12,24 +12,45 @@ SCAN_INTERVAL = timedelta(minutes=2)
 async def async_setup_entry(hass, config_entry, async_add_entities):
     data = hass.data[DOMAIN][config_entry.entry_id]
     client = data["client"]
+
+    # Vytvoření sdíleného objektu pro data
+    shared_data = SpaData(client)
+
     async_add_entities(
         [
-            SpaTemperatureSensor(client),  # Aktuální teplota
-            SpaDesiredTemperatureSensor(client),  # Požadovaná teplota
+            SpaTemperatureSensor(shared_data),  # Aktuální teplota
+            SpaDesiredTemperatureSensor(shared_data),  # Požadovaná teplota
         ],
         True,
     )
 
-class SpaTemperatureSensor(SensorEntity):
+class SpaData:
+    """Sdílený objekt pro uchování dat z webového dotazu."""
     def __init__(self, client):
         self._client = client
+        self._data = None
+
+    async def update(self):
+        """Aktualizace dat z webového dotazu."""
+        self._data = await self._client.getSpa()
+        _LOGGER.debug("Shared data updated: %s", self._data)
+
+    @property
+    def data(self):
+        """Vrací aktuální data."""
+        return self._data
+
+class SpaTemperatureSensor(SensorEntity):
+    def __init__(self, shared_data):
+        self._shared_data = shared_data
         self._attr_name = "Spa Current Temperature"
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
         self._attr_should_poll = True
         self._state = None
 
     async def async_update(self):
-        data = await self._client.getSpa()
+        await self._shared_data.update()  # Aktualizace sdílených dat
+        data = self._shared_data.data
         if data:
             fahrenheit_temp = data.get("currentTemp")
             if fahrenheit_temp is not None and fahrenheit_temp != 0:
@@ -41,15 +62,16 @@ class SpaTemperatureSensor(SensorEntity):
         return self._state
 
 class SpaDesiredTemperatureSensor(SensorEntity):
-    def __init__(self, client):
-        self._client = client
+    def __init__(self, shared_data):
+        self._shared_data = shared_data
         self._attr_name = "Spa Desired Temperature"
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
         self._attr_should_poll = True
         self._state = None
 
     async def async_update(self):
-        data = await self._client.getSpa()
+        await self._shared_data.update()  # Aktualizace sdílených dat
+        data = self._shared_data.data
         if data:
             fahrenheit_temp = data.get("desiredTemp")
             if fahrenheit_temp is not None:
