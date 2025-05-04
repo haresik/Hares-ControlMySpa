@@ -1,0 +1,10 @@
+{
+  "domain": "control_my_spa",
+  "name": "Hares My Spa",
+  "version": "0.1",
+  "documentation": "https://example.com",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": ["@yourgithub"],
+  "config_flow": true
+}
