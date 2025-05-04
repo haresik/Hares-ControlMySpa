@@ -63,6 +63,18 @@ class SpaTempRangeSelect(SelectEntity):
         self._attr_options = ["HIGH", "LOW"]  # Možnosti výběru
         self._attr_should_poll = True
         self._attr_current_option = None
+        self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"   
+ 
+    @property
+    def device_info(self):
+        """Informace o zařízení, ke kterému entita patří."""
+        return {
+            "identifiers": {(DOMAIN, "spa_device")},  # Unikátní identifikátor zařízení
+            "name": "Spa Balboa Device",
+            "manufacturer": "Balboa",
+            "model": "Spa Model 1",
+            "sw_version": "1.0",
+        }
 
     async def async_update(self):
         await self._shared_data.update()  # Aktualizace sdílených dat
@@ -74,7 +86,7 @@ class SpaTempRangeSelect(SelectEntity):
     async def async_select_option(self, option: str):
         """Změna hodnoty tempRange a odeslání do zařízení."""
         if option in self._attr_options:
-            success = await self._client.setTempRange(option == "HIGH")
+            success = await self._shared_data._client.setTempRange(option == "HIGH")
             if success:
                 self._attr_current_option = option
                 _LOGGER.info("Successfully set tempRange to %s", option)
@@ -90,6 +102,18 @@ class SpaPumpSelect(SelectEntity):
         self._attr_options = pump_data["availableValues"]  # Možnosti výběru
         self._attr_should_poll = True
         self._attr_current_option = None
+        self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
+
+    @property
+    def device_info(self):
+        """Informace o zařízení, ke kterému entita patří."""
+        return {
+            "identifiers": {(DOMAIN, "spa_device")},  # Unikátní identifikátor zařízení
+            "name": "Spa Balboa Device",
+            "manufacturer": "Balboa",
+            "model": "Spa Model 1",
+            "sw_version": "1.0",
+        }
 
     async def async_update(self):
         await self._shared_data.update()  # Aktualizace sdílených dat
@@ -129,6 +153,18 @@ class SpaLightSelect(SelectEntity):
         self._attr_options = light_data["availableValues"]  # Možnosti výběru
         self._attr_should_poll = True
         self._attr_current_option = None
+        self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
+
+    @property
+    def device_info(self):
+        """Informace o zařízení, ke kterému entita patří."""
+        return {
+            "identifiers": {(DOMAIN, "spa_device")},  # Unikátní identifikátor zařízení
+            "name": "Spa Balboa Device",
+            "manufacturer": "Balboa",
+            "model": "Spa Model 1",
+            "sw_version": "1.0",
+        }
 
     async def async_update(self):
         await self._shared_data.update()  # Aktualizace sdílených dat
@@ -167,6 +203,18 @@ class SpaBlowerSelect(SelectEntity):
         self._attr_options = blower_data["availableValues"]  # Možnosti výběru
         self._attr_should_poll = True
         self._attr_current_option = None
+        self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
+
+    @property
+    def device_info(self):
+        """Informace o zařízení, ke kterému entita patří."""
+        return {
+            "identifiers": {(DOMAIN, "spa_device")},  # Unikátní identifikátor zařízení
+            "name": "Spa Balboa Device",
+            "manufacturer": "Balboa",
+            "model": "Spa Model 1",
+            "sw_version": "1.0",
+        }
 
     async def async_update(self):
         await self._shared_data.update()  # Aktualizace sdílených dat

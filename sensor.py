@@ -47,6 +47,18 @@ class SpaTemperatureSensor(SensorEntity):
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
         self._attr_should_poll = True
         self._state = None
+        self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
+
+    @property
+    def device_info(self):
+        """Informace o zařízení, ke kterému entita patří."""
+        return {
+            "identifiers": {(DOMAIN, "spa_device")},  # Unikátní identifikátor zařízení
+            "name": "Spa Balboa Device",
+            "manufacturer": "Balboa",
+            "model": "Spa Model 1",
+            "sw_version": "1.0",
+        }
 
     async def async_update(self):
         await self._shared_data.update()  # Aktualizace sdílených dat
@@ -68,6 +80,18 @@ class SpaDesiredTemperatureSensor(SensorEntity):
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
         self._attr_should_poll = True
         self._state = None
+        self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
+
+    @property
+    def device_info(self):
+        """Informace o zařízení, ke kterému entita patří."""
+        return {
+            "identifiers": {(DOMAIN, "spa_device")},  # Unikátní identifikátor zařízení
+            "name": "Spa Balboa Device",
+            "manufacturer": "Balboa",
+            "model": "Spa Model 1",
+            "sw_version": "1.0",
+        }
 
     async def async_update(self):
         await self._shared_data.update()  # Aktualizace sdílených dat
@@ -81,22 +105,4 @@ class SpaDesiredTemperatureSensor(SensorEntity):
     @property
     def native_value(self):
         return self._state
-
-# class SpaTempRangeSensor(SensorEntity):
-#     def __init__(self, client):
-#         self._client = client
-#         self._attr_name = "Spa Temperature Range"
-#         self._attr_should_poll = True
-#         self._state = None
-
-#     async def async_update(self):
-#         data = await self._client.getSpa()
-#         if data:
-#             self._state = data.get("tempRange")  # Načtení hodnoty tempRange
-#             _LOGGER.debug("Updated temperature range: %s", self._state)
-
-#     @property
-#     def native_value(self):
-#         return self._state
-
 
