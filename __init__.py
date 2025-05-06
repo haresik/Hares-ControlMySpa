@@ -29,10 +29,19 @@ async def async_setup_entry(hass, config_entry):
         _LOGGER.error("Failed to initialize ControlMySpa client")
         return False
 
+    device_info = {
+        "identifiers": {(DOMAIN, "spa_device")},  # Unikátní identifikátor zaøízení
+        "name": "Spa Balboa Device",
+        "manufacturer": "Balboa",
+        "model": "Spa Model 1",
+        "sw_version": "1.0",
+    }
+
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][config_entry.entry_id] = {
         "client": spa_client,
-        "data": balboa_data
+        "data": balboa_data,
+        "device_info": device_info
     }
 
     # Registrace služby pro zmìnu tempRange

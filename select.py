@@ -8,18 +8,12 @@ _LOGGER = logging.getLogger(__name__)
 
 # Nastavení intervalu aktualizace na 2 minuty
 SCAN_INTERVAL = timedelta(minutes=2)
-DEVICE_INFO = {
-    "identifiers": {(DOMAIN, "spa_device")},  # Unikátní identifikátor zařízení
-    "name": "Spa Balboa Device",
-    "manufacturer": "Balboa",
-    "model": "Spa Model 1",
-    "sw_version": "1.0",
-}
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     data = hass.data[DOMAIN][config_entry.entry_id]
     # client = data["client"]
     shared_data = data["data"]
+    device_info = data["device_info"]
 
     pumps = [
         component for component in shared_data.data["components"]
@@ -37,22 +31,22 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     ]
 
     # Vytvořit entity pro každou PUMP
-    entities = [SpaPumpSelect(shared_data, pump) for pump in pumps]
-    entities += [SpaBlowerSelect(shared_data, blower) for blower in blowers]
-    entities += [SpaLightSelect(shared_data, light) for light in lights]
-    entities.append(SpaTempRangeSelect(shared_data))  # Přidat existující entitu
+    entities = [SpaPumpSelect(shared_data, device_info, pump) for pump in pumps]
+    entities += [SpaBlowerSelect(shared_data, device_info, blower) for blower in blowers]
+    entities += [SpaLightSelect(shared_data, device_info, light) for light in lights]
+    entities.append(SpaTempRangeSelect(shared_data, device_info))  # Přidat entitu
 
     async_add_entities(entities, True)
 
 class SpaTempRangeSelect(SelectEntity):
-    def __init__(self, shared_data):
+    def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
         self._attr_name = "Spa Temperature Range"
         self._attr_options = ["HIGH", "LOW"]  # Možnosti výběru
         self._attr_should_poll = True
         self._attr_current_option = None
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"  
-        self._attr_device_info = DEVICE_INFO
+        self._attr_device_info = device_info
  
     async def async_update(self):
         data = self._shared_data.data
@@ -72,7 +66,7 @@ class SpaTempRangeSelect(SelectEntity):
  # type: ignore
 
 class SpaPumpSelect(SelectEntity):
-    def __init__(self, shared_data, pump_data):
+    def __init__(self, shared_data, device_info, pump_data):
         self._shared_data = shared_data
         self._pump_data = pump_data
         self._attr_name = f"Spa Pump {pump_data['port']}"  # Název na základě portu
@@ -80,7 +74,7 @@ class SpaPumpSelect(SelectEntity):
         self._attr_should_poll = True
         self._attr_current_option = None
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
-        self._attr_device_info = DEVICE_INFO
+        self._attr_device_info = device_info
 
     async def async_update(self):
         data = self._shared_data.data
@@ -112,7 +106,7 @@ class SpaPumpSelect(SelectEntity):
                 _LOGGER.error("Failed to set Pump %s to %s", self._pump_data["port"], option)
 
 class SpaLightSelect(SelectEntity):
-    def __init__(self, shared_data, light_data):
+    def __init__(self, shared_data, device_info, light_data):
         self._shared_data = shared_data
         self._light_data = light_data
         self._attr_name = f"Spa Light {light_data['port']}"  # Název na základě portu
@@ -120,7 +114,7 @@ class SpaLightSelect(SelectEntity):
         self._attr_should_poll = True
         self._attr_current_option = None
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
-        self._attr_device_info = DEVICE_INFO
+        self._attr_device_info = device_info
 
     async def async_update(self):
         data = self._shared_data.data
@@ -151,7 +145,7 @@ class SpaLightSelect(SelectEntity):
                 _LOGGER.error("Failed to set Light %s to %s", self._light_data["port"], option)
 
 class SpaBlowerSelect(SelectEntity):
-    def __init__(self, shared_data, blower_data):
+    def __init__(self, shared_data, device_info, blower_data):
         self._shared_data = shared_data
         self._blower_data = blower_data
         self._attr_name = f"Spa Blower {blower_data['port']}"  # Název na základě portu
@@ -159,7 +153,7 @@ class SpaBlowerSelect(SelectEntity):
         self._attr_should_poll = True
         self._attr_current_option = None
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
-        self._attr_device_info = DEVICE_INFO
+        self._attr_device_info = device_info
 
     async def async_update(self):
         data = self._shared_data.data

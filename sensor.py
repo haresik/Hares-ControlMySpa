@@ -9,18 +9,12 @@ _LOGGER = logging.getLogger(__name__)
 
 # Nastavení intervalu aktualizace na 2 minuty
 SCAN_INTERVAL = timedelta(minutes=2)
-DEVICE_INFO = {
-    "identifiers": {(DOMAIN, "spa_device")},  # Unikátní identifikátor zařízení
-    "name": "Spa Balboa Device",
-    "manufacturer": "Balboa",
-    "model": "Spa Model 1",
-    "sw_version": "1.0",
-}
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     data = hass.data[DOMAIN][config_entry.entry_id]
     # client = data["client"]
     shared_data = data["data"]
+    device_info = data["device_info"]
 
     # Najít všechny CIRCULATION_PUMP komponenty
     circulation_pumps = [
@@ -29,14 +23,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     ]
 
     # Vytvořit entity pro každou CIRCULATION_PUMP
-    entities = [SpaCirculationPumpSensor(shared_data, pump, circulation_pumps.count) for pump in circulation_pumps]
-    entities.append(SpaTemperatureSensor(shared_data))  # Aktuální teplota
-    entities.append(SpaDesiredTemperatureSensor(shared_data))  # Požadovaná teplota
+    entities = [SpaCirculationPumpSensor(shared_data, device_info, pump, circulation_pumps.count) for pump in circulation_pumps]
+    entities.append(SpaTemperatureSensor(shared_data, device_info))  # Aktuální teplota
+    entities.append(SpaDesiredTemperatureSensor(shared_data, device_info))  # Požadovaná teplota
 
     async_add_entities(entities, True)
 
 class SpaTemperatureSensor(SensorEntity):
-    def __init__(self, shared_data):
+    def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
         self._attr_name = "Spa Current Temperature"
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
@@ -44,7 +38,7 @@ class SpaTemperatureSensor(SensorEntity):
         self._state = None
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
         self._attr_icon = "mdi:thermometer"
-        self._attr_device_info = DEVICE_INFO
+        self._attr_device_info = device_info
 
         # Registrace jako odběratel
         self._shared_data.register_subscriber(self)
@@ -62,7 +56,7 @@ class SpaTemperatureSensor(SensorEntity):
         return self._state
 
 class SpaDesiredTemperatureSensor(SensorEntity):
-    def __init__(self, shared_data):
+    def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
         self._attr_name = "Spa Desired Temperature"
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
@@ -70,7 +64,7 @@ class SpaDesiredTemperatureSensor(SensorEntity):
         self._state = None
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
         self._attr_icon = "mdi:thermometer"
-        self._attr_device_info = DEVICE_INFO
+        self._attr_device_info = device_info
 
         # Registrace jako odběratel
         self._shared_data.register_subscriber(self)
@@ -89,7 +83,7 @@ class SpaDesiredTemperatureSensor(SensorEntity):
 
 
 class SpaCirculationPumpSensor(SensorEntity):
-    def __init__(self, shared_data, pump_data, count_pump):
+    def __init__(self, shared_data, device_info, pump_data, count_pump):
         self._shared_data = shared_data
         self._pump_data = pump_data
         self._attr_name = "Spa Circulation Pump" if count_pump == 1 or pump_data['port'] == None else f"Spa Circulation Pump {pump_data['port']}"
@@ -97,7 +91,7 @@ class SpaCirculationPumpSensor(SensorEntity):
         self._attr_should_poll = False  # Data jsou sdílena
         self._state = None
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
-        self._attr_device_info = DEVICE_INFO
+        self._attr_device_info = device_info
 
         # Registrace jako odběratel
         self._shared_data.register_subscriber(self)
