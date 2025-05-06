@@ -19,16 +19,8 @@ DEVICE_INFO = {
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     data = hass.data[DOMAIN][config_entry.entry_id]
-    client = data["client"]
-
-    # Vytvoření sdíleného objektu pro data
-    shared_data = SpaData(client, hass)
-    
-    # Spustit pravidelnou aktualizaci dat
-    shared_data.start_periodic_update(SCAN_INTERVAL)
-
-    # Aktualizace dat pouze jednou
-    await shared_data.update()
+    # client = data["client"]
+    shared_data = data["data"]
 
     # Najít všechny CIRCULATION_PUMP komponenty
     circulation_pumps = [
@@ -42,43 +34,6 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     entities.append(SpaDesiredTemperatureSensor(shared_data))  # Požadovaná teplota
 
     async_add_entities(entities, True)
-
-class SpaData:
-    """Sdílený objekt pro uchování dat z webového dotazu."""
-    def __init__(self, client, hass):
-        self._client = client
-        self._data = None
-        self._hass = hass
-        self._subscribers = []  # Seznam odběratelů
-
-    async def update(self):
-        """Aktualizace dat z webového dotazu."""
-        self._data = await self._client.getSpa()
-        _LOGGER.debug("Shared data updated: %s", self._data)
-        await self._notify_subscribers()  # Notifikace odběratelů
-
-    def start_periodic_update(self, interval):
-        """Spustí pravidelnou aktualizaci dat."""
-        async_track_time_interval(self._hass, self._periodic_update, interval)
-
-    async def _periodic_update(self, _):
-        """Interní metoda pro pravidelnou aktualizaci."""
-        await self.update()
-
-    def register_subscriber(self, subscriber):
-        """Registrace odběratele."""
-        self._subscribers.append(subscriber)
-
-    async def _notify_subscribers(self):
-        """Notifikace všech odběratelů."""
-        for subscriber in self._subscribers:
-            await subscriber.async_update()
-
-    @property
-    def data(self):
-        """Vrací aktuální data."""
-        return self._data
-
 
 class SpaTemperatureSensor(SensorEntity):
     def __init__(self, shared_data):

@@ -18,16 +18,9 @@ DEVICE_INFO = {
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     data = hass.data[DOMAIN][config_entry.entry_id]
-    client = data["client"]
+    # client = data["client"]
+    shared_data = data["data"]
 
-    # Vytvoření sdíleného objektu pro data
-    shared_data = SpaData(client, hass)
-
-    # Spustit pravidelnou aktualizaci dat
-    shared_data.start_periodic_update(SCAN_INTERVAL)
-
-    # Najít všechny PUMP komponenty
-    await shared_data.update()
     pumps = [
         component for component in shared_data.data["components"]
         if component["componentType"] == "PUMP"
@@ -50,31 +43,6 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     entities.append(SpaTempRangeSelect(shared_data))  # Přidat existující entitu
 
     async_add_entities(entities, True)
-
-class SpaData:
-    """Sdílený objekt pro uchování dat z webového dotazu."""
-    def __init__(self, client, hass):
-        self._client = client
-        self._data = None
-        self._hass = hass
-
-    async def update(self):
-        """Aktualizace dat z webového dotazu."""
-        self._data = await self._client.getSpa()
-        _LOGGER.debug("Shared data updated: %s", self._data)
-
-    def start_periodic_update(self, interval):
-        """Spustí pravidelnou aktualizaci dat."""
-        async_track_time_interval(self._hass, self._periodic_update, interval)
-
-    async def _periodic_update(self, _):
-        """Interní metoda pro pravidelnou aktualizaci."""
-        await self.update()
-
-    @property
-    def data(self):
-        """Vrací aktuální data."""
-        return self._data
 
 class SpaTempRangeSelect(SelectEntity):
     def __init__(self, shared_data):

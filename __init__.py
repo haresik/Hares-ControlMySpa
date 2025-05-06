@@ -1,8 +1,10 @@
 import logging
 import voluptuous as vol
+from datetime import timedelta
 from .const import DOMAIN
 from homeassistant.helpers.service import async_register_admin_service
 from .ControlMySpa import ControlMySpa
+from .SpaData import SpaData  
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -15,10 +17,14 @@ async def async_setup_entry(hass, config_entry):
 
     spa_client = ControlMySpa(username, password)
     await spa_client.init()
-    balboa_data = await spa_client.getSpa()
 
-    _LOGGER.info(f"ControlMySpa INIT async_setup_entry {balboa_data}")
-        
+    # Inicializace SpaData
+    balboa_data = SpaData(spa_client, hass)
+    await balboa_data.update()  # První aktualizace dat
+    balboa_data.start_periodic_update(timedelta(minutes=2))  # Pravidelná aktualizace
+
+    _LOGGER.info("ControlMySpa INIT async_setup_entry")
+
     if not balboa_data:
         _LOGGER.error("Failed to initialize ControlMySpa client")
         return False
