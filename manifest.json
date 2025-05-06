@@ -5,6 +5,6 @@
   "documentation": "https://example.com",
   "requirements": [],
   "dependencies": [],
-  "codeowners": ["@yourgithub"],
+  "codeowners": [ "@yourgithub" ],
   "config_flow": true
 }

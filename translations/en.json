@@ -1,0 +1,12 @@
+{
+  "entity": {
+    "sensor": {
+      "spa_current_temperature": { "name": "Aktuální teplota ve Spa" },
+      "spa_desired_temperature": { "name": "Požadovaná teplota ve Spa" },
+      "spa_circulation_pump": { "name": "Cirkulační čerpadlo Spa 1" },
+      "spa_circulation_pump_1": { "name": "Cirkulační čerpadlo Spa 1" },
+      "spa_circulation_pump_2": { "name": "Cirkulační čerpadlo Spa 2" }
+    }
+  }
+}
+   
