@@ -37,7 +37,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class SpaTemperatureSensor(SensorEntity):
     def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
-        self._attr_name = "Spa Current Temperature"
+        self._attr_name = "Current Temperature"
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._state = None
@@ -60,7 +60,7 @@ class SpaTemperatureSensor(SensorEntity):
 class SpaDesiredTemperatureSensor(SensorEntity):
     def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
-        self._attr_name = "Spa Desired Temperature"
+        self._attr_name = "Desired Temperature"
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._state = None
@@ -87,12 +87,13 @@ class SpaCirculationPumpSensor(SensorEntity):
     def __init__(self, shared_data, device_info, pump_data, count_pump):
         self._shared_data = shared_data
         self._pump_data = pump_data
-        self._attr_name = "Spa Circulation Pump" if count_pump == 1 or pump_data['port'] == None else f"Spa Circulation Pump {pump_data['port']}"
+        self._attr_name = "Circulation Pump" if count_pump == 1 or pump_data['port'] == None else f"Spa Circulation Pump {pump_data['port']}"
         self._attr_native_unit_of_measurement = None  # Jednotka není potřeba
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._state = None
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
         self._attr_device_info = device_info
+        self._attr_icon = "mdi:weather-tornado"
 
     async def async_update(self):
         # Data jsou již aktualizována v async_setup_entry

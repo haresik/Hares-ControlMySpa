@@ -12,7 +12,8 @@
       "user": {
         "data": {
           "username": "Login",
-          "password": "Heslo"
+          "password": "Heslo",
+          "updateintervalminutes": "Interval aktualizace (minuty)"
         },
         "description": "Připojí se k ControlMySpa",
         "title": "Vířívá vana"

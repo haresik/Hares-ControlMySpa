@@ -14,6 +14,7 @@ async def async_setup(hass, config):
 async def async_setup_entry(hass, config_entry):
     username = config_entry.data["username"]
     password = config_entry.data["password"]
+    minUpdate = config_entry.data.get("updateintervalminutes", 2)
 
     spa_client = ControlMySpa(username, password)
     await spa_client.init()
@@ -21,9 +22,9 @@ async def async_setup_entry(hass, config_entry):
     # Inicializace SpaData
     balboa_data = SpaData(spa_client, hass)
     await balboa_data.update()  # První aktualizace dat
-    balboa_data.start_periodic_update(timedelta(minutes=2))  # Pravidelná aktualizace
+    balboa_data.start_periodic_update(timedelta(minutes=minUpdate))  # Pravidelná aktualizace
 
-    _LOGGER.info("ControlMySpa INIT async_setup_entry")
+    _LOGGER.info("ControlMySpa INIT async_setup_entry. Interval:%s, %s", minUpdate)
 
     if not balboa_data:
         _LOGGER.error("Failed to initialize ControlMySpa client")
