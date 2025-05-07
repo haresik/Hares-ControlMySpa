@@ -69,7 +69,7 @@ async def async_setup_entry(hass, config_entry):
     # )
 
     # Moderní zpùsob – nespouští deprecated warning
-    await hass.config_entries.async_forward_entry_setups(config_entry, ["sensor", "select"]) 
+    await hass.config_entries.async_forward_entry_setups(config_entry, ["sensor", "select", "number"]) 
     return True
 
 async def async_unload_entry(hass, config_entry):
@@ -77,6 +77,8 @@ async def async_unload_entry(hass, config_entry):
     sensor_unloaded = await hass.config_entries.async_forward_entry_unload(config_entry, "sensor")
     # Odregistrovat platformu "select"
     select_unloaded = await hass.config_entries.async_forward_entry_unload(config_entry, "select")
+    # Odregistrovat platformu "number"
+    select_unloaded = await hass.config_entries.async_forward_entry_unload(config_entry, "number")
 
     # Vrátit True, pokud byly obì platformy úspìšnì odregistrovány
     return sensor_unloaded and select_unloaded

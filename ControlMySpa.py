@@ -154,6 +154,15 @@ class ControlMySpa:
             "range": "HIGH" if high else "LOW"
         })
 
+    async def setTime(self, date, time, military_format=True):
+        return await self._postAndRefresh("/spa-commands/time   ", {
+            "spaId": self.spaId,
+            "via": "MOBILE",
+            "date": date,
+            "time": time,
+            "isMilitaryFormat": military_format
+    })
+
     async def setPanelLock(self, locked):
         return await self._postAndRefresh("/spa-commands/panel/state", {
             "spaId": self.spaId,
