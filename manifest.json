@@ -1,8 +1,8 @@
 {
   "domain": "control_my_spa",
-  "name": "Hares My Spa",
-  "version": "0.1",
-  "documentation": "https://example.com",
+  "name": "ControlMySpa Hares",
+  "version": "1.0.0.1",
+  "documentation": "https://github.com/haresik/Hares-ControlMySpa",
   "requirements": [],
   "dependencies": [],
   "codeowners": [ "@yourgithub" ],

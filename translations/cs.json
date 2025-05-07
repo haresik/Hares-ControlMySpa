@@ -1,11 +1,85 @@
 {
+  "config": {
+    "abort": {
+      "already_configured": "Zařízení je již nastaveno",
+      "already_in_progress": "Nastavení již probíhá"
+    },
+    "error": {
+      "connection_error": "Nepodařilo se připojit"
+    },
+    "flow_title": "ControlMySpa",
+    "step": {
+      "user": {
+        "data": {
+          "username": "Login",
+          "password": "Heslo"
+        },
+        "description": "Připojí se k ControlMySpa",
+        "title": "Vířívá vana"
+      }
+    }
+  },
   "entity": {
     "sensor": {
-      "spa_current_temperature": { "name": "Aktuální teplota ve Spa" },
-      "spa_desired_temperature": { "name": "Požadovaná teplota ve Spa" },
-      "spa_circulation_pump": { "name": "Cirkulační čerpadlo Spa 1" },
-      "spa_circulation_pump_1": { "name": "Cirkulační čerpadlo Spa 1" },
-      "spa_circulation_pump_2": { "name": "Cirkulační čerpadlo Spa 2" }
+      "spa_current_temperature": {
+        "name": "Aktuální teplota ve Spa"
+      },
+      "spa_desired_temperature": {
+        "name": "Požadovaná teplota ve Spa"
+      },
+      "spa_circulation_pump": {
+        "name": "Cirkulační čerpadlo Spa 1"
+      },
+      "spa_circulation_pump_1": {
+        "name": "Cirkulační čerpadlo Spa 1"
+      },
+      "spa_circulation_pump_2": {
+        "name": "Cirkulační čerpadlo Spa 2"
+      }
+    },
+    "select": {
+      "spa_light_0": {
+        "name": "Světlo d",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "spa_light": {
+        "name": "Světlo c",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "light": {
+        "name": "Světlo b",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "spa_spa_light": {
+        "name": "Světlo a",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "select.spa_light_2": {
+        "name": "Světlo bx",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "spa_light_2": {
+        "name": "Světlo bf",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      }
     }
   }
 }

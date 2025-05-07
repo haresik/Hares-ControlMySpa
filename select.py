@@ -7,7 +7,7 @@ import logging
 _LOGGER = logging.getLogger(__name__)
 
 # Nastavení intervalu aktualizace na 2 minuty
-SCAN_INTERVAL = timedelta(minutes=2)
+SCAN_INTERVAL = timedelta(minutes=60)
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     data = hass.data[DOMAIN][config_entry.entry_id]
@@ -31,19 +31,24 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     ]
 
     # Vytvořit entity pro každou PUMP
-    entities = [SpaPumpSelect(shared_data, device_info, pump) for pump in pumps]
-    entities += [SpaBlowerSelect(shared_data, device_info, blower) for blower in blowers]
-    entities += [SpaLightSelect(shared_data, device_info, light) for light in lights]
+    entities = [SpaPumpSelect(shared_data, device_info, pump, len(pumps)) for pump in pumps]
+    entities += [SpaBlowerSelect(shared_data, device_info, blower, len(blowers)) for blower in blowers]
+    entities += [SpaLightSelect(shared_data, device_info, light, len(lights)) for light in lights]
     entities.append(SpaTempRangeSelect(shared_data, device_info))  # Přidat entitu
 
     async_add_entities(entities, True)
+    _LOGGER.debug("START Select control_my_spa")
+
+    # Pro všechny entity proveď registraci jako odběratel
+    for entity in entities:
+        shared_data.register_subscriber(entity)
 
 class SpaTempRangeSelect(SelectEntity):
     def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
         self._attr_name = "Spa Temperature Range"
         self._attr_options = ["HIGH", "LOW"]  # Možnosti výběru
-        self._attr_should_poll = True
+        self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._attr_current_option = None
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"  
         self._attr_device_info = device_info
@@ -66,14 +71,14 @@ class SpaTempRangeSelect(SelectEntity):
  # type: ignore
 
 class SpaPumpSelect(SelectEntity):
-    def __init__(self, shared_data, device_info, pump_data):
+    def __init__(self, shared_data, device_info, pump_data, pump_count):
         self._shared_data = shared_data
         self._pump_data = pump_data
-        self._attr_name = f"Spa Pump {pump_data['port']}"  # Název na základě portu
+        self._attr_name = "Spa Pump" if pump_count == 1 or pump_data['port'] == None else f"Spa Pump {pump_data['port']}"
         self._attr_options = pump_data["availableValues"]  # Možnosti výběru
-        self._attr_should_poll = True
+        self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._attr_current_option = None
-        self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
+        self._attr_unique_id = f"{self._attr_name.lower().replace(' ', '_')}"
         self._attr_device_info = device_info
 
     async def async_update(self):
@@ -106,15 +111,18 @@ class SpaPumpSelect(SelectEntity):
                 _LOGGER.error("Failed to set Pump %s to %s", self._pump_data["port"], option)
 
 class SpaLightSelect(SelectEntity):
-    def __init__(self, shared_data, device_info, light_data):
+    def __init__(self, shared_data, device_info, light_data, light_count):
         self._shared_data = shared_data
         self._light_data = light_data
-        self._attr_name = f"Spa Light {light_data['port']}"  # Název na základě portu
+        self._attr_name = "Spa Light" if light_count == 1 or light_data['port'] == None else f"Spa Light {light_data['port']}"
         self._attr_options = light_data["availableValues"]  # Možnosti výběru
-        self._attr_should_poll = True
+        self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._attr_current_option = None
-        self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
+        self._attr_unique_id = f"{self._attr_name.lower().replace(' ', '_')}"
         self._attr_device_info = device_info
+        self._attr_icon = "mdi:lightbulb"
+
+        _LOGGER.debug("Created Light (%s) (%s) (%s)", self._attr_name, self._attr_unique_id, light_count)
 
     async def async_update(self):
         data = self._shared_data.data
@@ -145,14 +153,14 @@ class SpaLightSelect(SelectEntity):
                 _LOGGER.error("Failed to set Light %s to %s", self._light_data["port"], option)
 
 class SpaBlowerSelect(SelectEntity):
-    def __init__(self, shared_data, device_info, blower_data):
+    def __init__(self, shared_data, device_info, blower_data, blower_count):
         self._shared_data = shared_data
         self._blower_data = blower_data
-        self._attr_name = f"Spa Blower {blower_data['port']}"  # Název na základě portu
+        self._attr_name = "Spa Blower" if blower_count == 1 or blower_data['port'] == None else f"Spa Blower {blower_data['port']}"
         self._attr_options = blower_data["availableValues"]  # Možnosti výběru
-        self._attr_should_poll = True
+        self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._attr_current_option = None
-        self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
+        self._attr_unique_id = f"{self._attr_name.lower().replace(' ', '_')}"
         self._attr_device_info = device_info
 
     async def async_update(self):

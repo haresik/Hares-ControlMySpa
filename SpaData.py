@@ -32,7 +32,13 @@ class SpaData:
     async def _notify_subscribers(self):
         """Notifikace všech odběratelů."""
         for subscriber in self._subscribers:
-            await subscriber.async_update()
+            if subscriber.hass:
+                await subscriber.async_update()
+                subscriber.async_write_ha_state() #zajisti ulozeni hodnoty do HA
+            else:
+                _LOGGER.warning("Subscriber %s has no hass attribute initialized", subscriber)
+
+
 
     @property
     def data(self):
