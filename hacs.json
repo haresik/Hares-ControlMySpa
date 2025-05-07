@@ -1,0 +1,6 @@
+{
+  "name": "ControlMySpa Hares",
+  "content_in_root": false,
+  "domains": [ "number", "select", "sensor" ], 
+  "country": "cz"
+}
