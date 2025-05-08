@@ -1,24 +1,24 @@
-# ControlMySpa Hares pro Home Assistant (experimentální)
+# ControlMySpa Hares pro Home Assistant (experimentÃ¡lnÃ­)
 
-Tato komponenta umoòuje integraci a ovládání víøivek prostøednictvím platformy Home Assistant. Poskytuje pokroèilé funkce, které nejsou dostupné ve standardních integracích, a je urèena pro uivatele s konkrétními potøebami nebo pro ty, kteøí chtìjí testovat nové funkce.
+Tato komponenta umoÅ¾Åˆuje integraci a ovlÃ¡dÃ¡nÃ­ vÃ­Å™ivek prostÅ™ednictvÃ­m platformy Home Assistant. Poskytuje pokroÄilÃ© funkce, kterÃ© nejsou dostupnÃ© ve standardnÃ­ch integracÃ­ch, a je urÄena pro uÅ¾ivatele s konkrÃ©tnÃ­mi potÅ™ebami nebo pro ty, kteÅ™Ã­ chtÄ›jÃ­ testovat novÃ© funkce.
 
-## Hlavní funkce:
-- **Monitorování stavu víøivky**:
-  - Zobrazení aktuální teploty vody.
-  - Zobrazení poadované teploty vody.
-  - Informace o stavu cirkulaèního èerpadla, svìtel a dalších komponent.
+## HlavnÃ­ funkce:
+- **MonitorovÃ¡nÃ­ stavu vÃ­Å™ivky**:
+  - ZobrazenÃ­ aktuÃ¡lnÃ­ teploty vody.
+  - ZobrazenÃ­ poÅ¾adovanÃ© teploty vody.
+  - Informace o stavu cirkulaÄnÃ­ho Äerpadla, svÄ›tel a dalÅ¡Ã­ch komponent.
 
-- **Ovládání víøivky**:
-  - Nastavení poadované teploty vody.
-  - Pøepínání mezi vysokım a nízkım teplotním rozsahem.
-  - Ovládání svìtel, èerpadel a vzduchovıch bublin.
+- **OvlÃ¡dÃ¡nÃ­ vÃ­Å™ivky**:
+  - NastavenÃ­ poÅ¾adovanÃ© teploty vody.
+  - PÅ™epÃ­nÃ¡nÃ­ mezi vysokÃ½m a nÃ­zkÃ½m teplotnÃ­m rozsahem.
+  - OvlÃ¡dÃ¡nÃ­ svÄ›tel, Äerpadel a vzduchovÃ½ch bublin.
 
 - **Automatizace**:
-  - Monost integrace s automatizacemi Home Assistantu pro plánování a øízení víøivky na základì podmínek, jako je èas, poèasí nebo pøítomnost uivatelù.
+  - MoÅ¾nost integrace s automatizacemi Home Assistantu pro plÃ¡novÃ¡nÃ­ a Å™Ã­zenÃ­ vÃ­Å™ivky na zÃ¡kladÄ› podmÃ­nek, jako je Äas, poÄasÃ­ nebo pÅ™Ã­tomnost uÅ¾ivatelÅ¯.
 
-## Upozornìní:
-Tato komponenta je experimentální a mùe obsahovat funkce, které nejsou plnì otestovány. Pouívejte ji na vlastní riziko.
-Toto je mùj první projekt pro Home Assistant. Prosím o schovívavost ohlednì funkènosti a pøípadnıch nedostatkù. Pokud narazíte na chyby nebo máte návrhy na zlepšení, neváhejte mì kontaktovat nebo vytvoøit issue na GitHubu. Dìkuji za pochopení a podporu!
+## UpozornÄ›nÃ­:
+Tato komponenta je experimentÃ¡lnÃ­ a mÅ¯Å¾e obsahovat funkce, kterÃ© nejsou plnÄ› otestovÃ¡ny. PouÅ¾Ã­vejte ji na vlastnÃ­ riziko.
+Toto je mÅ¯j prvnÃ­ projekt pro Home Assistant. ProsÃ­m o schovÃ­vavost ohlednÄ› funkÄnosti a pÅ™Ã­padnÃ½ch nedostatkÅ¯. Pokud narazÃ­te na chyby nebo mÃ¡te nÃ¡vrhy na zlepÅ¡enÃ­, nevÃ¡hejte mÄ› kontaktovat nebo vytvoÅ™it issue na GitHubu. DÄ›kuji za pochopenÃ­ a podporu!
 
 
 # ControlMySpa Hares for Home Assistant (experimental)
@@ -43,3 +43,4 @@ This component allows integration and control of spas through the Home Assistant
 This component is experimental and may include features that are not fully tested. Use it at your own risk.
 This is my first project for Home Assistant. Please be patient regarding functionality and potential shortcomings. If you encounter any issues or have suggestions for improvement, feel free to contact me or create an issue on GitHub. Thank you for your understanding and support!
 
+![UkÃ¡zka](img/scan1.png)

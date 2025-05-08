@@ -42,6 +42,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     # Pro všechny entity proveď registraci jako odběratel
     for entity in entities:
         shared_data.register_subscriber(entity)
+        _LOGGER.debug("Created Select (%s) (%s) (%s) ", entity._attr_name, entity._attr_unique_id, entity.entity_id)
+
 
 class SpaTempRangeSelect(SelectEntity):
     def __init__(self, shared_data, device_info):
@@ -53,6 +55,7 @@ class SpaTempRangeSelect(SelectEntity):
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"  
         self._attr_device_info = device_info
         self._attr_icon = "mdi:pool-thermometer"
+        self._attr_translation_key = f"{self._attr_name.lower().replace(' ', '_')}"
  
     async def async_update(self):
         data = self._shared_data.data
@@ -75,13 +78,14 @@ class SpaPumpSelect(SelectEntity):
     def __init__(self, shared_data, device_info, pump_data, pump_count):
         self._shared_data = shared_data
         self._pump_data = pump_data
-        self._attr_name = "Pump" if pump_count == 1 or pump_data['port'] == None else f"Pump {pump_data['port']}"
+        self._attr_name = "Pump" if pump_count == 1 or pump_data['port'] == None else f"Pump {int(pump_data['port']) + 1}"
         self._attr_options = pump_data["availableValues"]  # Možnosti výběru
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._attr_current_option = None
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
         self._attr_device_info = device_info
         self._attr_icon = "mdi:weather-windy"
+        self._attr_translation_key = f"{self._attr_name.lower().replace(' ', '_')}"
 
     async def async_update(self):
         data = self._shared_data.data
@@ -116,15 +120,14 @@ class SpaLightSelect(SelectEntity):
     def __init__(self, shared_data, device_info, light_data, light_count):
         self._shared_data = shared_data
         self._light_data = light_data
-        self._attr_name = "Light" if light_count == 1 or light_data['port'] == None else f"Light {light_data['port']}"
+        self._attr_name = "Light" if light_count == 1 or light_data['port'] == None else f"Light {int(light_data['port']) + 1}"
         self._attr_options = light_data["availableValues"]  # Možnosti výběru
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._attr_current_option = None
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
         self._attr_device_info = device_info
         self._attr_icon = "mdi:lightbulb"
-
-        _LOGGER.debug("Created Light (%s) (%s) (%s)", self._attr_name, self._attr_unique_id, light_count)
+        self._attr_translation_key = f"{self._attr_name.lower().replace(' ', '_')}"
 
     async def async_update(self):
         data = self._shared_data.data
@@ -158,13 +161,14 @@ class SpaBlowerSelect(SelectEntity):
     def __init__(self, shared_data, device_info, blower_data, blower_count):
         self._shared_data = shared_data
         self._blower_data = blower_data
-        self._attr_name = "Blower" if blower_count == 1 or blower_data['port'] == None else f"Blower {blower_data['port']}"
+        self._attr_name = "Blower" if blower_count == 1 or blower_data['port'] == None else f"Blower {int(blower_data['port']) + 1}"
         self._attr_options = blower_data["availableValues"]  # Možnosti výběru
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._attr_current_option = None
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
         self._attr_device_info = device_info
         self._attr_icon = "mdi:weather-dust"
+        self._attr_translation_key = f"{self._attr_name.lower().replace(' ', '_')}"
 
     async def async_update(self):
         data = self._shared_data.data

@@ -36,6 +36,7 @@ class SpaTargetDesiredTempNumber(NumberEntity):
         self._attr_device_info = device_info
         self._state = None
         self._attr_icon = "mdi:thermometer-water"
+        self.entity_id = f"number.{self._attr_unique_id}"
 
         _LOGGER.debug("Created Target Desired Temperature (%s) (%s)", self._attr_name, self._attr_unique_id)
 

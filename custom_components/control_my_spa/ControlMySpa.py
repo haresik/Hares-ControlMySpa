@@ -47,7 +47,9 @@ class ControlMySpa:
                 'hour': int(spaData['time'].split(':')[0]) if spaData.get('time') else None,
                 'minute': int(spaData['time'].split(':')[1]) if spaData.get('time') else None,
                 'timeNotSet': not bool(spaData.get('time')),
-                'military': spaData['isMilitaryTime']
+                'military': spaData['isMilitaryTime'],
+                'serialNumber': spaData['serialNumber'],
+                'controllerSoftwareVersion': spaData['systemInfo']['controllerSoftwareVersion'],
             }
         except Exception as e:
             print(f"constructCurrentState Error: {e}")

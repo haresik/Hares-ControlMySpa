@@ -22,63 +22,87 @@
   },
   "entity": {
     "sensor": {
-      "spa_current_temperature": {
-        "name": "Aktuální teplota ve Spa"
+      "current_temperature": {
+        "name": "Aktuální teplota",
+        "unit_of_measurement": "°C"
       },
-      "spa_desired_temperature": {
-        "name": "Požadovaná teplota ve Spa"
+      "desired_temperature": {
+        "name": "Požadována teplota",
+        "unit_of_measurement": "°C"
       },
-      "spa_circulation_pump": {
-        "name": "Cirkulační čerpadlo Spa 1"
-      },
-      "spa_circulation_pump_1": {
-        "name": "Cirkulační čerpadlo Spa 1"
-      },
-      "spa_circulation_pump_2": {
-        "name": "Cirkulační čerpadlo Spa 2"
+      "circulation_pump": {
+        "name": "Cirkulační čerpadlo"
       }
     },
     "select": {
-      "spa_light_0": {
-        "name": "Světlo d",
-        "state": {
-          "OFF": "Vypnuto",
-          "HIGH": "Zapnuto"
-        }
-      },
-      "spa_light": {
-        "name": "Světlo c",
-        "state": {
-          "OFF": "Vypnuto",
-          "HIGH": "Zapnuto"
-        }
-      },
       "light": {
-        "name": "Světlo b",
+        "name": "Svetlo",
         "state": {
           "OFF": "Vypnuto",
           "HIGH": "Zapnuto"
         }
       },
-      "spa_spa_light": {
-        "name": "Světlo a",
+      "light_1": {
+        "name": "Světlo 1",
         "state": {
           "OFF": "Vypnuto",
           "HIGH": "Zapnuto"
         }
       },
-      "select.spa_light_2": {
-        "name": "Světlo bx",
+      "light_2": {
+        "name": "Světlo 2",
         "state": {
           "OFF": "Vypnuto",
           "HIGH": "Zapnuto"
         }
       },
-      "spa_light_2": {
-        "name": "Světlo bf",
+      "pump": {
+        "name": "Trysky",
         "state": {
           "OFF": "Vypnuto",
           "HIGH": "Zapnuto"
+        }
+      },
+      "pump_1": {
+        "name": "Trysky 1",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "pump_2": {
+        "name": "Trysky 2",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "blower": {
+        "name": "Vzduch",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "blower_1": {
+        "name": "Vzduch 1",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "blower_2": {
+        "name": "Vzduch 2",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "temperature_range": {
+        "name": "Teplotní rozsah",
+        "state": {
+          "LOW": "Nižší rozsah",
+          "HIGH": "Vysoký rozsah"
         }
       }
     }

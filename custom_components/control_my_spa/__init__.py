@@ -15,14 +15,20 @@ async def async_setup_entry(hass, config_entry):
     username = config_entry.data["username"]
     password = config_entry.data["password"]
     minUpdate = config_entry.data.get("updateintervalminutes", 2)
+    _LOGGER.info("AktuÃ¡lnÃ­ lokalizace uÅ¾ivatele: %s", hass.config.language)
+
+    # translations = await hass.helpers.translation.async_get_translations(hass.config.language, "entity")
+    # light_translation = translations.get("component.control_my_spa.entity.select.light.name", "PÅ™eklad nenalezen")
+    # _LOGGER.info("PÅ™eklad pro 'light': %s", light_translation)
+    # _LOGGER.info("DostupnÃ© pÅ™eklady: %s", translations)
 
     spa_client = ControlMySpa(username, password)
     await spa_client.init()
 
     # Inicializace SpaData
     balboa_data = SpaData(spa_client, hass)
-    await balboa_data.update()  # První aktualizace dat
-    balboa_data.start_periodic_update(timedelta(minutes=minUpdate))  # Pravidelná aktualizace
+    await balboa_data.update()  # PrvnÃ­ aktualizace dat
+    balboa_data.start_periodic_update(timedelta(minutes=minUpdate))  # PravidelnÃ¡ aktualizace
 
     _LOGGER.info("ControlMySpa INIT async_setup_entry. Interval:%s, %s", minUpdate)
 
@@ -31,11 +37,12 @@ async def async_setup_entry(hass, config_entry):
         return False
 
     device_info = {
-        "identifiers": {(DOMAIN, "spa_device")},  # Unikátní identifikátor zaøízení
+        "identifiers": {(DOMAIN, "spa_device")},  # UnikÃ¡tnÃ­ identifikÃ¡tor zaÅ™Ã­zenÃ­
         "name": "Spa Device",
         "manufacturer": "Balboa",
-        "model": "Spa Model 1",
-        "sw_version": "1.0",
+        "model": "Spa Model Unknown",
+        "sw_version": balboa_data.data["controllerSoftwareVersion"],
+        "serial_number": balboa_data.data["serialNumber"]
     }
 
     hass.data.setdefault(DOMAIN, {})
@@ -45,30 +52,6 @@ async def async_setup_entry(hass, config_entry):
         "device_info": device_info
     }
 
-    # Registrace služby pro zmìnu tempRange
-    # async def handle_set_temp_range(call):
-    #     temp_range = call.data.get("temp_range")
-    #     if temp_range not in ["HIGH", "LOW"]:
-    #         _LOGGER.error("Invalid temp_range value: %s", temp_range)
-    #         return
-
-    #     client = hass.data[DOMAIN][config_entry.entry_id]["client"]
-    #     success = await client.setTempRange(temp_range == "HIGH")
-    #     if success:
-    #         _LOGGER.info("Successfully set tempRange to %s", temp_range)
-    #     else:
-    #         _LOGGER.error("Failed to set tempRange to %s", temp_range)
-
-    # hass.services.async_register(
-    #     DOMAIN,
-    #     "set_temp_range",
-    #     handle_set_temp_range,
-    #     schema=vol.Schema({
-    #         vol.Required("temp_range"): vol.In(["HIGH", "LOW"]),
-    #     }),
-    # )
-
-    # Moderní zpùsob – nespouští deprecated warning
     await hass.config_entries.async_forward_entry_setups(config_entry, ["sensor", "select", "number"]) 
     return True
 
@@ -80,5 +63,4 @@ async def async_unload_entry(hass, config_entry):
     # Odregistrovat platformu "number"
     select_unloaded = await hass.config_entries.async_forward_entry_unload(config_entry, "number")
 
-    # Vrátit True, pokud byly obì platformy úspìšnì odregistrovány
     return sensor_unloaded and select_unloaded

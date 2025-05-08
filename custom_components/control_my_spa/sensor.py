@@ -44,6 +44,7 @@ class SpaTemperatureSensor(SensorEntity):
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
         self._attr_icon = "mdi:thermometer"
         self._attr_device_info = device_info
+        self._attr_translation_key = f"{self._attr_name.lower().replace(' ', '_')}"
 
     async def async_update(self):
         data = self._shared_data.data
@@ -67,6 +68,7 @@ class SpaDesiredTemperatureSensor(SensorEntity):
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
         self._attr_icon = "mdi:thermometer"
         self._attr_device_info = device_info
+        self._attr_translation_key = f"{self._attr_name.lower().replace(' ', '_')}"
 
         _LOGGER.debug("Created Desired Temperature (%s) (%s)", self._attr_name, self._attr_unique_id)
 
@@ -94,6 +96,7 @@ class SpaCirculationPumpSensor(SensorEntity):
         self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
         self._attr_device_info = device_info
         self._attr_icon = "mdi:weather-tornado"
+        self._attr_translation_key = f"{self._attr_name.lower().replace(' ', '_')}"
 
     async def async_update(self):
         # Data jsou již aktualizována v async_setup_entry
@@ -105,7 +108,7 @@ class SpaCirculationPumpSensor(SensorEntity):
                 None
             )
             if pump:
-                self._state = pump["value"]  # Stav čerpadla (např. ON/OFF)
+                self._state = pump["value"]  # Stav čerpadla 
                 _LOGGER.debug("Updated Circulation Pump %s: %s", self._pump_data["port"], self._state)
 
     @property
