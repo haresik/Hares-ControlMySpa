@@ -37,8 +37,8 @@ async def async_setup_entry(hass, config_entry):
         return False
 
     device_info = {
-        "identifiers": {(DOMAIN, "spa_device")},  # Unikátní identifikátor zařízení
-        "name": "Spa Device",
+        "identifiers": {(DOMAIN, balboa_data.data["serialNumber"])},  # Unikátní identifikátor zařízení
+        "name": "Spa",
         "manufacturer": "Balboa",
         "model": "Spa Model Unknown",
         "sw_version": balboa_data.data["controllerSoftwareVersion"],

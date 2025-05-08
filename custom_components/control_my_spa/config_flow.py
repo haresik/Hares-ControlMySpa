@@ -18,7 +18,7 @@ class ControlMySpaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema({
                 vol.Required("username"): str,
                 vol.Required("password"): str,
-                vol.Optional("updateintervalminutes", default=2): int,
+                vol.Optional("updateintervalminutes", default=1): int,
             }),
             errors=errors
         )
