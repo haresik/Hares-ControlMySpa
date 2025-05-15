@@ -42,7 +42,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     # Pro všechny entity proveď registraci jako odběratel
     for entity in entities:
         shared_data.register_subscriber(entity)
-        _LOGGER.debug("Created Select (%s) (%s) (%s) ", entity._attr_name, entity._attr_unique_id, entity.entity_id)
+        _LOGGER.debug("Created Select (%s) (%s) ", entity._attr_unique_id, entity.entity_id)
 
 class SpaSelectBase(SelectEntity):
     _attr_has_entity_name = True
