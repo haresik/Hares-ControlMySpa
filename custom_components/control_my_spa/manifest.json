@@ -4,7 +4,9 @@
   "version": "1.0.0.1",
   "documentation": "https://github.com/haresik/Hares-ControlMySpa",
   "requirements": [],
-  "dependencies": [],
-  "codeowners": [ "@yourgithub" ],
-  "config_flow": true
+  "dependencies": [ "http" ],
+  "codeowners": [ "@haresik" ],
+  "config_flow": true,
+  "icon": "icon.png",
+  "logo": "https://brands.home-assistant.io/balboa/logo.png"
 }

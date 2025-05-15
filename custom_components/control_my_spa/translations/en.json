@@ -1,0 +1,114 @@
+{
+  "title": "Balboa Hot Tub",
+  "config": {
+    "abort": {
+      "already_configured": "Device is already configured",
+      "already_in_progress": "Configuration is already in progress"
+    },
+    "error": {
+      "connection_error": "Failed to connect"
+    },
+    "flow_title": "ControlMySpa",
+    "step": {
+      "user": {
+        "data": {
+          "username": "Login",
+          "password": "Password",
+          "updateintervalminutes": "Update interval (minutes)"
+        },
+        "description": "Connects to ControlMySpa",
+        "title": "Hot Tub"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "current_temperature": {
+        "name": "Current Temperature"
+      },
+      "desired_temperature": {
+        "name": "Desired Temperature"
+      },
+      "circulation_pump": {
+        "name": "Circulation Pump"
+      }
+    },
+    "select": {
+      "light": {
+        "name": "Lighting",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "light_1": {
+        "name": "Lighting 1",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "light_2": {
+        "name": "Lighting 2",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "pump": {
+        "name": "Jets",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "pump_1": {
+        "name": "Jets 1",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "pump_2": {
+        "name": "Jets 2",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "blower": {
+        "name": "Air",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "blower_1": {
+        "name": "Air 1",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "blower_2": {
+        "name": "Air 2",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "temperature_range": {
+        "name": "Temperature Range",
+        "state": {
+          "LOW": "Low Range",
+          "HIGH": "High Range"
+        }
+      }
+    },
+    "number": {
+      "target_desired_temperature": {
+        "name": "Target Temperature"
+      }
+    }
+  }
+}

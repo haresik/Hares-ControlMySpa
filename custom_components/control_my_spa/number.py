@@ -21,9 +21,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         shared_data.register_subscriber(entity)
 
 class SpaTargetDesiredTempNumber(NumberEntity):
+    _attr_has_entity_name = True
+
     def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
-        self._attr_name = "Target Desired Temperature"
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._attr_step = 0.5  # Krok v Celsiu
@@ -32,13 +33,12 @@ class SpaTargetDesiredTempNumber(NumberEntity):
         self.native_step=0.5
         self.native_min_value=10.0
         self.native_max_value=40.0
-        self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
         self._attr_device_info = device_info
         self._state = None
         self._attr_icon = "mdi:thermometer-water"
-        self.entity_id = f"number.{self._attr_unique_id}"
-
-        _LOGGER.debug("Created Target Desired Temperature (%s) (%s)", self._attr_name, self._attr_unique_id)
+        self._attr_unique_id = f"number.spa_target_desired_temperature"
+        self._attr_translation_key = f"target_desired_temperature"
+        self.entity_id = self._attr_unique_id
 
     async def async_update(self):
         """Aktualizace hodnoty z datového zdroje."""

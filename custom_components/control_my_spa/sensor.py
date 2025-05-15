@@ -2,6 +2,7 @@ from datetime import timedelta
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.const import UnitOfTemperature
 from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.core import HomeAssistant
 from .const import DOMAIN
 import logging
 
@@ -10,7 +11,7 @@ _LOGGER = logging.getLogger(__name__)
 # Nastavení intervalu aktualizace na 2 minuty
 SCAN_INTERVAL = timedelta(minutes=60)
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
+async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
     data = hass.data[DOMAIN][config_entry.entry_id]
     # client = data["client"]
     shared_data = data["data"]
@@ -34,17 +35,20 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     for entity in entities:
         shared_data.register_subscriber(entity)
 
-class SpaTemperatureSensor(SensorEntity):
+class SpaSensorBase(SensorEntity):
+    _attr_has_entity_name = True
+
+class SpaTemperatureSensor(SpaSensorBase):
     def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
-        self._attr_name = "Current Temperature"
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._state = None
-        self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
         self._attr_icon = "mdi:thermometer"
         self._attr_device_info = device_info
-        self._attr_translation_key = f"{self._attr_name.lower().replace(' ', '_')}"
+        self._attr_unique_id = f"sensor.spa_current_temperature"
+        self._attr_translation_key = f"current_temperature"
+        self.entity_id = self._attr_unique_id
 
     async def async_update(self):
         data = self._shared_data.data
@@ -58,19 +62,17 @@ class SpaTemperatureSensor(SensorEntity):
     def native_value(self):
         return self._state
 
-class SpaDesiredTemperatureSensor(SensorEntity):
+class SpaDesiredTemperatureSensor(SpaSensorBase):
     def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
-        self._attr_name = "Desired Temperature"
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._state = None
-        self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
         self._attr_icon = "mdi:thermometer"
         self._attr_device_info = device_info
-        self._attr_translation_key = f"{self._attr_name.lower().replace(' ', '_')}"
-
-        _LOGGER.debug("Created Desired Temperature (%s) (%s)", self._attr_name, self._attr_unique_id)
+        self._attr_unique_id = f"sensor.spa_desired_temperature"
+        self._attr_translation_key = f"desired_temperature"
+        self.entity_id = self._attr_unique_id
 
     async def async_update(self):
         data = self._shared_data.data
@@ -85,18 +87,18 @@ class SpaDesiredTemperatureSensor(SensorEntity):
     def native_value(self):
         return self._state
 
-class SpaCirculationPumpSensor(SensorEntity):
+class SpaCirculationPumpSensor(SpaSensorBase):
     def __init__(self, shared_data, device_info, pump_data, count_pump):
         self._shared_data = shared_data
         self._pump_data = pump_data
-        self._attr_name = "Circulation Pump" if count_pump == 1 or pump_data['port'] == None else f"Spa Circulation Pump {pump_data['port']}"
         self._attr_native_unit_of_measurement = None  # Jednotka není potřeba
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._state = None
-        self._attr_unique_id = f"spa_{self._attr_name.lower().replace(' ', '_')}"
         self._attr_device_info = device_info
         self._attr_icon = "mdi:weather-tornado"
-        self._attr_translation_key = f"{self._attr_name.lower().replace(' ', '_')}"
+        self._attr_unique_id = f"sensor.spa_circulation_pump" if count_pump == 1 or pump_data['port'] == None else f"sensor.spa_circulation_pump_{pump_data['port']}"
+        self._attr_translation_key = f"circulation_pump" if count_pump == 1 or pump_data['port'] == None else f"spa_circulation_pump_{pump_data['port']}"
+        self.entity_id = self._attr_unique_id
 
     async def async_update(self):
         # Data jsou již aktualizována v async_setup_entry

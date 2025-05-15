@@ -1,4 +1,5 @@
 {
+  "title": "Vířívá vana Balboa",
   "config": {
     "abort": {
       "already_configured": "Zařízení je již nastaveno",
@@ -23,12 +24,10 @@
   "entity": {
     "sensor": {
       "current_temperature": {
-        "name": "Aktuální teplota",
-        "unit_of_measurement": "°C"
+        "name": "Aktuální teplota"
       },
       "desired_temperature": {
-        "name": "Požadována teplota",
-        "unit_of_measurement": "°C"
+        "name": "Požadována teplota"
       },
       "circulation_pump": {
         "name": "Cirkulační čerpadlo"
@@ -36,21 +35,21 @@
     },
     "select": {
       "light": {
-        "name": "Svetlo",
+        "name": "Osvětlení",
         "state": {
           "OFF": "Vypnuto",
           "HIGH": "Zapnuto"
         }
       },
       "light_1": {
-        "name": "Světlo 1",
+        "name": "Osvětlení 1",
         "state": {
           "OFF": "Vypnuto",
           "HIGH": "Zapnuto"
         }
       },
       "light_2": {
-        "name": "Světlo 2",
+        "name": "Osvětlení 2",
         "state": {
           "OFF": "Vypnuto",
           "HIGH": "Zapnuto"
@@ -104,6 +103,11 @@
           "LOW": "Nižší rozsah",
           "HIGH": "Vysoký rozsah"
         }
+      }
+    },
+    "number": {
+      "target_desired_temperature": {
+        "name": "Cílená teplota"
       }
     }
   }

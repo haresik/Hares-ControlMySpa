@@ -2,16 +2,29 @@ import logging
 import voluptuous as vol
 from datetime import timedelta
 from .const import DOMAIN
+from homeassistant.core import HomeAssistant
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.service import async_register_admin_service
 from .ControlMySpa import ControlMySpa
 from .SpaData import SpaData  
+from homeassistant.const import Platform
 
 _LOGGER = logging.getLogger(__name__)
+PLATFORMS = [
+	Platform.SELECT,
+	Platform.SENSOR,
+    Platform.NUMBER ,
+]
 
-async def async_setup(hass, config):
-    return True
+# async def async_setup(hass, config):
+#     return True
 
-async def async_setup_entry(hass, config_entry):
+async def options_update_listener(hass: HomeAssistant, config_entry: ConfigEntry):
+    """Handle options update."""
+    _LOGGER.debug('options_update_listener', config_entry.data)
+    await hass.config_entries.async_reload(config_entry.entry_id)
+
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     username = config_entry.data["username"]
     password = config_entry.data["password"]
     minUpdate = config_entry.data.get("updateintervalminutes", 2)
@@ -52,15 +65,9 @@ async def async_setup_entry(hass, config_entry):
         "device_info": device_info
     }
 
-    await hass.config_entries.async_forward_entry_setups(config_entry, ["sensor", "select", "number"]) 
+    await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
     return True
 
-async def async_unload_entry(hass, config_entry):
-    # Odregistrovat platformu "sensor"
-    sensor_unloaded = await hass.config_entries.async_forward_entry_unload(config_entry, "sensor")
-    # Odregistrovat platformu "select"
-    select_unloaded = await hass.config_entries.async_forward_entry_unload(config_entry, "select")
-    # Odregistrovat platformu "number"
-    select_unloaded = await hass.config_entries.async_forward_entry_unload(config_entry, "number")
-
-    return sensor_unloaded and select_unloaded
+async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry):
+    # Odregistrovat platformy
+    return await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS)
