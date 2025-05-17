@@ -26,6 +26,7 @@ class SpaTargetDesiredTempNumber(NumberEntity):
     def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
+        self.mode = "box"
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._attr_step = 0.5  # Krok v Celsiu
         self._attr_min_value = 10.0  # Minimální hodnota v Celsiu
