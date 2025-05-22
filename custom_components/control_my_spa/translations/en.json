@@ -31,6 +31,18 @@
       },
       "circulation_pump": {
         "name": "Circulation Pump"
+      },
+      "filter": {
+        "name": "Filter Cycle"
+      },
+      "filter_1": {
+        "name": "Filter Cycle 1"
+      },
+      "filter_2": {
+        "name": "Filter Cycle 2"
+      },
+      "ozone": {
+        "name": "Ozone"
       }
     },
     "select": {

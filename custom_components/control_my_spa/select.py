@@ -35,6 +35,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     entities += [SpaBlowerSelect(shared_data, device_info, blower, len(blowers)) for blower in blowers]
     entities += [SpaLightSelect(shared_data, device_info, light, len(lights)) for light in lights]
     entities.append(SpaTempRangeSelect(shared_data, device_info))  # Přidat entitu
+    entities.append(SpaHeaterModeSelect(shared_data, device_info))  # Přidat entitu pro heater mode
+
 
     async_add_entities(entities, True)
     _LOGGER.debug("START Select control_my_spa")
@@ -201,3 +203,30 @@ class SpaBlowerSelect(SpaSelectBase):
             else:
                 _LOGGER.error("Failed to set Blower %s to %s", self._blower_data["port"], option)
 
+class SpaHeaterModeSelect(SpaSelectBase):
+    def __init__(self, shared_data, device_info):
+        self._shared_data = shared_data
+        self._attr_options = ["READY", "REST", "READY_IN_REST"]  
+        self._attr_should_poll = False
+        self._attr_current_option = None
+        self._attr_device_info = device_info
+        self._attr_icon = "mdi:radiator"
+        self._attr_unique_id = f"select.spa_heater_mode"
+        self._attr_translation_key = f"heater_mode"
+        self.entity_id = self._attr_unique_id
+
+    async def async_update(self):
+        data = self._shared_data.data
+        if data:
+            self._attr_current_option = data.get("heaterMode")
+            _LOGGER.debug("Updated heaterMode: %s", self._attr_current_option)
+
+    async def async_select_option(self, option: str):
+        """Změna hodnoty heaterMode a odeslání do zařízení."""
+        if option in self._attr_options:
+            success = await self._shared_data._client.setHeaterMode(option)
+            if success:
+                self._attr_current_option = option
+                _LOGGER.info("Successfully set heaterMode to %s", option)
+            else:
+                _LOGGER.error("Failed to set heaterMode to %s", option)

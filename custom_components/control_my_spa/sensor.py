@@ -22,11 +22,23 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
         component for component in shared_data.data["components"]
         if component["componentType"] == "CIRCULATION_PUMP"
     ]
+    # Najít všechny FILTER komponenty
+    filters = [
+        component for component in shared_data.data["components"]
+        if component["componentType"] == "FILTER"
+    ]
+    # Najít všechny OZONE komponenty
+    ozones = [
+        component for component in shared_data.data["components"]
+        if component["componentType"] == "OZONE"
+    ]
 
     # Vytvořit entity pro každou CIRCULATION_PUMP
     entities = [SpaCirculationPumpSensor(shared_data, device_info, pump, len(circulation_pumps)) for pump in circulation_pumps]
     entities.append(SpaTemperatureSensor(shared_data, device_info))  # Aktuální teplota
     entities.append(SpaDesiredTemperatureSensor(shared_data, device_info))  # Požadovaná teplota
+    entities += [SpaFilterSensor(shared_data, device_info, filter_data, len(filters)) for filter_data in filters]
+    entities += [SpaOzoneSensor(shared_data, device_info, ozone_data, len(ozones)) for ozone_data in ozones]
 
     async_add_entities(entities, True)
     _LOGGER.debug("START Śensor control_my_spa")
@@ -117,3 +129,104 @@ class SpaCirculationPumpSensor(SpaSensorBase):
     def native_value(self):
         return self._state
 
+class SpaFilterSensor(SpaSensorBase):
+    def __init__(self, shared_data, device_info, filter_data, count_filter):
+        self._shared_data = shared_data
+        self._filter_data = filter_data
+        self._attr_native_unit_of_measurement = None  # Jednotka není potřeba
+        self._attr_should_poll = False  # Data jsou sdílena, posluchač
+        self._state = None
+        self._attr_device_info = device_info
+        self._attr_icon = "mdi:water-sync"
+        self._attr_unique_id = (
+            f"sensor.spa_filter"
+            if count_filter == 1 or filter_data['port'] is None
+            else f"sensor.spa_filter_{int(filter_data['port']) + 1}"
+        )
+        self._attr_translation_key = (
+            "filter"
+            if count_filter == 1 or filter_data['port'] is None
+            else f"filter_{int(filter_data['port']) + 1}"
+        )
+        self.entity_id = self._attr_unique_id
+
+    async def async_update(self):
+        data = self._shared_data.data
+        if data:
+            # Najít odpovídající FILTER podle portu
+            filter_comp = next(
+                (
+                    comp
+                    for comp in data["components"]
+                    if comp["componentType"] == "FILTER" and comp["port"] == self._filter_data["port"]
+                ),
+                None,
+            )
+            if filter_comp:
+                self._state = filter_comp["value"]
+                _LOGGER.debug("Updated Filter %s: %s", self._filter_data["port"], self._state)
+
+    @property
+    def native_value(self):
+        return self._state
+
+    @property
+    def extra_state_attributes(self):
+        data = self._shared_data.data
+        if data:
+            # Najít odpovídající FILTER podle portu
+            filter_comp = next(
+                (
+                    comp
+                    for comp in data["components"]
+                    if comp["componentType"] == "FILTER" and comp["port"] == self._filter_data["port"]
+                ),
+                None,
+            )
+            if filter_comp:
+                attrs = {
+                    "Start time": f"{filter_comp['hour']} : {str(filter_comp['minute']).zfill(2)}",
+                    "Duration ": filter_comp["durationMinutes"],
+                }
+                return attrs
+
+class SpaOzoneSensor(SpaSensorBase):
+    def __init__(self, shared_data, device_info, ozone_data, count_ozone):
+        self._shared_data = shared_data
+        self._ozone_data = ozone_data
+        self._attr_native_unit_of_measurement = None  # Jednotka není potřeba
+        self._attr_should_poll = False  # Data jsou sdílena, posluchač
+        self._state = None
+        self._attr_device_info = device_info
+        self._attr_icon = "mdi:weather-hazy"
+        self._attr_unique_id = (
+            f"sensor.spa_ozone"
+            if count_ozone == 1 or ozone_data['port'] is None
+            else f"sensor.spa_ozone_{int(ozone_data['port']) + 1}"
+        )
+        self._attr_translation_key = (
+            "ozone"
+            if count_ozone == 1 or ozone_data['port'] is None
+            else f"ozone_{int(ozone_data['port']) + 1}"
+        )
+        self.entity_id = self._attr_unique_id
+
+    async def async_update(self):
+        data = self._shared_data.data
+        if data:
+            # Najít odpovídající OZONE podle portu
+            ozone_comp = next(
+                (
+                    comp
+                    for comp in data["components"]
+                    if comp["componentType"] == "OZONE" and comp["port"] == self._ozone_data["port"]
+                ),
+                None,
+            )
+            if ozone_comp:
+                self._state = ozone_comp["value"]
+                _LOGGER.debug("Updated Ozone %s: %s", self._ozone_data["port"], self._state)
+
+    @property
+    def native_value(self):
+        return self._state

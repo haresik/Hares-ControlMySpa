@@ -31,6 +31,18 @@
       },
       "circulation_pump": {
         "name": "Cirkulační čerpadlo"
+      },
+      "filter": {
+        "name": "Filtrační cyklus"
+      },
+      "filter_1": {
+        "name": "Filtrační cyklus 1"
+      },
+      "filter_2": {
+        "name": "Filtrační cyklus 2"
+      },
+      "ozone": {
+        "name": "Ozón"
       }
     },
     "select": {
@@ -102,6 +114,14 @@
         "state": {
           "LOW": "Nižší rozsah",
           "HIGH": "Vysoký rozsah"
+        }
+      },
+      "heater_mode": {
+        "name": "Režim ohřevu",
+        "state": {
+          "READY": "Ohřev i mimo cirkulaci",
+          "REST": "Ohřev jen při cirkulaci",
+          "READY_IN_REST": "Ohřev dle zařízení"
         }
       }
     },
