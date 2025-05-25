@@ -38,7 +38,8 @@ class SpaData:
             else:
                 _LOGGER.warning("Subscriber %s has no hass attribute initialized", subscriber)
 
-
+    async def async_force_update(self):
+        await self.update()
 
     @property
     def data(self):

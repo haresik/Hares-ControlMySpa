@@ -36,7 +36,6 @@ class ControlMySpa:
                 'heaterMode': spaData['heaterMode'],
                 'components': spaData.get('components', []),
                 'runMode': spaData['heaterMode'],
-                'online': spaData['isOnline'],
                 'tempRange': spaData['tempRange'],
                 'setupParams': {
                     'highRangeLow': spaData['rangeLimits']['highRangeLow'],
@@ -50,6 +49,7 @@ class ControlMySpa:
                 'military': spaData['isMilitaryTime'],
                 'serialNumber': spaData['serialNumber'],
                 'controllerSoftwareVersion': spaData['systemInfo']['controllerSoftwareVersion'],
+                'isOnline': bool(spaData.get('isOnline')),
             }
         except Exception as e:
             print(f"constructCurrentState Error: {e}")

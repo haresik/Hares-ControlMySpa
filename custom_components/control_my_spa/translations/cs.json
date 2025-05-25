@@ -129,7 +129,78 @@
       "target_desired_temperature": {
         "name": "Cílená teplota"
       }
+    },
+    "binary_sensor": {
+      "isOnline": {
+        "name": "Je online"
+      }
+    },
+    "switch": {
+      "light": {
+        "name": "Osvětlení"
+      },
+      "light_1": {
+        "name": "Osvětlení 1"
+      },
+      "light_2": {
+        "name": "Osvětlení 2"
+      },
+      "pump": {
+        "name": "Trysky",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "pump_1": {
+        "name": "Trysky 1",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "pump_2": {
+        "name": "Trysky 2",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "blower": {
+        "name": "Vzduch",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "blower_1": {
+        "name": "Vzduch 1",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "blower_2": {
+        "name": "Vzduch 2",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      }
+    },
+    "climate": {
+      "thermostat": {
+        "name": "Vířivka",
+        "current_temperature": "Aktuální teplota",
+        "target_temperature": "Cílená teplota",
+        "desired_temperature": "Požadovaná teplota",
+        "state": {
+          "off": "Vypnuto",
+          "heat": "Ohřev"
+        }
+      }
     }
+
   }
 }
    

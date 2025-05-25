@@ -6,9 +6,6 @@ import logging
 
 _LOGGER = logging.getLogger(__name__)
 
-# Nastavení intervalu aktualizace na 2 minuty
-SCAN_INTERVAL = timedelta(minutes=60)
-
 async def async_setup_entry(hass, config_entry, async_add_entities):
     data = hass.data[DOMAIN][config_entry.entry_id]
     # client = data["client"]
@@ -31,9 +28,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     ]
 
     # Vytvořit entity pro každou PUMP
-    entities = [SpaPumpSelect(shared_data, device_info, pump, len(pumps)) for pump in pumps]
-    entities += [SpaBlowerSelect(shared_data, device_info, blower, len(blowers)) for blower in blowers]
-    entities += [SpaLightSelect(shared_data, device_info, light, len(lights)) for light in lights]
+    entities = []
+    # entities = [SpaPumpSelect(shared_data, device_info, pump, len(pumps)) for pump in pumps]
+    # entities += [SpaBlowerSelect(shared_data, device_info, blower, len(blowers)) for blower in blowers]
+    # entities += [SpaLightSelect(shared_data, device_info, light, len(lights)) for light in lights]
     entities.append(SpaTempRangeSelect(shared_data, device_info))  # Přidat entitu
     entities.append(SpaHeaterModeSelect(shared_data, device_info))  # Přidat entitu pro heater mode
 
@@ -76,7 +74,7 @@ class SpaTempRangeSelect(SpaSelectBase):
                 _LOGGER.info("Successfully set tempRange to %s", option)
             else:
                 _LOGGER.error("Failed to set tempRange to %s", option)
- # type: ignore
+            await self._shared_data.async_force_update()
 
 class SpaPumpSelect(SpaSelectBase):
     def __init__(self, shared_data, device_info, pump_data, pump_count):
@@ -119,6 +117,7 @@ class SpaPumpSelect(SpaSelectBase):
                 _LOGGER.info("Successfully set Pump %s to %s", self._pump_data["port"], option)
             else:
                 _LOGGER.error("Failed to set Pump %s to %s", self._pump_data["port"], option)
+            await self._shared_data.async_force_update()
 
 class SpaLightSelect(SpaSelectBase):
     def __init__(self, shared_data, device_info, light_data, light_count):
@@ -160,6 +159,7 @@ class SpaLightSelect(SpaSelectBase):
                 _LOGGER.info("Successfully set Light %s to %s", self._light_data["port"], option)
             else:
                 _LOGGER.error("Failed to set Light %s to %s", self._light_data["port"], option)
+            await self._shared_data.async_force_update()
 
 class SpaBlowerSelect(SpaSelectBase):
     def __init__(self, shared_data, device_info, blower_data, blower_count):
@@ -202,6 +202,7 @@ class SpaBlowerSelect(SpaSelectBase):
                 _LOGGER.info("Successfully set Blower %s to %s", self._blower_data["port"], option)
             else:
                 _LOGGER.error("Failed to set Blower %s to %s", self._blower_data["port"], option)
+            await self._shared_data.async_force_update()
 
 class SpaHeaterModeSelect(SpaSelectBase):
     def __init__(self, shared_data, device_info):
@@ -230,3 +231,4 @@ class SpaHeaterModeSelect(SpaSelectBase):
                 _LOGGER.info("Successfully set heaterMode to %s", option)
             else:
                 _LOGGER.error("Failed to set heaterMode to %s", option)
+            await self._shared_data.async_force_update()

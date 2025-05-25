@@ -60,8 +60,10 @@ class SpaTargetDesiredTempNumber(NumberEntity):
                 _LOGGER.info("Successfully set target desired temperature to %s °C", value)
             else:
                 _LOGGER.error("Failed to set target desired temperature to %s °C", value)
+            await self._shared_data.async_force_update()
         else:
             _LOGGER.error("Value %s is out of range (%s - %s)", value, self._attr_min_value, self._attr_max_value)
+
 
     @property
     def native_value(self):

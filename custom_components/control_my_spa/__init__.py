@@ -13,7 +13,10 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [
 	Platform.SELECT,
 	Platform.SENSOR,
-    Platform.NUMBER ,
+    Platform.NUMBER,
+    Platform.BINARY_SENSOR,
+    Platform.SWITCH,
+    Platform.CLIMATE,
 ]
 
 # async def async_setup(hass, config):

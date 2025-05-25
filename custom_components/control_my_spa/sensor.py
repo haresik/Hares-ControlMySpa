@@ -8,9 +8,6 @@ import logging
 
 _LOGGER = logging.getLogger(__name__)
 
-# Nastavení intervalu aktualizace na 2 minuty
-SCAN_INTERVAL = timedelta(minutes=60)
-
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
     data = hass.data[DOMAIN][config_entry.entry_id]
     # client = data["client"]

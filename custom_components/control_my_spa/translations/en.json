@@ -1,5 +1,5 @@
 {
-  "title": "Balboa Hot Tub",
+  "title": "Balboa Spa",
   "config": {
     "abort": {
       "already_configured": "Device is already configured",
@@ -17,29 +17,29 @@
           "updateintervalminutes": "Update interval (minutes)"
         },
         "description": "Connects to ControlMySpa",
-        "title": "Hot Tub"
+        "title": "Spa"
       }
     }
   },
   "entity": {
     "sensor": {
       "current_temperature": {
-        "name": "Current Temperature"
+        "name": "Current temperature"
       },
       "desired_temperature": {
-        "name": "Desired Temperature"
+        "name": "Desired temperature"
       },
       "circulation_pump": {
-        "name": "Circulation Pump"
+        "name": "Circulation pump"
       },
       "filter": {
-        "name": "Filter Cycle"
+        "name": "Filter cycle"
       },
       "filter_1": {
-        "name": "Filter Cycle 1"
+        "name": "Filter cycle 1"
       },
       "filter_2": {
-        "name": "Filter Cycle 2"
+        "name": "Filter cycle 2"
       },
       "ozone": {
         "name": "Ozone"
@@ -47,21 +47,21 @@
     },
     "select": {
       "light": {
-        "name": "Lighting",
+        "name": "Light",
         "state": {
           "OFF": "Off",
           "HIGH": "On"
         }
       },
       "light_1": {
-        "name": "Lighting 1",
+        "name": "Light 1",
         "state": {
           "OFF": "Off",
           "HIGH": "On"
         }
       },
       "light_2": {
-        "name": "Lighting 2",
+        "name": "Light 2",
         "state": {
           "OFF": "Off",
           "HIGH": "On"
@@ -89,37 +89,115 @@
         }
       },
       "blower": {
-        "name": "Air",
+        "name": "Blower",
         "state": {
           "OFF": "Off",
           "HIGH": "On"
         }
       },
       "blower_1": {
-        "name": "Air 1",
+        "name": "Blower 1",
         "state": {
           "OFF": "Off",
           "HIGH": "On"
         }
       },
       "blower_2": {
-        "name": "Air 2",
+        "name": "Blower 2",
         "state": {
           "OFF": "Off",
           "HIGH": "On"
         }
       },
       "temperature_range": {
-        "name": "Temperature Range",
+        "name": "Temperature range",
         "state": {
-          "LOW": "Low Range",
-          "HIGH": "High Range"
+          "LOW": "Low range",
+          "HIGH": "High range"
+        }
+      },
+      "heater_mode": {
+        "name": "Heater mode",
+        "state": {
+          "READY": "Heating also outside circulation",
+          "REST": "Heating only during circulation",
+          "READY_IN_REST": "Heating as per device"
         }
       }
     },
     "number": {
       "target_desired_temperature": {
-        "name": "Target Temperature"
+        "name": "Target temperature"
+      }
+    },
+    "binary_sensor": {
+      "isOnline": {
+        "name": "Is online"
+      }
+    },
+    "switch": {
+      "light": {
+        "name": "Light"
+      },
+      "light_1": {
+        "name": "Light 1"
+      },
+      "light_2": {
+        "name": "Light 2"
+      },
+      "pump": {
+        "name": "Jets",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "pump_1": {
+        "name": "Jets 1",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "pump_2": {
+        "name": "Jets 2",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "blower": {
+        "name": "Blower",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "blower_1": {
+        "name": "Blower 1",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "blower_2": {
+        "name": "Blower 2",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      }
+    },
+    "climate": {
+      "thermostat": {
+        "name": "Spa",
+        "current_temperature": "Current temperature",
+        "target_temperature": "Target temperature",
+        "desired_temperature": "Desired temperature",
+        "state": {
+          "off": "Off",
+          "heat": "Heating"
+        }
       }
     }
   }
