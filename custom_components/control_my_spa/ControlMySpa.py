@@ -3,7 +3,8 @@ import time
 import asyncio
 
 class ControlMySpa:
-    BASE_URL = 'https://production.controlmyspa.net'
+    # BASE_URL = 'https://production.controlmyspa.net'
+    BASE_URL = 'https://iot.controlmyspa.com'
 
     def __init__(self, email, password):
         self.email = email
@@ -100,6 +101,24 @@ class ControlMySpa:
         except Exception as e:
             print(f"Login Error: {e}")
         return False
+
+    async def loginFlow(self):
+        try:
+            headers = {**self.getCommonHeaders(), 'Content-Type': 'application/json'}
+            payload = {'email': self.email, 'password': self.password}
+            async with self.session.post(f'{self.BASE_URL}/auth/login', json=payload, headers=headers, ssl=False) as resp:
+                if resp.status == 200:
+                    res_json = await resp.json()
+                    token = res_json.get('data', {}).get('accessToken')
+                    if token:
+                        return True, "Login successful"
+                    else:
+                        return False, "No access token returned"
+                else:
+                    return False, f"HTTP error {resp.status}"
+        except Exception as e:
+            print(f"Login Error: {e}")
+            return False, f"Exception: {e}"
 
     async def getWhoAmI(self):
         try:

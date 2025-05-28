@@ -52,13 +52,16 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
         _LOGGER.error("Failed to initialize ControlMySpa client")
         return False
 
+    serial_number = balboa_data.data.get("serialNumber") if balboa_data and balboa_data.data else "unknown"
+    sw_version = balboa_data.data.get("controllerSoftwareVersion") if balboa_data and balboa_data.data else "unknown"
+
     device_info = {
-        "identifiers": {(DOMAIN, balboa_data.data["serialNumber"])},  # Unikátní identifikátor zařízení
+        "identifiers": {(DOMAIN, serial_number)},  # Unikátní identifikátor zařízení
         "name": "Spa",
         "manufacturer": "Balboa",
         "model": "Spa Model Unknown",
-        "sw_version": balboa_data.data["controllerSoftwareVersion"],
-        "serial_number": balboa_data.data["serialNumber"]
+        "sw_version": sw_version,
+        "serial_number": serial_number
     }
 
     hass.data.setdefault(DOMAIN, {})

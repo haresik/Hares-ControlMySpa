@@ -1,6 +1,7 @@
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
+from .ControlMySpa import ControlMySpa
 from .const import DOMAIN
 
 class ControlMySpaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -10,8 +11,19 @@ class ControlMySpaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
-            # Zde by mohl být test přihlášení, ale nyní pouze uložíme data
-            return self.async_create_entry(title="ControlMySpa", data=user_input)
+            username = user_input["username"]
+            password = user_input["password"]
+
+            spa_client = ControlMySpa(username, password)
+
+            await spa_client.init_session()
+            isLogin, loginMessage = await spa_client.loginFlow()
+
+            if isLogin:
+                return self.async_create_entry(title="ControlMySpa", data=user_input)
+            else:
+                errors["base"] = "cannot_login"
+                # errors["base"] = f"cannot_login: {loginMessage}"
 
         return self.async_show_form(
             step_id="user",

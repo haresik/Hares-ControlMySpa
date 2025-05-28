@@ -6,7 +6,8 @@
       "already_in_progress": "Configuration is already in progress"
     },
     "error": {
-      "connection_error": "Failed to connect"
+      "connection_error": "Failed to connect",
+      "cannot_login": "Unable to log in, please check your username and password."
     },
     "flow_title": "ControlMySpa",
     "step": {

@@ -6,7 +6,8 @@
       "already_in_progress": "Nastavení již probíhá"
     },
     "error": {
-      "connection_error": "Nepodařilo se připojit"
+      "connection_error": "Nepodařilo se připojit",
+      "cannot_login": "Nelze se přihlásit, zkontrolujte uživatelské jméno a heslo."
     },
     "flow_title": "ControlMySpa",
     "step": {

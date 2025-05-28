@@ -11,6 +11,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     # client = data["client"]
     shared_data = data["data"]
     device_info = data["device_info"]
+    client = data["client"]
+
+    if not client.userInfo:
+        _LOGGER.error("Failed to initialize ControlMySpa client (No userInfo)")
+        return False
 
     pumps = [
         component for component in shared_data.data["components"]
