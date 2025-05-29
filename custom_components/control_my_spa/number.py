@@ -9,6 +9,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     data = hass.data[DOMAIN][config_entry.entry_id]
     shared_data = data["data"]
     device_info = data["device_info"]
+    client = data["client"]
+
+    if not client.userInfo:
+        _LOGGER.error("Failed to initialize ControlMySpa client (No userInfo)")
+        return False
 
     # Vytvořit entitu pro targetDesiredTemp
     entities = [SpaTargetDesiredTempNumber(shared_data, device_info)]

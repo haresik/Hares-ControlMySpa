@@ -1,6 +1,16 @@
 import asyncio
 import sys
 import os
+import logging
+
+# Nastavení loggingu
+logging.basicConfig(
+    level=logging.DEBUG,  # Nastavení úrovně logování na DEBUG
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+# Přidání loggingu pro aiohttp
+logging.getLogger('aiohttp').setLevel(logging.DEBUG)
 
 sys.path.append("custom_components\\control_my_spa")
 from ControlMySpa import ControlMySpa
@@ -28,19 +38,16 @@ class Driver:
                 'password': data['password']
             }
 
-            self.homey.app.log(f"[Driver] {self.id} - got config", {
-                **self.config,
-                'username': 'LOG',
-                'password': 'LOG'
-            })
+            self.homey.app.log(f"[Driver] {self.id}")
 
             self._control_my_spa_client = ControlMySpa(
                 self.config['username'],
                 self.config['password']
             )
 
-            self.balboa_data = await self._control_my_spa_client.init()
+            await self._control_my_spa_client.init()
 
+            self.balboa_data = await self._control_my_spa_client.getSpa()
             if not self.balboa_data:
                 return False
 
@@ -53,7 +60,6 @@ class Driver:
     async def close(self):
         if hasattr(self, "_control_my_spa_client") and self._control_my_spa_client:
             await self._control_my_spa_client.close()
-
 
 async def main():
     print("Start Test")
@@ -68,12 +74,15 @@ async def main():
         success = await driver.initialize_driver(data)
         if success:
             print("Driver inicializován.")
-            print(f"teplota. {driver.balboa_data['currentTemp']}")
+            print(f"teplota. {driver.balboa_data.get('currentTemp')}")
+            print(".....................")
+            # print(f"teplota. {driver.balboa_data}")
             print("Konec.")
         else:
             print("Driver se nepodařilo inicializovat.")
     finally:
         await driver.close()
+        await asyncio.sleep(5)
 
 if __name__ == '__main__':
     asyncio.run(main())

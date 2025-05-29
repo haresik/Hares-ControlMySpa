@@ -1,6 +1,9 @@
 import aiohttp
 import time
 import asyncio
+import logging
+
+_LOGGER = logging.getLogger(__name__)
 
 class ControlMySpa:
     # BASE_URL = 'https://production.controlmyspa.net'
@@ -26,6 +29,110 @@ class ControlMySpa:
         if self.session:
             await self.session.close()
             self.session = None
+
+    def getAuthHeaders(self):
+        return {
+            'Authorization': f"Bearer {self.tokenData['access_token']}",
+            **self.getCommonHeaders()
+        }
+
+    def getCommonHeaders(self):
+        return {
+            'Accept': '*/*',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Accept-Language': 'en-GB,en;q=0.9',
+            'User-Agent': 'cms/34 CFNetwork/3826.500.111.2.2 Darwin/24.4.0'
+        }
+
+    async def init(self):
+        await self.init_session()
+        return await self.login() and await self.getWhoAmI() 
+
+    def isLoggedIn(self):
+        if not self.tokenData:
+            return False
+        return self.tokenData['timestamp'] + self.tokenData['expires_in'] * 1000 > int(time.time() * 1000)
+
+    async def login(self):
+        try:
+            headers = {**self.getCommonHeaders(), 'Content-Type': 'application/json'}
+            payload = {'email': self.email, 'password': self.password}
+            async with self.session.post(f'{self.BASE_URL}/auth/login', json=payload, headers=headers, ssl=False) as resp:
+                if resp.status == 200:
+                    res_json = await resp.json()
+                    token = res_json.get('data', {}).get('accessToken')
+                    if token:
+                        self.tokenData = {
+                            'access_token': token,
+                            'timestamp': int(time.time() * 1000),
+                            'expires_in': 3600
+                        }
+                        return True
+                    else:
+                        _LOGGER.error(f"Login Error, no login token: {res_json}")
+                else:
+                    _LOGGER.error(f"Login Error, HTTP status {resp.status}: {await resp.text()}")
+        except Exception as e:
+            _LOGGER.error(f"Login Error: {e}")
+        return False
+
+    async def loginFlow(self):
+        try:
+            headers = {**self.getCommonHeaders(), 'Content-Type': 'application/json'}
+            payload = {'email': self.email, 'password': self.password}
+            async with self.session.post(f'{self.BASE_URL}/auth/login', json=payload, headers=headers, ssl=False) as resp:
+                if resp.status == 200:
+                    res_json = await resp.json()
+                    token = res_json.get('data', {}).get('accessToken')
+                    if token:
+                        return True, "Login successful"
+                    else:
+                        return False, "No access token returned"
+                else:
+                    return False, f"HTTP error {resp.status}"
+        except Exception as e:
+            _LOGGER.error(f"Login Error: {e}")
+            return False, f"Exception: {e}"
+
+    async def getWhoAmI(self):
+        try:
+            headers = self.getAuthHeaders()
+            async with self.session.get(f'{self.BASE_URL}/user-management/profile', headers=headers, ssl=False) as resp:
+                if resp.status == 200:
+                    res_json = await resp.json()
+                    user = res_json.get('data', {}).get('user')
+                    if user:
+                        self.userInfo = user
+                        self.spaId = user.get('spaId')
+                        _LOGGER.info(f"GetWhoAmI User exists: {user}")
+
+                        if self.spaId:
+                            _LOGGER.info(f"GetWhoAmI spaId exists: {self.spaId}")
+                        else:
+                            _LOGGER.info(f"GetWhoAmI spaId Unknow: {res_json}")
+                        return user
+                    else:
+                        _LOGGER.error(f"GetWhoAmI Unknow data: {res_json}")
+                else:
+                    _LOGGER.error(f"GetWhoAmI Error, HTTP status {resp.status}: {await resp.text()}")
+        except Exception as e:
+            _LOGGER.error(f"GetWhoAmI Error: {e}")
+        return None
+
+    async def getSpa(self):
+        try:
+            if not self.isLoggedIn():
+                await self.login()
+            headers = self.getAuthHeaders()
+            async with self.session.get(f'{self.BASE_URL}/spas/{self.spaId}/dashboard', headers=headers, ssl=False) as resp:
+                if resp.status == 200:
+                    res_json = await resp.json()
+                    return self.constructCurrentState(res_json.get('data'))
+                else:
+                    _LOGGER.error(f"GetSpa Error, HTTP status {resp.status}: {await resp.text()}")
+        except Exception as e:
+            _LOGGER.error(f"GetSpa Error: {e}")
+        return None
 
     def constructCurrentState(self, spaData):
         try:
@@ -53,100 +160,8 @@ class ControlMySpa:
                 'isOnline': bool(spaData.get('isOnline')),
             }
         except Exception as e:
-            print(f"constructCurrentState Error: {e}")
+            _LOGGER.error(f"constructCurrentState Error: {e}")
             return None
-
-    def getAuthHeaders(self):
-        return {
-            'Authorization': f"Bearer {self.tokenData['access_token']}",
-            **self.getCommonHeaders()
-        }
-
-    def getCommonHeaders(self):
-        return {
-            'Accept': '*/*',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Accept-Language': 'en-GB,en;q=0.9',
-            'User-Agent': 'cms/34 CFNetwork/3826.500.111.2.2 Darwin/24.4.0'
-        }
-
-    async def init(self):
-        await self.init_session()
-        return await self.login() and await self.getWhoAmI() and await self.getSpa()
-
-    async def deviceInit(self):
-        await self.init_session()
-        return await self.login() and await self.getWhoAmI()
-
-    def isLoggedIn(self):
-        if not self.tokenData:
-            return False
-        return self.tokenData['timestamp'] + self.tokenData['expires_in'] * 1000 > int(time.time() * 1000)
-
-    async def login(self):
-        try:
-            headers = {**self.getCommonHeaders(), 'Content-Type': 'application/json'}
-            payload = {'email': self.email, 'password': self.password}
-            async with self.session.post(f'{self.BASE_URL}/auth/login', json=payload, headers=headers, ssl=False) as resp:
-                if resp.status == 200:
-                    res_json = await resp.json()
-                    token = res_json.get('data', {}).get('accessToken')
-                    if token:
-                        self.tokenData = {
-                            'access_token': token,
-                            'timestamp': int(time.time() * 1000),
-                            'expires_in': 3600
-                        }
-                        return True
-        except Exception as e:
-            print(f"Login Error: {e}")
-        return False
-
-    async def loginFlow(self):
-        try:
-            headers = {**self.getCommonHeaders(), 'Content-Type': 'application/json'}
-            payload = {'email': self.email, 'password': self.password}
-            async with self.session.post(f'{self.BASE_URL}/auth/login', json=payload, headers=headers, ssl=False) as resp:
-                if resp.status == 200:
-                    res_json = await resp.json()
-                    token = res_json.get('data', {}).get('accessToken')
-                    if token:
-                        return True, "Login successful"
-                    else:
-                        return False, "No access token returned"
-                else:
-                    return False, f"HTTP error {resp.status}"
-        except Exception as e:
-            print(f"Login Error: {e}")
-            return False, f"Exception: {e}"
-
-    async def getWhoAmI(self):
-        try:
-            headers = self.getAuthHeaders()
-            async with self.session.get(f'{self.BASE_URL}/user-management/profile', headers=headers, ssl=False) as resp:
-                if resp.status == 200:
-                    res_json = await resp.json()
-                    user = res_json.get('data', {}).get('user')
-                    if user:
-                        self.userInfo = user
-                        self.spaId = user.get('spaId')
-                        return user
-        except Exception as e:
-            print(f"GetWhoAmI Error: {e}")
-        return None
-
-    async def getSpa(self):
-        try:
-            if not self.isLoggedIn():
-                await self.login()
-            headers = self.getAuthHeaders()
-            async with self.session.get(f'{self.BASE_URL}/spas/{self.spaId}/dashboard', headers=headers, ssl=False) as resp:
-                if resp.status == 200:
-                    res_json = await resp.json()
-                    return self.constructCurrentState(res_json.get('data'))
-        except Exception as e:
-            print(f"GetSpa Error: {e}")
-        return None
 
     async def _postAndRefresh(self, endpoint, payload):
         try:
@@ -158,7 +173,7 @@ class ControlMySpa:
                     await asyncio.sleep(5)
                     return await self.getSpa()
         except Exception as e:
-            print(f"Error in {endpoint}: {e}")
+            _LOGGER.error(f"Error in {endpoint}: {e}")
         return None
 
     async def setTemp(self, temp):
