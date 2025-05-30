@@ -30,6 +30,7 @@ async def options_update_listener(hass: HomeAssistant, config_entry: ConfigEntry
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     username = config_entry.data["username"]
     password = config_entry.data["password"]
+    spa_id = config_entry.data["spa_id"]
     minUpdate = config_entry.data.get("updateintervalminutes", 2)
     _LOGGER.info("Aktuální lokalizace uživatele: %s", hass.config.language)
 
@@ -38,7 +39,12 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     # _LOGGER.info("Překlad pro 'light': %s", light_translation)
     # _LOGGER.info("Dostupné překlady: %s", translations)
 
+    if not spa_id:
+        _LOGGER.error("spa_id is not set")
+        return False
+
     spa_client = ControlMySpa(username, password)
+    spa_client.spaId = spa_id
     await spa_client.init()
 
     # Inicializace SpaData
@@ -46,10 +52,10 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     await balboa_data.update()  # První aktualizace dat
     balboa_data.start_periodic_update(timedelta(minutes=minUpdate))  # Pravidelná aktualizace
 
-    _LOGGER.info("ControlMySpa INIT async_setup_entry. Interval:%s, %s", minUpdate)
+    _LOGGER.info("ControlMySpa INIT async_setup_entry. Interval:%s, SpaId:%s", minUpdate, spa_id)
 
-    if not balboa_data:
-        _LOGGER.error("Failed to initialize ControlMySpa client")
+    if not balboa_data.data:
+        _LOGGER.error("Failed to initialize ControlMySpa client, no data")
         return False
 
     serial_number = balboa_data.data.get("serialNumber") if balboa_data and balboa_data.data else "unknown"

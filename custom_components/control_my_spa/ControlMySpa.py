@@ -76,24 +76,6 @@ class ControlMySpa:
             _LOGGER.error(f"Login Error: {e}")
         return False
 
-    async def loginFlow(self):
-        try:
-            headers = {**self.getCommonHeaders(), 'Content-Type': 'application/json'}
-            payload = {'email': self.email, 'password': self.password}
-            async with self.session.post(f'{self.BASE_URL}/auth/login', json=payload, headers=headers, ssl=False) as resp:
-                if resp.status == 200:
-                    res_json = await resp.json()
-                    token = res_json.get('data', {}).get('accessToken')
-                    if token:
-                        return True, "Login successful"
-                    else:
-                        return False, "No access token returned"
-                else:
-                    return False, f"HTTP error {resp.status}"
-        except Exception as e:
-            _LOGGER.error(f"Login Error: {e}")
-            return False, f"Exception: {e}"
-
     async def getWhoAmI(self):
         try:
             headers = self.getAuthHeaders()
@@ -103,13 +85,7 @@ class ControlMySpa:
                     user = res_json.get('data', {}).get('user')
                     if user:
                         self.userInfo = user
-                        self.spaId = user.get('spaId')
                         _LOGGER.info(f"GetWhoAmI User exists: {user}")
-
-                        if self.spaId:
-                            _LOGGER.info(f"GetWhoAmI spaId exists: {self.spaId}")
-                        else:
-                            _LOGGER.info(f"GetWhoAmI spaId Unknow: {res_json}")
                         return user
                     else:
                         _LOGGER.error(f"GetWhoAmI Unknow data: {res_json}")
@@ -119,10 +95,28 @@ class ControlMySpa:
             _LOGGER.error(f"GetWhoAmI Error: {e}")
         return None
 
+    async def getSpaOwner(self):
+        try:
+            if not self.isLoggedIn():
+                await self.login()
+            headers = self.getAuthHeaders()
+            async with self.session.get(f'{self.BASE_URL}/spas/owned', headers=headers, ssl=False) as resp:
+                if resp.status == 200:
+                    res_json = await resp.json()
+                    return res_json.get('data', {}).get('spas', [])
+                else:
+                    _LOGGER.error(f"getSpaOwner Error, HTTP status {resp.status}: {await resp.text()}")
+        except Exception as e:
+            _LOGGER.error(f"getSpaOwner Error: {e}")
+        return None
+
     async def getSpa(self):
         try:
             if not self.isLoggedIn():
                 await self.login()
+            if not self.spaId:
+                return None
+
             headers = self.getAuthHeaders()
             async with self.session.get(f'{self.BASE_URL}/spas/{self.spaId}/dashboard', headers=headers, ssl=False) as resp:
                 if resp.status == 200:

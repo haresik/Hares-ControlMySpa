@@ -19,6 +19,13 @@
         },
         "description": "Připojí se k ControlMySpa",
         "title": "Vířívá vana"
+      },
+      "select_spa": {
+        "data": {
+          "spa_id": "Vyberte vířivou vanu"
+        },
+        "description": "Vyberte vířivou vanu ze seznamu",
+        "title": "Výběr vířivé vany"
       }
     }
   },

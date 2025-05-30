@@ -19,6 +19,13 @@
         },
         "description": "Connects to ControlMySpa",
         "title": "Spa"
+      },
+      "select_spa": {
+        "data": {
+          "spa_id": "Select your spa"
+        },
+        "description": "Select your spa from the list",
+        "title": "Select Spa"
       }
     }
   },

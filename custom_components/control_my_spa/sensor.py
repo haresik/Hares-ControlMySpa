@@ -18,6 +18,8 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     if not client.userInfo:
         _LOGGER.error("Failed to initialize ControlMySpa client (No userInfo)")
         return False
+    if not shared_data.data:
+        return False
 
     # Najít všechny CIRCULATION_PUMP komponenty
     circulation_pumps = [
