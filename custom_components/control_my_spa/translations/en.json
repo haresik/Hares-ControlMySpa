@@ -1,5 +1,5 @@
 {
-  "title": "Balboa Spa",
+  "title": "Balboa SPA",
   "config": {
     "abort": {
       "already_configured": "Device is already configured",
@@ -18,14 +18,14 @@
           "updateintervalminutes": "Update interval (minutes)"
         },
         "description": "Connects to ControlMySpa",
-        "title": "Spa"
+        "title": "SPA"
       },
       "select_spa": {
         "data": {
-          "spa_id": "Select your spa"
+          "spa_id": "Select your SPA"
         },
-        "description": "Select your spa from the list",
-        "title": "Select Spa"
+        "description": "Select your SPA from the list",
+        "title": "Select SPA"
       }
     }
   },

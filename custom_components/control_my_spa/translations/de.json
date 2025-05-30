@@ -1,0 +1,212 @@
+{
+  "title": "Balboa Whirlpool",
+  "config": {
+    "abort": {
+      "already_configured": "Gerät ist bereits konfiguriert",
+      "already_in_progress": "Konfiguration läuft bereits"
+    },
+    "error": {
+      "connection_error": "Verbindung fehlgeschlagen",
+      "cannot_login": "Anmeldung nicht möglich, bitte überprüfen Sie Benutzername und Passwort."
+    },
+    "flow_title": "ControlMySpa",
+    "step": {
+      "user": {
+        "data": {
+          "username": "Benutzername",
+          "password": "Passwort",
+          "updateintervalminutes": "Aktualisierungsintervall (Minuten)"
+        },
+        "description": "Verbindet sich mit ControlMySpa",
+        "title": "Whirlpool"
+      },
+      "select_spa": {
+        "data": {
+          "spa_id": "Wählen Sie Ihren Whirlpool"
+        },
+        "description": "Wählen Sie Ihren Whirlpool aus der Liste",
+        "title": "Whirlpool auswählen"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "current_temperature": {
+        "name": "Aktuelle Temperatur"
+      },
+      "desired_temperature": {
+        "name": "Gewünschte Temperatur"
+      },
+      "circulation_pump": {
+        "name": "Umwälzpumpe"
+      },
+      "filter": {
+        "name": "Filterzyklus"
+      },
+      "filter_1": {
+        "name": "Filterzyklus 1"
+      },
+      "filter_2": {
+        "name": "Filterzyklus 2"
+      },
+      "ozone": {
+        "name": "Ozon"
+      }
+    },
+    "select": {
+      "light": {
+        "name": "Beleuchtung",
+        "state": {
+          "OFF": "Aus",
+          "HIGH": "Ein"
+        }
+      },
+      "light_1": {
+        "name": "Beleuchtung 1",
+        "state": {
+          "OFF": "Aus",
+          "HIGH": "Ein"
+        }
+      },
+      "light_2": {
+        "name": "Beleuchtung 2",
+        "state": {
+          "OFF": "Aus",
+          "HIGH": "Ein"
+        }
+      },
+      "pump": {
+        "name": "Düsen",
+        "state": {
+          "OFF": "Aus",
+          "HIGH": "Ein"
+        }
+      },
+      "pump_1": {
+        "name": "Düsen 1",
+        "state": {
+          "OFF": "Aus",
+          "HIGH": "Ein"
+        }
+      },
+      "pump_2": {
+        "name": "Düsen 2",
+        "state": {
+          "OFF": "Aus",
+          "HIGH": "Ein"
+        }
+      },
+      "blower": {
+        "name": "Gebläse",
+        "state": {
+          "OFF": "Aus",
+          "HIGH": "Ein"
+        }
+      },
+      "blower_1": {
+        "name": "Gebläse 1",
+        "state": {
+          "OFF": "Aus",
+          "HIGH": "Ein"
+        }
+      },
+      "blower_2": {
+        "name": "Gebläse 2",
+        "state": {
+          "OFF": "Aus",
+          "HIGH": "Ein"
+        }
+      },
+      "temperature_range": {
+        "name": "Temperaturbereich",
+        "state": {
+          "LOW": "Niedriger Bereich",
+          "HIGH": "Hoher Bereich"
+        }
+      },
+      "heater_mode": {
+        "name": "Heizmodus",
+        "state": {
+          "READY": "Heizung auch außerhalb der Zirkulation",
+          "REST": "Heizung nur während der Zirkulation",
+          "READY_IN_REST": "Heizung nach Geräteeinstellung"
+        }
+      }
+    },
+    "number": {
+      "target_desired_temperature": {
+        "name": "Zieltemperatur"
+      }
+    },
+    "binary_sensor": {
+      "isOnline": {
+        "name": "Ist online"
+      }
+    },
+    "switch": {
+      "light": {
+        "name": "Beleuchtung"
+      },
+      "light_1": {
+        "name": "Beleuchtung 1"
+      },
+      "light_2": {
+        "name": "Beleuchtung 2"
+      },
+      "pump": {
+        "name": "Düsen",
+        "state": {
+          "OFF": "Aus",
+          "HIGH": "Ein"
+        }
+      },
+      "pump_1": {
+        "name": "Düsen 1",
+        "state": {
+          "OFF": "Aus",
+          "HIGH": "Ein"
+        }
+      },
+      "pump_2": {
+        "name": "Düsen 2",
+        "state": {
+          "OFF": "Aus",
+          "HIGH": "Ein"
+        }
+      },
+      "blower": {
+        "name": "Gebläse",
+        "state": {
+          "OFF": "Aus",
+          "HIGH": "Ein"
+        }
+      },
+      "blower_1": {
+        "name": "Gebläse 1",
+        "state": {
+          "OFF": "Aus",
+          "HIGH": "Ein"
+        }
+      },
+      "blower_2": {
+        "name": "Gebläse 2",
+        "state": {
+          "OFF": "Aus",
+          "HIGH": "Ein"
+        }
+      }
+    },
+    "climate": {
+      "thermostat": {
+        "name": "Whirlpool",
+        "current_temperature": "Aktuelle Temperatur",
+        "target_temperature": "Zieltemperatur",
+        "desired_temperature": "Gewünschte Temperatur",
+        "state": {
+          "off": "Aus",
+          "heat": "Heizen"
+        }
+      }
+    }
+  }
+} 
