@@ -53,15 +53,15 @@ class SpaClimate(ClimateEntity):
         if data:
             # Aktuální teplota
             current_f = data.get("currentTemp")
-            if current_f is not None:
+            if current_f is not None and current_f != 0:
                 self._current_temperature = round((current_f - 32) * 5.0 / 9.0, 1)
             # Požadovaná teplota
             desired_f = data.get("desiredTemp")
-            if desired_f is not None:
+            if desired_f is not None and desired_f != 0:
                 self._desired_temperature = round((desired_f - 32) * 5.0 / 9.0, 1)
             # Cílená teplota (target)
             target_f = data.get("targetDesiredTemp")
-            if target_f is not None:
+            if target_f is not None and target_f != 0:
                 self._target_temperature = round((target_f - 32) * 5.0 / 9.0, 1)
             _LOGGER.debug("Climate update: current=%s, desired=%s, target=%s", self._current_temperature, self._desired_temperature, self._target_temperature)
 

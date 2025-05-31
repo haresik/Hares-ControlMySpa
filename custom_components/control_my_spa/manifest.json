@@ -1,7 +1,7 @@
 {
   "domain": "control_my_spa",
   "name": "ControlMySpa Hares",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "documentation": "https://github.com/haresik/Hares-ControlMySpa",
   "requirements": [],
   "dependencies": [ "http" ],

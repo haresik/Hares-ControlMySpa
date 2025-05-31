@@ -17,21 +17,32 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     if not shared_data.data:
         return False
 
-    # Najít všechny LIGHT komponenty
+    # Najít všechny LIGHT komponenty s přesně dvěma hodnotami
     lights = [
         component for component in shared_data.data["components"]
-        if component["componentType"] == "LIGHT"
+        if component["componentType"] == "LIGHT" and 
+        len(component.get("availableValues", ["OFF", "HIGH"])) == 2
     ]
-    # Najít všechny PUMP komponenty
+    # Najít všechny PUMP komponenty s přesně dvěma hodnotami
     pumps = [
         component for component in shared_data.data["components"]
-        if component["componentType"] == "PUMP"
+        if component["componentType"] == "PUMP" and 
+        len(component.get("availableValues", ["OFF", "HIGH"])) == 2
     ]
-    # Najít všechny BLOWER komponenty
+    # Najít všechny BLOWER komponenty s přesně dvěma hodnotami
     blowers = [
         component for component in shared_data.data["components"]
-        if component["componentType"] == "BLOWER"
+        if component["componentType"] == "BLOWER" and 
+        len(component.get("availableValues", ["OFF", "HIGH"])) == 2
     ]
+
+    # Logování informací o filtrování
+    _LOGGER.debug(
+        "Filtered components for Switch - Lights: %d, Pumps: %d, Blowers: %d",
+        len(lights),
+        len(pumps),
+        len(blowers)
+    )
 
     entities = [SpaLightSwitch(shared_data, device_info, light, len(lights)) for light in lights]
     entities += [SpaPumpSwitch(shared_data, device_info, pump, len(pumps)) for pump in pumps]
@@ -61,6 +72,10 @@ class SpaLightSwitch(SpaSwitchBase):
         )
         self._attr_translation_key = f"light" if light_count == 1 or light_data['port'] == None else f"light_{int(light_data['port']) + 1}"
         self.entity_id = self._attr_unique_id
+        # Získání dostupných hodnot pro světlo, výchozí hodnoty jsou OFF a HIGH
+        self._available_values = light_data.get("availableValues", ["OFF", "HIGH"])
+        self._off_value = self._available_values[0]  # První hodnota pro vypnuto
+        self._on_value = self._available_values[-1]  # Poslední hodnota pro zapnuto
 
     @property
     def icon(self):
@@ -78,19 +93,19 @@ class SpaLightSwitch(SpaSwitchBase):
             )
             _LOGGER.debug("Updated Light %s: %s", self._light_data["port"], light["value"])
             if light:
-                self._attr_is_on = light["value"] == "HIGH"
+                self._attr_is_on = light["value"] == self._on_value
             else:
                 self._attr_is_on = False
 
     async def async_turn_on(self, **kwargs):
         device_number = int(self._light_data["port"])
-        await self._shared_data._client.setLightState(device_number, "HIGH")
+        await self._shared_data._client.setLightState(device_number, self._on_value)
         self.async_write_ha_state()
         await self._shared_data.async_force_update()
 
     async def async_turn_off(self, **kwargs):
         device_number = int(self._light_data["port"])
-        await self._shared_data._client.setLightState(device_number, "OFF")
+        await self._shared_data._client.setLightState(device_number, self._off_value)
         self.async_write_ha_state()
         await self._shared_data.async_force_update()
 
@@ -112,6 +127,10 @@ class SpaPumpSwitch(SpaSwitchBase):
             else f"pump_{int(pump_data['port']) + 1}"
         )
         self.entity_id = self._attr_unique_id
+        # Získání dostupných hodnot pro pump, výchozí hodnoty jsou OFF a HIGH
+        self._available_values = pump_data.get("availableValues", ["OFF", "HIGH"])
+        self._off_value = self._available_values[0]  # První hodnota pro vypnuto
+        self._on_value = self._available_values[-1]  # Poslední hodnota pro zapnuto
 
     async def async_update(self):
         data = self._shared_data.data
@@ -122,7 +141,7 @@ class SpaPumpSwitch(SpaSwitchBase):
             )
             _LOGGER.debug("Updated Pump %s: %s", self._pump_data["port"], pump["value"])
             if pump:
-                self._attr_is_on = pump["value"] == "HIGH"
+                self._attr_is_on = pump["value"] == self._on_value
             else:
                 self._attr_is_on = False
 
@@ -132,10 +151,9 @@ class SpaPumpSwitch(SpaSwitchBase):
         except (ValueError, TypeError):
             _LOGGER.error("Invalid port value for Pump: %s", self._pump_data["port"])
             return
-        await self._shared_data._client.setJetState(device_number, "HIGH")
+        await self._shared_data._client.setJetState(device_number, self._on_value)
         self.async_write_ha_state()
         await self._shared_data.async_force_update()
-
 
     async def async_turn_off(self, **kwargs):
         try:
@@ -143,7 +161,7 @@ class SpaPumpSwitch(SpaSwitchBase):
         except (ValueError, TypeError):
             _LOGGER.error("Invalid port value for Pump: %s", self._pump_data["port"])
             return
-        await self._shared_data._client.setJetState(device_number, "OFF")
+        await self._shared_data._client.setJetState(device_number, self._off_value)
         self.async_write_ha_state()
         await self._shared_data.async_force_update()
 
@@ -165,6 +183,10 @@ class SpaBlowerSwitch(SpaSwitchBase):
             else f"blower_{int(blower_data['port']) + 1}"
         )
         self.entity_id = self._attr_unique_id
+        # Získání dostupných hodnot pro blower, výchozí hodnoty jsou OFF a HIGH
+        self._available_values = blower_data.get("availableValues", ["OFF", "HIGH"])
+        self._off_value = self._available_values[0]  # První hodnota pro vypnuto
+        self._on_value = self._available_values[-1]  # Poslední hodnota pro zapnuto
 
     async def async_update(self):
         data = self._shared_data.data
@@ -175,7 +197,7 @@ class SpaBlowerSwitch(SpaSwitchBase):
             )
             _LOGGER.debug("Updated Blower %s: %s", self._blower_data["port"], blower["value"])
             if blower:
-                self._attr_is_on = blower["value"] == "HIGH"
+                self._attr_is_on = blower["value"] == self._on_value
             else:
                 self._attr_is_on = False
 
@@ -185,7 +207,7 @@ class SpaBlowerSwitch(SpaSwitchBase):
         except (ValueError, TypeError):
             _LOGGER.error("Invalid port value for Blower: %s", self._blower_data["port"])
             return
-        await self._shared_data._client.setBlowerState(device_number, "HIGH")
+        await self._shared_data._client.setBlowerState(device_number, self._on_value)
         self.async_write_ha_state()
         await self._shared_data.async_force_update()
 
@@ -195,6 +217,6 @@ class SpaBlowerSwitch(SpaSwitchBase):
         except (ValueError, TypeError):
             _LOGGER.error("Invalid port value for Blower: %s", self._blower_data["port"])
             return
-        await self._shared_data._client.setBlowerState(device_number, "OFF")
+        await self._shared_data._client.setBlowerState(device_number, self._off_value)
         self.async_write_ha_state()
         await self._shared_data.async_force_update()

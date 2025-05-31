@@ -8,7 +8,6 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     data = hass.data[DOMAIN][config_entry.entry_id]
-    # client = data["client"]
     shared_data = data["data"]
     device_info = data["device_info"]
     client = data["client"]
@@ -19,29 +18,39 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     if not shared_data.data:
         return False
 
+    # Najít všechny PUMP komponenty s více než dvěma hodnotami
     pumps = [
         component for component in shared_data.data["components"]
-        if component["componentType"] == "PUMP"
+        if component["componentType"] == "PUMP" and 
+        len(component.get("availableValues", [])) > 2
     ]
-    # Najít všechny BLOWER komponenty
+    # Najít všechny BLOWER komponenty s více než dvěma hodnotami
     blowers = [
         component for component in shared_data.data["components"]
-        if component["componentType"] == "BLOWER"
+        if component["componentType"] == "BLOWER" and 
+        len(component.get("availableValues", [])) > 2
     ]
-    # Najít všechny LIGHT komponenty
+    # Najít všechny LIGHT komponenty s více než dvěma hodnotami
     lights = [
         component for component in shared_data.data["components"]
-        if component["componentType"] == "LIGHT"
+        if component["componentType"] == "LIGHT" and 
+        len(component.get("availableValues", [])) > 2
     ]
 
-    # Vytvořit entity pro každou PUMP
+    # Logování informací o filtrování
+    _LOGGER.debug(
+        "Filtered components for Select - Lights: %d, Pumps: %d, Blowers: %d",
+        len(lights),
+        len(pumps),
+        len(blowers)
+    )
+
     entities = []
-    # entities = [SpaPumpSelect(shared_data, device_info, pump, len(pumps)) for pump in pumps]
-    # entities += [SpaBlowerSelect(shared_data, device_info, blower, len(blowers)) for blower in blowers]
-    # entities += [SpaLightSelect(shared_data, device_info, light, len(lights)) for light in lights]
+    entities = [SpaPumpSelect(shared_data, device_info, pump, len(pumps)) for pump in pumps]
+    entities += [SpaBlowerSelect(shared_data, device_info, blower, len(blowers)) for blower in blowers]
+    entities += [SpaLightSelect(shared_data, device_info, light, len(lights)) for light in lights]
     entities.append(SpaTempRangeSelect(shared_data, device_info))  # Přidat entitu
     entities.append(SpaHeaterModeSelect(shared_data, device_info))  # Přidat entitu pro heater mode
-
 
     async_add_entities(entities, True)
     _LOGGER.debug("START Select control_my_spa")
