@@ -10,6 +10,9 @@ class SpaData:
         self._data = None
         self._hass = hass
         self._subscribers = []  # Seznam odběratelů
+        self._update_interval = None  # Handler pro interval
+        self._is_updating = False  # Příznak zda běží aktualizace
+        self._last_interval = None  # Poslední použitý interval
 
     async def update(self):
         """Aktualizace dat z webového dotazu."""
@@ -19,7 +22,32 @@ class SpaData:
 
     def start_periodic_update(self, interval):
         """Spustí pravidelnou aktualizaci dat."""
-        async_track_time_interval(self._hass, self._periodic_update, interval)
+        self._last_interval = interval
+        self._is_updating = True
+        self._update_interval = async_track_time_interval(self._hass, self._periodic_update, interval)
+
+    def pause_updates(self):
+        """Pozastaví pravidelnou aktualizaci dat."""
+        if self._update_interval is not None:
+            self._update_interval()  # Zrušení intervalu
+            self._update_interval = None
+            self._is_updating = False
+            _LOGGER.debug("Periodic updates paused")
+            return True
+        return False
+
+    def resume_updates(self):
+        """Obnoví pravidelnou aktualizaci dat."""
+        if not self._is_updating and self._last_interval is not None:
+            self.start_periodic_update(self._last_interval)
+            _LOGGER.debug("Periodic updates resumed")
+            return True
+        return False
+
+    @property
+    def is_updating(self):
+        """Vrací informaci, zda probíhá pravidelná aktualizace."""
+        return self._is_updating
 
     async def _periodic_update(self, _):
         """Interní metoda pro pravidelnou aktualizaci."""

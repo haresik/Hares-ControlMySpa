@@ -76,38 +76,117 @@ class SpaLightSwitch(SpaSwitchBase):
         self._available_values = light_data.get("availableValues", ["OFF", "HIGH"])
         self._off_value = self._available_values[0]  # První hodnota pro vypnuto
         self._on_value = self._available_values[-1]  # Poslední hodnota pro zapnuto
+        self._is_processing = False  # Příznak zpracování
+
+    @property
+    def available(self) -> bool:
+        """Indikuje, zda je entita dostupná pro ovládání."""
+        return not self._is_processing
 
     @property
     def icon(self):
+        if self._is_processing:
+            return "mdi:sync"  # Ikona pro zpracování
         if self.is_on:
             return "mdi:lightbulb-on"
         else:
             return "mdi:lightbulb"
 
+    def _get_light_state(self, data):
+        """Získá stav světla z dat."""
+        if not data:
+            return None
+        light = next(
+            (comp for comp in data["components"] if comp["componentType"] == "LIGHT" and comp["port"] == self._light_data["port"]),
+            None
+        )
+        return light["value"] if light else None
+
     async def async_update(self):
         data = self._shared_data.data
         if data:
-            light = next(
-                (comp for comp in data["components"] if comp["componentType"] == "LIGHT" and comp["port"] == self._light_data["port"]),
-                None
-            )
-            _LOGGER.debug("Updated Light %s: %s", self._light_data["port"], light["value"])
-            if light:
-                self._attr_is_on = light["value"] == self._on_value
+            light_state = self._get_light_state(data)
+            if light_state is not None:
+                self._attr_is_on = light_state == self._on_value
+                _LOGGER.debug("Updated Light %s: %s", self._light_data["port"], light_state)
             else:
                 self._attr_is_on = False
 
-    async def async_turn_on(self, **kwargs):
-        device_number = int(self._light_data["port"])
-        await self._shared_data._client.setLightState(device_number, self._on_value)
+    async def _try_set_light_state(self, device_number: int, target_state: str, is_retry: bool = False) -> bool:
+        """Pokus o nastavení stavu světla s možností opakování."""
+        self._is_processing = True  # Zneplatnění tlačítka
         self.async_write_ha_state()
-        await self._shared_data.async_force_update()
+        
+        try:
+            response_data = await self._shared_data._client.setLightState(device_number, target_state)
+            new_state = self._get_light_state(response_data)
+            
+            if new_state == target_state:
+                self._attr_is_on = (target_state == self._on_value)
+                _LOGGER.info(
+                    "Úspěšně %s světlo %s%s",
+                    "zapnuto" if target_state == self._on_value else "vypnuto",
+                    self._light_data["port"],
+                    " (2. pokus)" if is_retry else ""
+                )
+                return True
+            else:
+                _LOGGER.warning(
+                    "Světlo %s nebylo %s. Očekávaný stav: %s, Aktuální stav: %s%s",
+                    self._light_data["port"],
+                    "zapnuto" if target_state == self._on_value else "vypnuto",
+                    target_state,
+                    new_state,
+                    " (2. pokus)" if is_retry else ""
+                )
+                return False
+        finally:
+            self._is_processing = False  # Obnovení tlačítka
+            self.async_write_ha_state()
+
+    async def async_turn_on(self, **kwargs):
+        try:
+            self._shared_data.pause_updates()
+            device_number = int(self._light_data["port"])
+            
+            # První pokus
+            success = await self._try_set_light_state(device_number, self._on_value)
+            
+            # Druhý pokus pokud první selhal
+            if not success:
+                _LOGGER.info("Zkouším znovu zapnout světlo %s", self._light_data["port"])
+                success = await self._try_set_light_state(device_number, self._on_value, True)
+                
+            await self._shared_data.async_force_update()
+        except ValueError as ve:
+            _LOGGER.error("Neplatná hodnota portu pro světlo: %s", self._light_data["port"])
+        except Exception as e:
+            _LOGGER.error("Chyba při zapínání světla (port %s): %s", self._light_data["port"], str(e))
+            raise
+        finally:
+            self._shared_data.resume_updates()
 
     async def async_turn_off(self, **kwargs):
-        device_number = int(self._light_data["port"])
-        await self._shared_data._client.setLightState(device_number, self._off_value)
-        self.async_write_ha_state()
-        await self._shared_data.async_force_update()
+        try:
+            self._shared_data.pause_updates()
+            device_number = int(self._light_data["port"])
+            
+            # První pokus
+            success = await self._try_set_light_state(device_number, self._off_value)
+            
+            # Druhý pokus pokud první selhal
+            if not success:
+                _LOGGER.info("Zkouším znovu vypnout světlo %s", self._light_data["port"])
+                success = await self._try_set_light_state(device_number, self._off_value, True)
+                
+            await self._shared_data.async_force_update()
+        except ValueError as ve:
+            _LOGGER.error("Neplatná hodnota portu pro světlo: %s", self._light_data["port"])
+        except Exception as e:
+            _LOGGER.error("Chyba při vypínání světla (port %s): %s", self._light_data["port"], str(e))
+            raise
+        finally:
+            self._shared_data.resume_updates()
 
 class SpaPumpSwitch(SpaSwitchBase):
     def __init__(self, shared_data, device_info, pump_data, pump_count):
@@ -131,6 +210,19 @@ class SpaPumpSwitch(SpaSwitchBase):
         self._available_values = pump_data.get("availableValues", ["OFF", "HIGH"])
         self._off_value = self._available_values[0]  # První hodnota pro vypnuto
         self._on_value = self._available_values[-1]  # Poslední hodnota pro zapnuto
+        self._is_processing = False  # Příznak zpracování
+
+    @property
+    def available(self) -> bool:
+        """Indikuje, zda je entita dostupná pro ovládání."""
+        return not self._is_processing
+
+    @property
+    def icon(self):
+        if self._is_processing:
+            return "mdi:sync"  # Ikona pro zpracování
+        else:
+            return "mdi:weather-windy"
 
     async def async_update(self):
         data = self._shared_data.data
@@ -145,25 +237,85 @@ class SpaPumpSwitch(SpaSwitchBase):
             else:
                 self._attr_is_on = False
 
+    async def _try_set_pump_state(self, device_number: int, target_state: str, is_retry: bool = False) -> bool:
+        """Pokus o nastavení stavu čerpadla s možností opakování."""
+        self._is_processing = True  # Zneplatnění tlačítka
+        self.async_write_ha_state()
+        
+        try:
+            response_data = await self._shared_data._client.setJetState(device_number, target_state)
+            pump = next(
+                (comp for comp in response_data["components"] if comp["componentType"] == "PUMP" and comp["port"] == self._pump_data["port"]),
+                None
+            )
+            new_state = pump["value"] if pump else None
+            
+            if new_state == target_state:
+                self._attr_is_on = (target_state == self._on_value)
+                _LOGGER.info(
+                    "Úspěšně %s čerpadlo %s%s",
+                    "zapnuto" if target_state == self._on_value else "vypnuto",
+                    self._pump_data["port"],
+                    " (2. pokus)" if is_retry else ""
+                )
+                return True
+            else:
+                _LOGGER.warning(
+                    "Čerpadlo %s nebylo %s. Očekávaný stav: %s, Aktuální stav: %s%s",
+                    self._pump_data["port"],
+                    "zapnuto" if target_state == self._on_value else "vypnuto",
+                    target_state,
+                    new_state,
+                    " (2. pokus)" if is_retry else ""
+                )
+                return False
+        finally:
+            self._is_processing = False  # Obnovení tlačítka
+            self.async_write_ha_state()
+
     async def async_turn_on(self, **kwargs):
         try:
+            self._shared_data.pause_updates()
             device_number = int(self._pump_data["port"])
-        except (ValueError, TypeError):
-            _LOGGER.error("Invalid port value for Pump: %s", self._pump_data["port"])
-            return
-        await self._shared_data._client.setJetState(device_number, self._on_value)
-        self.async_write_ha_state()
-        await self._shared_data.async_force_update()
+            
+            # První pokus
+            success = await self._try_set_pump_state(device_number, self._on_value)
+            
+            # Druhý pokus pokud první selhal
+            if not success:
+                _LOGGER.info("Zkouším znovu zapnout čerpadlo %s", self._pump_data["port"])
+                success = await self._try_set_pump_state(device_number, self._on_value, True)
+                
+            await self._shared_data.async_force_update()
+        except ValueError as ve:
+            _LOGGER.error("Neplatná hodnota portu pro čerpadlo: %s", self._pump_data["port"])
+        except Exception as e:
+            _LOGGER.error("Chyba při zapínání čerpadla (port %s): %s", self._pump_data["port"], str(e))
+            raise
+        finally:
+            self._shared_data.resume_updates()
 
     async def async_turn_off(self, **kwargs):
         try:
+            self._shared_data.pause_updates()
             device_number = int(self._pump_data["port"])
-        except (ValueError, TypeError):
-            _LOGGER.error("Invalid port value for Pump: %s", self._pump_data["port"])
-            return
-        await self._shared_data._client.setJetState(device_number, self._off_value)
-        self.async_write_ha_state()
-        await self._shared_data.async_force_update()
+            
+            # První pokus
+            success = await self._try_set_pump_state(device_number, self._off_value)
+            
+            # Druhý pokus pokud první selhal
+            if not success:
+                _LOGGER.info("Zkouším znovu vypnout čerpadlo %s", self._pump_data["port"])
+                success = await self._try_set_pump_state(device_number, self._off_value, True)
+                
+            await self._shared_data.async_force_update()
+        except ValueError as ve:
+            _LOGGER.error("Neplatná hodnota portu pro čerpadlo: %s", self._pump_data["port"])
+        except Exception as e:
+            _LOGGER.error("Chyba při vypínání čerpadla (port %s): %s", self._pump_data["port"], str(e))
+            raise
+        finally:
+            self._shared_data.resume_updates()
 
 class SpaBlowerSwitch(SpaSwitchBase):
     def __init__(self, shared_data, device_info, blower_data, blower_count):
@@ -187,6 +339,19 @@ class SpaBlowerSwitch(SpaSwitchBase):
         self._available_values = blower_data.get("availableValues", ["OFF", "HIGH"])
         self._off_value = self._available_values[0]  # První hodnota pro vypnuto
         self._on_value = self._available_values[-1]  # Poslední hodnota pro zapnuto
+        self._is_processing = False  # Příznak zpracování
+
+    @property
+    def available(self) -> bool:
+        """Indikuje, zda je entita dostupná pro ovládání."""
+        return not self._is_processing
+
+    @property
+    def icon(self):
+        if self._is_processing:
+            return "mdi:sync"  # Ikona pro zpracování
+        else:
+            return "mdi:weather-dust"
 
     async def async_update(self):
         data = self._shared_data.data
@@ -201,22 +366,82 @@ class SpaBlowerSwitch(SpaSwitchBase):
             else:
                 self._attr_is_on = False
 
+    async def _try_set_blower_state(self, device_number: int, target_state: str, is_retry: bool = False) -> bool:
+        """Pokus o nastavení stavu vzduchovače s možností opakování."""
+        self._is_processing = True  # Zneplatnění tlačítka
+        self.async_write_ha_state()
+        
+        try:
+            response_data = await self._shared_data._client.setBlowerState(device_number, target_state)
+            blower = next(
+                (comp for comp in response_data["components"] if comp["componentType"] == "BLOWER" and comp["port"] == self._blower_data["port"]),
+                None
+            )
+            new_state = blower["value"] if blower else None
+            
+            if new_state == target_state:
+                self._attr_is_on = (target_state == self._on_value)
+                _LOGGER.info(
+                    "Úspěšně %s vzduchovač %s%s",
+                    "zapnut" if target_state == self._on_value else "vypnut",
+                    self._blower_data["port"],
+                    " (2. pokus)" if is_retry else ""
+                )
+                return True
+            else:
+                _LOGGER.warning(
+                    "Vzduchovač %s nebyl %s. Očekávaný stav: %s, Aktuální stav: %s%s",
+                    self._blower_data["port"],
+                    "zapnut" if target_state == self._on_value else "vypnut",
+                    target_state,
+                    new_state,
+                    " (2. pokus)" if is_retry else ""
+                )
+                return False
+        finally:
+            self._is_processing = False  # Obnovení tlačítka
+            self.async_write_ha_state()
+
     async def async_turn_on(self, **kwargs):
         try:
+            self._shared_data.pause_updates()
             device_number = int(self._blower_data["port"])
-        except (ValueError, TypeError):
-            _LOGGER.error("Invalid port value for Blower: %s", self._blower_data["port"])
-            return
-        await self._shared_data._client.setBlowerState(device_number, self._on_value)
-        self.async_write_ha_state()
-        await self._shared_data.async_force_update()
+            
+            # První pokus
+            success = await self._try_set_blower_state(device_number, self._on_value)
+            
+            # Druhý pokus pokud první selhal
+            if not success:
+                _LOGGER.info("Zkouším znovu zapnout vzduchovač %s", self._blower_data["port"])
+                success = await self._try_set_blower_state(device_number, self._on_value, True)
+                
+            await self._shared_data.async_force_update()
+        except ValueError as ve:
+            _LOGGER.error("Neplatná hodnota portu pro vzduchovač: %s", self._blower_data["port"])
+        except Exception as e:
+            _LOGGER.error("Chyba při zapínání vzduchovače (port %s): %s", self._blower_data["port"], str(e))
+            raise
+        finally:
+            self._shared_data.resume_updates()
 
     async def async_turn_off(self, **kwargs):
         try:
+            self._shared_data.pause_updates()
             device_number = int(self._blower_data["port"])
-        except (ValueError, TypeError):
-            _LOGGER.error("Invalid port value for Blower: %s", self._blower_data["port"])
-            return
-        await self._shared_data._client.setBlowerState(device_number, self._off_value)
-        self.async_write_ha_state()
-        await self._shared_data.async_force_update()
+            
+            # První pokus
+            success = await self._try_set_blower_state(device_number, self._off_value)
+            
+            # Druhý pokus pokud první selhal
+            if not success:
+                _LOGGER.info("Zkouším znovu vypnout vzduchovač %s", self._blower_data["port"])
+                success = await self._try_set_blower_state(device_number, self._off_value, True)
+                
+            await self._shared_data.async_force_update()
+        except ValueError as ve:
+            _LOGGER.error("Neplatná hodnota portu pro vzduchovač: %s", self._blower_data["port"])
+        except Exception as e:
+            _LOGGER.error("Chyba při vypínání vzduchovače (port %s): %s", self._blower_data["port"], str(e))
+            raise
+        finally:
+            self._shared_data.resume_updates()

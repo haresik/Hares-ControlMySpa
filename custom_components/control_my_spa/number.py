@@ -59,18 +59,25 @@ class SpaTargetDesiredTempNumber(NumberEntity):
 
     async def async_set_value(self, value: float):
         """Nastavení nové hodnoty."""
-        if self._attr_min_value <= value <= self._attr_max_value:
+        if not (self._attr_min_value <= value <= self._attr_max_value):
+            _LOGGER.error("Hodnota %s je mimo rozsah (%s - %s)", value, self._attr_min_value, self._attr_max_value)
+            return
+
+        try:
+            self._shared_data.pause_updates()
             fahrenheit_temp = round(value * 9.0 / 5.0 + 32, 1)  # Převod na Fahrenheit
             success = await self._shared_data._client.setTemp(fahrenheit_temp)
             if success:
                 self._state = value
-                _LOGGER.info("Successfully set target desired temperature to %s °C", value)
+                _LOGGER.info("Úspěšně nastavena požadovaná teplota na %s °C", value)
             else:
-                _LOGGER.error("Failed to set target desired temperature to %s °C", value)
+                _LOGGER.error("Nepodařilo se nastavit požadovanou teplotu na %s °C", value)
             await self._shared_data.async_force_update()
-        else:
-            _LOGGER.error("Value %s is out of range (%s - %s)", value, self._attr_min_value, self._attr_max_value)
-
+        except Exception as e:
+            _LOGGER.error("Chyba při nastavování požadované teploty na %s °C: %s", value, str(e))
+            raise
+        finally:
+            self._shared_data.resume_updates()
 
     @property
     def native_value(self):
