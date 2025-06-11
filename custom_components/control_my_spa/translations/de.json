@@ -7,7 +7,10 @@
     },
     "error": {
       "connection_error": "Verbindung fehlgeschlagen",
-      "cannot_login": "Anmeldung nicht möglich, bitte überprüfen Sie Benutzername und Passwort."
+      "cannot_login": "Anmeldung nicht möglich, bitte überprüfen Sie Benutzername und Passwort.",
+      "cannot_connect": "Verbindung fehlgeschlagen",
+      "invalid_auth": "Ungültige Authentifizierung",
+      "unknown": "Unerwarteter Fehler"
     },
     "flow_title": "ControlMySpa",
     "step": {
@@ -204,9 +207,29 @@
         "desired_temperature": "Gewünschte Temperatur",
         "state": {
           "off": "Aus",
-          "heat": "Heizen"
+          "heat": "Heizung"
         }
       }
+    },
+    "button": {
+      "update_time": {
+        "name": "Zeit aktualisieren",
+        "state": {
+          "pressed": "Gedrückt"
+        }
+      }
+    }
+  },
+  "services": {
+    "update_time": {
+      "name": "Zeit aktualisieren",
+      "description": "Aktualisiert die Gerätezeit auf die aktuelle Systemzeit."
+    }
+  },
+  "notification": {
+    "time_update": {
+      "title": "Whirlpool Zeitaktualisierung",
+      "message": "Die Whirlpool-Zeit wurde erfolgreich von {old_time} auf {new_time} aktualisiert"
     }
   }
 } 

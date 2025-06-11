@@ -2,21 +2,24 @@
   "title": "Vířívá vana Balboa",
   "config": {
     "abort": {
-      "already_configured": "Zařízení je již nastaveno",
+      "already_configured": "Zařízení je již nakonfigurováno",
       "already_in_progress": "Nastavení již probíhá"
     },
     "error": {
       "connection_error": "Nepodařilo se připojit",
-      "cannot_login": "Nelze se přihlásit, zkontrolujte uživatelské jméno a heslo."
+      "cannot_login": "Nelze se přihlásit, zkontrolujte uživatelské jméno a heslo.",
+      "cannot_connect": "Nepodařilo se připojit",
+      "invalid_auth": "Neplatné přihlašovací údaje",
+      "unknown": "Neočekávaná chyba"
     },
     "flow_title": "ControlMySpa",
     "step": {
       "user": {
         "data": {
-          "username": "Login",
+          "username": "Uživatelské jméno",
           "password": "Heslo",
           "updateintervalminutes": "Interval aktualizace (minuty)"
-        },
+      },
         "description": "Připojí se k ControlMySpa",
         "title": "Vířívá vana"
       },
@@ -207,8 +210,27 @@
           "heat": "Ohřev"
         }
       }
+    },
+    "button": {
+      "update_time": {
+        "name": "Aktualizovat čas",
+        "state": {
+          "pressed": "Stisknuto"
+        }
+      }
     }
-
+  },
+  "services": {
+    "update_time": {
+      "name": "Aktualizovat čas",
+      "description": "Aktualizuje čas v zařízení na aktuální systémový čas."
+    }
+  },
+  "notification": {
+    "time_update": {
+      "title": "Aktualizace času vířivky",
+      "message": "Čas vířivky byl úspěšně aktualizován z {old_time} na {new_time}"
+    }
   }
 }
    

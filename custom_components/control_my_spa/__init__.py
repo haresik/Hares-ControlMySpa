@@ -8,6 +8,7 @@ from homeassistant.helpers.service import async_register_admin_service
 from .ControlMySpa import ControlMySpa
 from .SpaData import SpaData  
 from homeassistant.const import Platform
+from .services import async_setup_services, async_unload_services
 
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [
@@ -17,6 +18,7 @@ PLATFORMS = [
     Platform.BINARY_SENSOR,
     Platform.SWITCH,
     Platform.CLIMATE,
+    Platform.BUTTON,
 ]
 
 # async def async_setup(hass, config):
@@ -28,6 +30,9 @@ async def options_update_listener(hass: HomeAssistant, config_entry: ConfigEntry
     await hass.config_entries.async_reload(config_entry.entry_id)
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
+    # Nastavení služeb
+    await async_setup_services(hass)
+
     username = config_entry.data["username"]
     password = config_entry.data["password"]
     spa_id = config_entry.data["spa_id"]
@@ -81,5 +86,11 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     return True
 
 async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry):
+    # Odebrání služeb
+    await async_unload_services(hass)
+
     # Odregistrovat platformy
-    return await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS)
+    if unload_ok := await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS):
+        hass.data[DOMAIN].pop(config_entry.entry_id)
+
+    return unload_ok

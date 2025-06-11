@@ -7,17 +7,20 @@
     },
     "error": {
       "connection_error": "Failed to connect",
-      "cannot_login": "Unable to log in, please check your username and password."
+      "cannot_login": "Cannot login, check your username and password",
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "unknown": "Unexpected error"
     },
     "flow_title": "ControlMySpa",
     "step": {
       "user": {
         "data": {
-          "username": "Login",
+          "username": "Username",
           "password": "Password",
           "updateintervalminutes": "Update interval (minutes)"
         },
-        "description": "Connects to ControlMySpa",
+        "description": "Connect to ControlMySpa",
         "title": "SPA"
       },
       "select_spa": {
@@ -204,9 +207,29 @@
         "desired_temperature": "Desired temperature",
         "state": {
           "off": "Off",
-          "heat": "Heating"
+          "heat": "Heat"
         }
       }
+    },
+    "button": {
+      "update_time": {
+        "name": "Update time",
+        "state": {
+          "pressed": "Pressed"
+        }
+      }
+    }
+  },
+  "services": {
+    "update_time": {
+      "name": "Update time",
+      "description": "Updates the device time to current system time."
+    }
+  },
+  "notification": {
+    "time_update": {
+      "title": "Spa time update",
+      "message": "Spa time has been successfully updated from {old_time} to {new_time}"
     }
   }
 }
