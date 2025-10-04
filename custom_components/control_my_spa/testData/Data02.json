@@ -1,0 +1,368 @@
+{
+  "statusCode": 200,
+  "data": {
+    "serialNumber": "12345667890",
+    "hasCurrentState": true,
+    "currentTemp": "0.00",
+    "desiredTemp": "51.00",
+    "c8zCurrentState": {
+      "c8zHeaterState": "OFF",
+      "c8zStatus": "C8Z_STATUS_NOT_PRESENT"
+    },
+    "time": "19:23",
+    "isMilitaryTime": true,
+    "isPanelLocked": false,
+    "heaterMode": "READY",
+    "tempRange": "LOW",
+    "isCelsius": true,
+    "isOnHold": false,
+    "currentFaultMessage": null,
+    "components": [
+      {
+        "componentId": null,
+        "serialNumber": "12345667890",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "GATEWAY",
+        "componentType": "GATEWAY",
+        "value": null,
+        "availableValues": [],
+        "registeredTimestamp": "2025-10-02T23:11:52.991Z",
+        "port": null,
+        "hour": null,
+        "minute": null,
+        "durationMinutes": null
+      },
+      {
+        "componentId": null,
+        "serialNumber": "12345667890",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "CONTROLLER",
+        "componentType": "CONTROLLER",
+        "value": null,
+        "availableValues": [],
+        "registeredTimestamp": "2025-10-02T23:11:52.991Z",
+        "port": null,
+        "hour": null,
+        "minute": null,
+        "durationMinutes": null
+      },
+      {
+        "componentId": null,
+        "serialNumber": "12345667890",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "FILTER",
+        "componentType": "FILTER",
+        "value": "OFF",
+        "availableValues": [
+          "OFF",
+          "ON",
+          "DISABLED"
+        ],
+        "registeredTimestamp": "2025-10-02T23:11:52.992Z",
+        "port": "0",
+        "hour": 11,
+        "minute": 0,
+        "durationMinutes": 60
+      },
+      {
+        "componentId": null,
+        "serialNumber": "12345667890",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "FILTER",
+        "componentType": "FILTER",
+        "value": "OFF",
+        "availableValues": [
+          "OFF",
+          "ON",
+          "DISABLED"
+        ],
+        "registeredTimestamp": "2025-10-02T23:11:52.992Z",
+        "port": "1",
+        "hour": 22,
+        "minute": 0,
+        "durationMinutes": 60
+      },
+      {
+        "componentId": null,
+        "serialNumber": "12345667890",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "OZONE",
+        "componentType": "OZONE",
+        "value": "OFF",
+        "availableValues": [
+          "OFF",
+          "ON"
+        ],
+        "registeredTimestamp": "2025-10-02T23:11:52.992Z",
+        "port": null,
+        "hour": null,
+        "minute": null,
+        "durationMinutes": null
+      },
+      {
+        "componentId": null,
+        "serialNumber": "12345667890",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "PUMP",
+        "componentType": "PUMP",
+        "value": "HIGH",
+        "availableValues": [
+          "OFF",
+          "LOW",
+          "HIGH"
+        ],
+        "registeredTimestamp": "2025-10-02T23:11:52.992Z",
+        "port": "0",
+        "hour": null,
+        "minute": null,
+        "durationMinutes": null
+      },
+      {
+        "componentId": null,
+        "serialNumber": "12345667890",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "PUMP",
+        "componentType": "PUMP",
+        "value": "OFF",
+        "availableValues": [
+          "OFF",
+          "LOW",
+          "HIGH"
+        ],
+        "registeredTimestamp": "2025-10-02T23:11:52.992Z",
+        "port": "1",
+        "hour": null,
+        "minute": null,
+        "durationMinutes": null
+      },
+      {
+        "componentId": null,
+        "serialNumber": "12345667890",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "PUMP",
+        "componentType": "PUMP",
+        "value": "OFF",
+        "availableValues": [
+          "OFF",
+          "LOW",
+          "HIGH"
+        ],
+        "registeredTimestamp": "2025-10-02T23:11:52.992Z",
+        "port": "2",
+        "hour": null,
+        "minute": null,
+        "durationMinutes": null
+      },
+      {
+        "componentId": null,
+        "serialNumber": "12345667890",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "LIGHT",
+        "componentType": "LIGHT",
+        "value": "HIGH",
+        "availableValues": [
+          "OFF",
+          "HIGH"
+        ],
+        "registeredTimestamp": "2025-10-02T23:11:52.992Z",
+        "port": "0",
+        "hour": null,
+        "minute": null,
+        "durationMinutes": null
+      }
+    ],
+    "primaryTZLStatus": "TZL_CONNECTED",
+    "secondaryTZLStatus": "TZL_NOT_PRESENT",
+    "tzlState": {
+      "updateTimestamp": "2025-10-02T07:02:41.267Z",
+      "tzlLightStatus": {
+        "tzlZones": [
+          {
+            "zoneId": "1",
+            "zoneName": "A",
+            "state": "OFF",
+            "intensity": 0,
+            "speed": 0,
+            "red": 0,
+            "green": 0,
+            "blue": 0
+          },
+          {
+            "zoneId": "2",
+            "zoneName": "B",
+            "state": "NORMAL",
+            "intensity": 0,
+            "speed": 0,
+            "red": 255,
+            "green": 255,
+            "blue": 255
+          },
+          {
+            "zoneId": "3",
+            "zoneName": "C",
+            "state": "OFF",
+            "intensity": 8,
+            "speed": 0,
+            "red": 177,
+            "green": 0,
+            "blue": 255
+          }
+        ]
+      },
+      "tzlConfiguration": {
+        "tzlZoneFunctions": [
+          {
+            "zoneId": "0",
+            "zoneName": "A",
+            "zoneFunction": "NORMAL"
+          },
+          {
+            "zoneId": "1",
+            "zoneName": "B",
+            "zoneFunction": "SINGLE_COLOR"
+          },
+          {
+            "zoneId": "2",
+            "zoneName": "C",
+            "zoneFunction": "STATUS_PRO"
+          }
+        ],
+        "tzlGroupStates": [
+          {
+            "groupId": "1",
+            "state": "A"
+          },
+          {
+            "groupId": "2",
+            "state": "OFF"
+          },
+          {
+            "groupId": "3",
+            "state": "OFF"
+          },
+          {
+            "groupId": "4",
+            "state": "OFF"
+          }
+        ]
+      },
+      "tzlColorSettings": {
+        "tzlColors": [
+          {
+            "colorId": 1,
+            "red": 255,
+            "green": 255,
+            "blue": 255,
+            "isSecondary": false
+          },
+          {
+            "colorId": 2,
+            "red": 255,
+            "green": 0,
+            "blue": 0,
+            "isSecondary": false
+          },
+          {
+            "colorId": 3,
+            "red": 255,
+            "green": 0,
+            "blue": 92,
+            "isSecondary": false
+          },
+          {
+            "colorId": 4,
+            "red": 0,
+            "green": 0,
+            "blue": 255,
+            "isSecondary": false
+          },
+          {
+            "colorId": 5,
+            "red": 0,
+            "green": 255,
+            "blue": 255,
+            "isSecondary": false
+          },
+          {
+            "colorId": 6,
+            "red": 0,
+            "green": 255,
+            "blue": 0,
+            "isSecondary": false
+          },
+          {
+            "colorId": 7,
+            "red": 177,
+            "green": 0,
+            "blue": 255,
+            "isSecondary": false
+          },
+          {
+            "colorId": 8,
+            "red": 83,
+            "green": 106,
+            "blue": 255,
+            "isSecondary": false
+          }
+        ]
+      }
+    },
+    "hasChromazone": false,
+    "rangeLimits": {
+      "highRangeHigh": 104,
+      "highRangeLow": 80,
+      "lowRangeHigh": 99,
+      "lowRangeLow": 50
+    },
+    "systemInfo": {
+      "registrationServerDate": "2025-05-05T18:16:11.839Z",
+      "assignedDate": "2024-06-17T09:14:09.899Z",
+      "rs485Address": 18,
+      "isRs485ConnectionActive": true,
+      "isDrainMode": false,
+      "pingTime": "2025-10-04T17:21:06.934Z",
+      "controllerSoftwareVersion": "M100_225 V43.0",
+      "currentSetup": 17,
+      "dipSwitches": [
+        {
+          "slotNumber": 1,
+          "on": false
+        },
+        {
+          "slotNumber": 2,
+          "on": false
+        },
+        {
+          "slotNumber": 3,
+          "on": true
+        }
+      ],
+      "buildNumber": "1129/129"
+    },
+    "dealer": {
+      "_id": "1234567890"
+    },
+    "isOnline": true,
+    "isPrimingMode": false,
+    "totalAlerts": 3
+  },
+  "message": "Spa's dashboard retrieved successfully."
+}

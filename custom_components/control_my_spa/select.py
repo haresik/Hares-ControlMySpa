@@ -3,6 +3,7 @@ from homeassistant.components.select import SelectEntity
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.core import HomeAssistant
 from homeassistant.components import persistent_notification
+from homeassistant.helpers import translation
 from .const import DOMAIN
 import logging
 
@@ -47,12 +48,17 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         len(blowers)
     )
 
+    # Najít všechny TZL zones
+    tzl_zones = shared_data.data.get("tzlZones", [])
+    tzl_colors = shared_data.data.get("tzlColors", [])
+
     entities = []
     entities = [SpaPumpSelect(shared_data, device_info, pump, len(pumps)) for pump in pumps]
     entities += [SpaBlowerSelect(shared_data, device_info, blower, len(blowers)) for blower in blowers]
     entities += [SpaLightSelect(shared_data, device_info, light, len(lights)) for light in lights]
     entities.append(SpaTempRangeSelect(shared_data, device_info, hass))  # Přidat entitu
     entities.append(SpaHeaterModeSelect(shared_data, device_info))  # Přidat entitu pro heater mode
+    #entities += [SpaTzlZoneColorSelect(shared_data, device_info, tzl_zone_data, tzl_colors, len(tzl_zones)) for tzl_zone_data in tzl_zones]
 
     async_add_entities(entities, True)
     _LOGGER.debug("START Select control_my_spa")
@@ -567,6 +573,355 @@ class SpaHeaterModeSelect(SpaSelectBase):
             await self._shared_data.async_force_update()
         except Exception as e:
             _LOGGER.error("Chyba při nastavování režimu ohřevu na %s: %s", option, str(e))
-            raise
-        finally:
-            self._shared_data.resume_updates()
+
+
+class SpaTzlZoneColorSelect(SpaSelectBase):
+    _attr_has_entity_name = True
+
+    def __init__(self, shared_data, device_info, tzl_zone_data, tzl_colors, count_tzl_zones):
+        self._shared_data = shared_data
+        self._tzl_zone_data = tzl_zone_data
+        self._tzl_colors = tzl_colors
+        self._attr_device_info = device_info
+        self._attr_should_poll = False
+        self._current_option = None
+        self._attr_icon = "mdi:palette"
+        self._attr_unique_id = (
+            f"select.spa_tzl_color_select"
+            if count_tzl_zones == 1
+            else f"select.spa_tzl_color_select_{tzl_zone_data['zoneId']}"
+        )
+        self._attr_translation_key = (
+            "tzl_color_select"
+            if count_tzl_zones == 1
+            else f"tzl_color_select_{tzl_zone_data['zoneId']}"
+        )
+        self.entity_id = self._attr_unique_id
+        self._options = self._create_color_options()
+
+    def _create_color_options(self):
+        """Vytvoří seznam možností barev z tzlColors."""
+        options = ["OFF"]  # Vždy přidat možnost vypnutí
+        
+        for color in self._tzl_colors:
+            color_id = color.get("colorId")
+            red = color.get("red", 0)
+            green = color.get("green", 0)
+            blue = color.get("blue", 0)
+            
+            # Vytvořit název barvy
+            color_name = self._get_color_name(red, green, blue)
+            option_label = f"{color_name} (RGB: {red},{green},{blue})"
+            
+            options.append(option_label)
+            
+        return options
+
+    def _get_localized_color(self, color_key, language):
+        """Vrátí lokalizovaný název barvy s emoji."""
+        colors = {
+            "white": {
+                "cs": "⚪ Bílá",
+                "en": "⚪ White", 
+                "de": "⚪ Weiß"
+            },
+            "red": {
+                "cs": "🔴 Červená",
+                "en": "🔴 Red",
+                "de": "🔴 Rot"
+            },
+            "green": {
+                "cs": "🟢 Zelená",
+                "en": "🟢 Green",
+                "de": "🟢 Grün"
+            },
+            "blue": {
+                "cs": "🔵 Modrá",
+                "en": "🔵 Blue",
+                "de": "🔵 Blau"
+            },
+            "yellow": {
+                "cs": "🟡 Žlutá",
+                "en": "🟡 Yellow",
+                "de": "🟡 Gelb"
+            },
+            "purple": {
+                "cs": "🟣 Fialová",
+                "en": "🟣 Purple",
+                "de": "🟣 Lila"
+            },
+            "cyan": {
+                "cs": "🔵 Azurová",
+                "en": "🔵 Cyan",
+                "de": "🔵 Cyan"
+            },
+            "black": {
+                "cs": "⚫ Černá",
+                "en": "⚫ Black",
+                "de": "⚫ Schwarz"
+            },
+            "light_gray": {
+                "cs": "⚪ Světle šedá",
+                "en": "⚪ Light Gray",
+                "de": "⚪ Hellgrau"
+            },
+            "dark_gray": {
+                "cs": "⚫ Tmavě šedá",
+                "en": "⚫ Dark Gray",
+                "de": "⚫ Dunkelgrau"
+            },
+            "light_red": {
+                "cs": "🔴 Světle červená",
+                "en": "🔴 Light Red",
+                "de": "🔴 Hellrot"
+            },
+            "light_green": {
+                "cs": "🟢 Světle zelená",
+                "en": "🟢 Light Green",
+                "de": "🟢 Hellgrün"
+            },
+            "light_blue": {
+                "cs": "🔵 Světle modrá",
+                "en": "🔵 Light Blue",
+                "de": "🔵 Hellblau"
+            },
+            "light_yellow": {
+                "cs": "🟡 Světle žlutá",
+                "en": "🟡 Light Yellow",
+                "de": "🟡 Hellgelb"
+            },
+            "light_purple": {
+                "cs": "🟣 Světle fialová",
+                "en": "🟣 Light Purple",
+                "de": "🟣 Helllila"
+            },
+            "light_cyan": {
+                "cs": "🔵 Světle azurová",
+                "en": "🔵 Light Cyan",
+                "de": "🔵 Hellcyan"
+            },
+            "orange": {
+                "cs": "🟠 Oranžová",
+                "en": "🟠 Orange",
+                "de": "🟠 Orange"
+            },
+            "lime": {
+                "cs": "🟢 Limetková",
+                "en": "🟢 Lime",
+                "de": "🟢 Limette"
+            },
+            "mint": {
+                "cs": "🟢 Mátová",
+                "en": "🟢 Mint",
+                "de": "🟢 Minze"
+            },
+            "pink": {
+                "cs": "🩷 Růžová",
+                "en": "🩷 Pink",
+                "de": "🩷 Rosa"
+            },
+            "magenta": {
+                "cs": "🟣 Magenta",
+                "en": "🟣 Magenta",
+                "de": "🟣 Magenta"
+            },
+            "dark_pink": {
+                "cs": "🩷 Tmavě růžová",
+                "en": "🩷 Dark Pink",
+                "de": "🩷 Dunkelrosa"
+            }
+        }
+        
+        return colors.get(color_key, {}).get(language, colors[color_key]["cs"])
+
+    def _get_color_name(self, red, green, blue):
+        """Vrátí název barvy na základě RGB hodnot."""
+        # Získat aktuální jazyk Home Assistant
+        try:
+            language = self.hass.config.language
+        except:
+            language = "cs"  # Fallback na češtinu
+        
+        # Základní barvy (přesné shody)
+        if red == 255 and green == 255 and blue == 255:
+            return self._get_localized_color("white", language)
+        elif red == 255 and green == 0 and blue == 0:
+            return self._get_localized_color("red", language)
+        elif red == 0 and green == 255 and blue == 0:
+            return self._get_localized_color("green", language)
+        elif red == 0 and green == 0 and blue == 255:
+            return self._get_localized_color("blue", language)
+        elif red == 255 and green == 255 and blue == 0:
+            return self._get_localized_color("yellow", language)
+        elif red == 255 and green == 0 and blue == 255:
+            return self._get_localized_color("purple", language)
+        elif red == 0 and green == 255 and blue == 255:
+            return self._get_localized_color("cyan", language)
+        elif red == 0 and green == 0 and blue == 0:
+            return self._get_localized_color("black", language)
+        
+        # Rozšířené barvy (přibližné shody)
+        elif red > 200 and green > 200 and blue > 200:
+            return self._get_localized_color("light_gray", language)
+        elif red < 50 and green < 50 and blue < 50:
+            return self._get_localized_color("dark_gray", language)
+        elif red > 200 and green < 100 and blue < 100:
+            return self._get_localized_color("light_red", language)
+        elif red < 100 and green > 200 and blue < 100:
+            return self._get_localized_color("light_green", language)
+        elif red < 100 and green < 100 and blue > 200:
+            return self._get_localized_color("light_blue", language)
+        elif red > 200 and green > 200 and blue < 100:
+            return self._get_localized_color("light_yellow", language)
+        elif red > 200 and green < 100 and blue > 200:
+            return self._get_localized_color("light_purple", language)
+        elif red < 100 and green > 200 and blue > 200:
+            return self._get_localized_color("light_cyan", language)
+        
+        # Smíšené barvy
+        elif red > 150 and green > 100 and blue < 100:
+            return self._get_localized_color("orange", language)
+        elif red > 100 and green > 150 and blue < 100:
+            return self._get_localized_color("lime", language)
+        elif red < 100 and green > 150 and blue > 100:
+            return self._get_localized_color("mint", language)
+        elif red > 100 and green < 100 and blue > 150:
+            return self._get_localized_color("pink", language)
+        elif red > 150 and green < 100 and blue > 100:
+            return self._get_localized_color("magenta", language)
+        
+        # Specifické barvy z TZL
+        elif red == 177 and green == 0 and blue == 255:
+            return self._get_localized_color("dark_pink", language)
+        elif red == 255 and green == 0 and blue == 92:
+            return self._get_localized_color("pink", language)
+        elif red == 83 and green == 106 and blue == 255:
+            return self._get_localized_color("light_blue", language)
+        
+        # Pro ostatní barvy použít RGB hodnoty
+        else:
+            return f"RGB({red},{green},{blue})"
+
+    def _rgb_to_hex(self, red, green, blue):
+        """Převede RGB hodnoty na hex kód barvy."""
+        return f"#{red:02x}{green:02x}{blue:02x}".upper()
+
+    @property
+    def options(self):
+        return self._options
+
+    @property
+    def current_option(self):
+        return self._current_option
+
+    async def async_update(self):
+        data = self._shared_data.data
+        if data:
+            # Najít odpovídající TZL zone podle zoneId
+            tzl_zone = next(
+                (
+                    zone
+                    for zone in data.get("tzlZones", [])
+                    if zone["zoneId"] == self._tzl_zone_data["zoneId"]
+                ),
+                None,
+            )
+            if tzl_zone:
+                state = tzl_zone.get("state", "OFF")
+                red = tzl_zone.get("red", 0)
+                green = tzl_zone.get("green", 0)
+                blue = tzl_zone.get("blue", 0)
+                
+                # Prioritně najít shodu s definovanými barvami
+                found_match = False
+                for color in self._tzl_colors:
+                    if (color.get("red") == red and 
+                        color.get("green") == green and 
+                        color.get("blue") == blue):
+                        color_name = self._get_color_name(red, green, blue)
+                        self._current_option = f"{color_name} (RGB: {red},{green},{blue})"
+                        found_match = True
+                        break
+                
+                # Pokud se nenašla shoda a barva je černá (0,0,0) a stav je OFF, nastavit na OFF
+                if not found_match and red == 0 and green == 0 and blue == 0 and state == "OFF":
+                    self._current_option = "OFF"
+                elif not found_match:
+                    # Pokud se nenašla shoda, ale barva není černá, zobrazit RGB hodnoty
+                    color_name = self._get_color_name(red, green, blue)
+                    self._current_option = f"{color_name} (RGB: {red},{green},{blue})"
+                
+                _LOGGER.debug("Updated TZL Color Select %s: %s (RGB: %s,%s,%s)", 
+                             self._tzl_zone_data["zoneId"], self._current_option, red, green, blue)
+
+    async def async_select_option(self, option: str):
+        if option == "OFF":
+            _LOGGER.debug(f"Turning off TZL zone {self._tzl_zone_data['zoneId']}")
+            # Zde by mělo být volání API pro vypnutí zóny
+            # await self._shared_data.async_set_tzl_zone_color(
+            #     self._tzl_zone_data["zoneId"], 0, 0, 0, "OFF"
+            # )
+        else:
+            # Najít odpovídající barvu podle option (formát: "Název (RGB: r,g,b)")
+            if " (RGB: " in option:
+                # Extrahovat RGB hodnoty z option
+                rgb_part = option.split(" (RGB: ")[1].rstrip(")")
+                try:
+                    red, green, blue = map(int, rgb_part.split(","))
+                    _LOGGER.debug(f"Setting TZL zone {self._tzl_zone_data['zoneId']} to RGB {red},{green},{blue}")
+                    # Zde by mělo být volání API pro nastavení barvy
+                    # await self._shared_data.async_set_tzl_zone_color(
+                    #     self._tzl_zone_data["zoneId"], red, green, blue, "NORMAL"
+                    # )
+                except ValueError:
+                    _LOGGER.error(f"Invalid RGB format in option: {option}")
+            else:
+                _LOGGER.error(f"Unknown option format: {option}")
+        
+        self.async_write_ha_state()
+
+    @property
+    def extra_state_attributes(self):
+        data = self._shared_data.data
+        if data:
+            # Najít odpovídající TZL zone podle zoneId
+            tzl_zone = next(
+                (
+                    zone
+                    for zone in data.get("tzlZones", [])
+                    if zone["zoneId"] == self._tzl_zone_data["zoneId"]
+                ),
+                None,
+            )
+            if tzl_zone:
+                red = tzl_zone.get("red", 0)
+                green = tzl_zone.get("green", 0)
+                blue = tzl_zone.get("blue", 0)
+                current_color_name = self._get_color_name(red, green, blue)
+                current_hex = self._rgb_to_hex(red, green, blue)
+                
+                # Vytvořit seznam dostupných barev
+                available_colors = []
+                for color in self._tzl_colors:
+                    color_name = self._get_color_name(
+                        color.get("red", 0), 
+                        color.get("green", 0), 
+                        color.get("blue", 0)
+                    )
+                    available_colors.append({
+                        "color_id": color.get("colorId"),
+                        "name": color_name,
+                        "rgb": [color.get("red", 0), color.get("green", 0), color.get("blue", 0)],
+                        "hex": self._rgb_to_hex(color.get("red", 0), color.get("green", 0), color.get("blue", 0))
+                    })
+                
+                attrs = {
+                    "zone_name": tzl_zone.get("zoneName"),
+                    "zone_id": tzl_zone.get("zoneId"),
+                    "current_state": tzl_zone.get("state"),
+                    "current_rgb": [red, green, blue],
+                    "current_color_name": current_color_name,
+                    "current_hex": current_hex,
+                    "available_colors": available_colors,
+                }
+                return attrs

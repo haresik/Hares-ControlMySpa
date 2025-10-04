@@ -19,6 +19,7 @@ PLATFORMS = [
     Platform.SWITCH,
     Platform.CLIMATE,
     Platform.BUTTON,
+    Platform.LIGHT,
 ]
 
 # async def async_setup(hass, config):

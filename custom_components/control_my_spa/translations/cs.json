@@ -54,9 +54,73 @@
       },
       "ozone": {
         "name": "Ozón"
+      },
+      "tzl_zone": {
+        "name": "TZL zóna"
+      },
+      "tzl_zone_1": {
+        "name": "TZL zóna A"
+      },
+      "tzl_zone_2": {
+        "name": "TZL zóna B"
+      },
+      "tzl_zone_3": {
+        "name": "TZL zóna C"
+      },
+      "tzl_rgb": {
+        "name": "TZL RGB"
+      },
+      "tzl_rgb_1": {
+        "name": "TZL RGB A"
+      },
+      "tzl_rgb_2": {
+        "name": "TZL RGB B"
+      },
+      "tzl_rgb_3": {
+        "name": "TZL RGB C"
       }
     },
     "select": {
+      "tzl_color_select": {
+        "name": "TZL barva"
+      },
+      "tzl_color_select_1": {
+        "name": "TZL barva A"
+      },
+      "tzl_color_select_2": {
+        "name": "TZL barva B"
+      },
+      "tzl_color_select_3": {
+        "name": "TZL barva C"
+      }
+    },
+    "light": {
+      "tzl_zone_light": {
+        "name": "TZL světlo"
+      },
+      "tzl_zone_light_1": {
+        "name": "TZL světlo A"
+      },
+      "tzl_zone_light_2": {
+        "name": "TZL světlo B"
+      },
+      "tzl_zone_light_3": {
+        "name": "TZL světlo C"
+      }
+    },
+    "select": {
+      "tzl_color_select": {
+        "name": "TZL barva"
+      },
+      "tzl_color_select_1": {
+        "name": "TZL barva A"
+      },
+      "tzl_color_select_2": {
+        "name": "TZL barva B"
+      },
+      "tzl_color_select_3": {
+        "name": "TZL barva C"
+      },
       "light": {
         "name": "Osvětlení",
         "state": {
@@ -94,6 +158,13 @@
       },
       "pump_2": {
         "name": "Trysky 2",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "pump_3": {
+        "name": "Trysky 3",
         "state": {
           "OFF": "Vypnuto",
           "HIGH": "Zapnuto"
@@ -172,6 +243,13 @@
       },
       "pump_2": {
         "name": "Trysky 2",
+        "state": {
+          "OFF": "Vypnuto",
+          "HIGH": "Zapnuto"
+        }
+      },
+      "pump_3": {
+        "name": "Trysky 3",
         "state": {
           "OFF": "Vypnuto",
           "HIGH": "Zapnuto"

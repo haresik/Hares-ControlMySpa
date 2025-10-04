@@ -36,6 +36,9 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
         component for component in shared_data.data["components"]
         if component["componentType"] == "OZONE"
     ]
+    
+    # Najít všechny TZL zones
+    tzl_zones = shared_data.data.get("tzlZones", [])
 
     # Vytvořit entity pro každou CIRCULATION_PUMP
     entities = [SpaCirculationPumpSensor(shared_data, device_info, pump, len(circulation_pumps)) for pump in circulation_pumps]
@@ -43,6 +46,8 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     entities.append(SpaDesiredTemperatureSensor(shared_data, device_info))  # Požadovaná teplota
     entities += [SpaFilterSensor(shared_data, device_info, filter_data, len(filters)) for filter_data in filters]
     entities += [SpaOzoneSensor(shared_data, device_info, ozone_data, len(ozones)) for ozone_data in ozones]
+    entities += [SpaTzlZoneSensor(shared_data, device_info, tzl_zone_data, len(tzl_zones)) for tzl_zone_data in tzl_zones]
+    entities += [SpaTzlZoneRgbSensor(shared_data, device_info, tzl_zone_data, len(tzl_zones)) for tzl_zone_data in tzl_zones]
 
     async_add_entities(entities, True)
     _LOGGER.debug("START Śensor control_my_spa")
@@ -257,3 +262,334 @@ class SpaOzoneSensor(SpaSensorBase):
     @property
     def native_value(self):
         return self._state
+
+class SpaTzlZoneSensor(SpaSensorBase):
+    def __init__(self, shared_data, device_info, tzl_zone_data, count_tzl_zones):
+        self._shared_data = shared_data
+        self._tzl_zone_data = tzl_zone_data
+        self._attr_native_unit_of_measurement = None  # Jednotka není potřeba
+        self._attr_should_poll = False  # Data jsou sdílena, posluchač
+        self._state = None
+        self._attr_device_info = device_info
+        self._attr_icon = "mdi:lightbulb"
+        self._attr_unique_id = (
+            f"sensor.spa_tzl_zone"
+            if count_tzl_zones == 1
+            else f"sensor.spa_tzl_zone_{tzl_zone_data['zoneId']}"
+        )
+        self._attr_translation_key = (
+            "tzl_zone"
+            if count_tzl_zones == 1
+            else f"tzl_zone_{tzl_zone_data['zoneId']}"
+        )
+        self.entity_id = self._attr_unique_id
+
+    async def async_update(self):
+        data = self._shared_data.data
+        if data:
+            # Najít odpovídající TZL zone podle zoneId
+            tzl_zone = next(
+                (
+                    zone
+                    for zone in data.get("tzlZones", [])
+                    if zone["zoneId"] == self._tzl_zone_data["zoneId"]
+                ),
+                None,
+            )
+            if tzl_zone:
+                self._state = tzl_zone["state"]
+                _LOGGER.debug("Updated TZL Zone %s: %s", self._tzl_zone_data["zoneId"], self._state)
+
+    @property
+    def native_value(self):
+        return self._state
+
+    @property
+    def extra_state_attributes(self):
+        data = self._shared_data.data
+        if data:
+            # Najít odpovídající TZL zone podle zoneId
+            tzl_zone = next(
+                (
+                    zone
+                    for zone in data.get("tzlZones", [])
+                    if zone["zoneId"] == self._tzl_zone_data["zoneId"]
+                ),
+                None,
+            )
+            if tzl_zone:
+                attrs = {
+                    "zone_name": tzl_zone.get("zoneName"),
+                    "intensity": tzl_zone.get("intensity"),
+                    "speed": tzl_zone.get("speed"),
+                    "red": tzl_zone.get("red"),
+                    "green": tzl_zone.get("green"),
+                    "blue": tzl_zone.get("blue"),
+                }
+                return attrs
+
+
+class SpaTzlZoneRgbSensor(SpaSensorBase):
+    def __init__(self, shared_data, device_info, tzl_zone_data, count_tzl_zones):
+        self._shared_data = shared_data
+        self._tzl_zone_data = tzl_zone_data
+        self._attr_native_unit_of_measurement = None  # Jednotka není potřeba
+        self._attr_should_poll = False  # Data jsou sdílena, posluchač
+        self._state = None
+        self._attr_device_info = device_info
+        self._attr_icon = "mdi:palette"
+        self._attr_unique_id = (
+            f"sensor.spa_tzl_rgb"
+            if count_tzl_zones == 1
+            else f"sensor.spa_tzl_rgb_{tzl_zone_data['zoneId']}"
+        )
+        self._attr_translation_key = (
+            "tzl_rgb"
+            if count_tzl_zones == 1
+            else f"tzl_rgb_{tzl_zone_data['zoneId']}"
+        )
+        self.entity_id = self._attr_unique_id
+
+    def _get_localized_color(self, color_key, language):
+        """Vrátí lokalizovaný název barvy s emoji."""
+        colors = {
+            "white": {
+                "cs": "⚪ Bílá",
+                "en": "⚪ White", 
+                "de": "⚪ Weiß"
+            },
+            "red": {
+                "cs": "🔴 Červená",
+                "en": "🔴 Red",
+                "de": "🔴 Rot"
+            },
+            "green": {
+                "cs": "🟢 Zelená",
+                "en": "🟢 Green",
+                "de": "🟢 Grün"
+            },
+            "blue": {
+                "cs": "🔵 Modrá",
+                "en": "🔵 Blue",
+                "de": "🔵 Blau"
+            },
+            "yellow": {
+                "cs": "🟡 Žlutá",
+                "en": "🟡 Yellow",
+                "de": "🟡 Gelb"
+            },
+            "purple": {
+                "cs": "🟣 Fialová",
+                "en": "🟣 Purple",
+                "de": "🟣 Lila"
+            },
+            "cyan": {
+                "cs": "🔵 Azurová",
+                "en": "🔵 Cyan",
+                "de": "🔵 Cyan"
+            },
+            "black": {
+                "cs": "⚫ Černá",
+                "en": "⚫ Black",
+                "de": "⚫ Schwarz"
+            },
+            "light_gray": {
+                "cs": "⚪ Světle šedá",
+                "en": "⚪ Light Gray",
+                "de": "⚪ Hellgrau"
+            },
+            "dark_gray": {
+                "cs": "⚫ Tmavě šedá",
+                "en": "⚫ Dark Gray",
+                "de": "⚫ Dunkelgrau"
+            },
+            "light_red": {
+                "cs": "🔴 Světle červená",
+                "en": "🔴 Light Red",
+                "de": "🔴 Hellrot"
+            },
+            "light_green": {
+                "cs": "🟢 Světle zelená",
+                "en": "🟢 Light Green",
+                "de": "🟢 Hellgrün"
+            },
+            "light_blue": {
+                "cs": "🔵 Světle modrá",
+                "en": "🔵 Light Blue",
+                "de": "🔵 Hellblau"
+            },
+            "light_yellow": {
+                "cs": "🟡 Světle žlutá",
+                "en": "🟡 Light Yellow",
+                "de": "🟡 Hellgelb"
+            },
+            "light_purple": {
+                "cs": "🟣 Světle fialová",
+                "en": "🟣 Light Purple",
+                "de": "🟣 Helllila"
+            },
+            "light_cyan": {
+                "cs": "🔵 Světle azurová",
+                "en": "🔵 Light Cyan",
+                "de": "🔵 Hellcyan"
+            },
+            "orange": {
+                "cs": "🟠 Oranžová",
+                "en": "🟠 Orange",
+                "de": "🟠 Orange"
+            },
+            "lime": {
+                "cs": "🟢 Limetková",
+                "en": "🟢 Lime",
+                "de": "🟢 Limette"
+            },
+            "mint": {
+                "cs": "🟢 Mátová",
+                "en": "🟢 Mint",
+                "de": "🟢 Minze"
+            },
+            "pink": {
+                "cs": "🩷 Růžová",
+                "en": "🩷 Pink",
+                "de": "🩷 Rosa"
+            },
+            "magenta": {
+                "cs": "🟣 Magenta",
+                "en": "🟣 Magenta",
+                "de": "🟣 Magenta"
+            },
+            "dark_pink": {
+                "cs": "🩷 Tmavě růžová",
+                "en": "🩷 Dark Pink",
+                "de": "🩷 Dunkelrosa"
+            }
+        }
+        
+        return colors.get(color_key, {}).get(language, colors[color_key]["cs"])
+
+    def _get_color_name(self, red, green, blue):
+        """Vrátí název barvy na základě RGB hodnot."""
+        # Získat aktuální jazyk Home Assistant
+        try:
+            language = self.hass.config.language
+        except:
+            language = "cs"  # Fallback na češtinu
+        
+        # Základní barvy (přesné shody)
+        if red == 255 and green == 255 and blue == 255:
+            return self._get_localized_color("white", language)
+        elif red == 255 and green == 0 and blue == 0:
+            return self._get_localized_color("red", language)
+        elif red == 0 and green == 255 and blue == 0:
+            return self._get_localized_color("green", language)
+        elif red == 0 and green == 0 and blue == 255:
+            return self._get_localized_color("blue", language)
+        elif red == 255 and green == 255 and blue == 0:
+            return self._get_localized_color("yellow", language)
+        elif red == 255 and green == 0 and blue == 255:
+            return self._get_localized_color("purple", language)
+        elif red == 0 and green == 255 and blue == 255:
+            return self._get_localized_color("cyan", language)
+        elif red == 0 and green == 0 and blue == 0:
+            return self._get_localized_color("black", language)
+        
+        # Rozšířené barvy (přibližné shody)
+        elif red > 200 and green > 200 and blue > 200:
+            return self._get_localized_color("light_gray", language)
+        elif red < 50 and green < 50 and blue < 50:
+            return self._get_localized_color("dark_gray", language)
+        elif red > 200 and green < 100 and blue < 100:
+            return self._get_localized_color("light_red", language)
+        elif red < 100 and green > 200 and blue < 100:
+            return self._get_localized_color("light_green", language)
+        elif red < 100 and green < 100 and blue > 200:
+            return self._get_localized_color("light_blue", language)
+        elif red > 200 and green > 200 and blue < 100:
+            return self._get_localized_color("light_yellow", language)
+        elif red > 200 and green < 100 and blue > 200:
+            return self._get_localized_color("light_purple", language)
+        elif red < 100 and green > 200 and blue > 200:
+            return self._get_localized_color("light_cyan", language)
+        
+        # Smíšené barvy
+        elif red > 150 and green > 100 and blue < 100:
+            return self._get_localized_color("orange", language)
+        elif red > 100 and green > 150 and blue < 100:
+            return self._get_localized_color("lime", language)
+        elif red < 100 and green > 150 and blue > 100:
+            return self._get_localized_color("mint", language)
+        elif red > 100 and green < 100 and blue > 150:
+            return self._get_localized_color("pink", language)
+        elif red > 150 and green < 100 and blue > 100:
+            return self._get_localized_color("magenta", language)
+        
+        # Specifické barvy z TZL
+        elif red == 177 and green == 0 and blue == 255:
+            return self._get_localized_color("dark_pink", language)
+        elif red == 255 and green == 0 and blue == 92:
+            return self._get_localized_color("pink", language)
+        elif red == 83 and green == 106 and blue == 255:
+            return self._get_localized_color("light_blue", language)
+        
+        # Pro ostatní barvy použít RGB hodnoty
+        else:
+            return f"🎨 RGB({red},{green},{blue})"
+
+    async def async_update(self):
+        data = self._shared_data.data
+        if data:
+            # Najít odpovídající TZL zone podle zoneId
+            tzl_zone = next(
+                (
+                    zone
+                    for zone in data.get("tzlZones", [])
+                    if zone["zoneId"] == self._tzl_zone_data["zoneId"]
+                ),
+                None,
+            )
+            if tzl_zone:
+                red = tzl_zone.get("red", 0)
+                green = tzl_zone.get("green", 0)
+                blue = tzl_zone.get("blue", 0)
+                
+                # Vytvořit popisný název barvy místo jen RGB hodnot
+                color_name = self._get_color_name(red, green, blue)
+                self._state = color_name
+                
+                _LOGGER.debug("Updated TZL RGB Sensor %s: %s", 
+                             self._tzl_zone_data["zoneId"], color_name)
+
+    @property
+    def native_value(self):
+        return self._state
+
+    @property
+    def extra_state_attributes(self):
+        data = self._shared_data.data
+        if data:
+            # Najít odpovídající TZL zone podle zoneId
+            tzl_zone = next(
+                (
+                    zone
+                    for zone in data.get("tzlZones", [])
+                    if zone["zoneId"] == self._tzl_zone_data["zoneId"]
+                ),
+                None,
+            )
+            if tzl_zone:
+                red = tzl_zone.get("red", 0)
+                green = tzl_zone.get("green", 0)
+                blue = tzl_zone.get("blue", 0)
+                hex_color = f"#{red:02x}{green:02x}{blue:02x}".upper()
+                
+                attrs = {
+                    "zone_name": tzl_zone.get("zoneName"),
+                    "zone_id": tzl_zone.get("zoneId"),
+                    "red": red,
+                    "green": green,
+                    "blue": blue,
+                    "hex": hex_color,
+                    "state": tzl_zone.get("state"),
+                    "intensity": tzl_zone.get("intensity"),
+                }
+                return attrs

@@ -2,6 +2,9 @@ import aiohttp
 import time
 import asyncio
 import logging
+import json
+import os
+from . import const
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -112,6 +115,25 @@ class ControlMySpa:
 
     async def getSpa(self):
         try:
+            # Test mode - načtení dat ze souboru
+            if const.TEST_MODE and const.TEST_MODE.startswith("Data"):
+                test_file_path = os.path.join(os.path.dirname(__file__), 'testData', f'{const.TEST_MODE}.json')
+                try:
+                    with open(test_file_path, 'r', encoding='utf-8') as f:
+                        test_data = json.load(f)
+                        _LOGGER.info(f"Načtena testovací data z {test_file_path}")
+                        return self.constructCurrentState(test_data.get('data'))
+                except FileNotFoundError:
+                    _LOGGER.error(f"Testovací soubor nenalezen: {test_file_path}")
+                    return None
+                except json.JSONDecodeError as e:
+                    _LOGGER.error(f"Chyba při parsování JSON souboru: {e}")
+                    return None
+                except Exception as e:
+                    _LOGGER.error(f"Chyba při načítání testovacích dat: {e}")
+                    return None
+            
+            # Normální režim - načtení dat z API
             if not self.isLoggedIn():
                 await self.login()
             if not self.spaId:
@@ -130,7 +152,7 @@ class ControlMySpa:
 
     def constructCurrentState(self, spaData):
         try:
-            return {
+            result = {
                 'desiredTemp': float(spaData['desiredTemp']),
                 'targetDesiredTemp': float(spaData['desiredTemp']),
                 'currentTemp': float(spaData['currentTemp']),
@@ -154,6 +176,23 @@ class ControlMySpa:
                 'controllerSoftwareVersion': spaData['systemInfo']['controllerSoftwareVersion'],
                 'isOnline': bool(spaData.get('isOnline')),
             }
+            
+            # Načtení TZL zones pokud je TZL připojen
+            if spaData.get('primaryTZLStatus') == 'TZL_CONNECTED':
+                tzl_state = spaData.get('tzlState', {})
+                tzl_light_status = tzl_state.get('tzlLightStatus', {})
+                tzl_configuration = tzl_state.get('tzlConfiguration', {})
+                tzl_color_settings = tzl_state.get('tzlColorSettings', {})
+                
+                result['tzlZones'] = tzl_light_status.get('tzlZones', [])
+                result['tzlZoneFunctions'] = tzl_configuration.get('tzlZoneFunctions', [])
+                result['tzlColors'] = tzl_color_settings.get('tzlColors', [])
+            else:
+                result['tzlZones'] = []
+                result['tzlZoneFunctions'] = []
+                result['tzlColors'] = []
+                
+            return result
         except Exception as e:
             _LOGGER.error(f"constructCurrentState Error: {e}")
             return None

@@ -54,9 +54,73 @@
       },
       "ozone": {
         "name": "Ozone"
+      },
+      "tzl_zone": {
+        "name": "TZL zone"
+      },
+      "tzl_zone_1": {
+        "name": "TZL zone A"
+      },
+      "tzl_zone_2": {
+        "name": "TZL zone B"
+      },
+      "tzl_zone_3": {
+        "name": "TZL zone C"
+      },
+      "tzl_rgb": {
+        "name": "TZL RGB"
+      },
+      "tzl_rgb_1": {
+        "name": "TZL RGB A"
+      },
+      "tzl_rgb_2": {
+        "name": "TZL RGB B"
+      },
+      "tzl_rgb_3": {
+        "name": "TZL RGB C"
       }
     },
     "select": {
+      "tzl_color_select": {
+        "name": "TZL color"
+      },
+      "tzl_color_select_1": {
+        "name": "TZL color A"
+      },
+      "tzl_color_select_2": {
+        "name": "TZL color B"
+      },
+      "tzl_color_select_3": {
+        "name": "TZL color C"
+      }
+    },
+    "light": {
+      "tzl_zone_light": {
+        "name": "TZL light"
+      },
+      "tzl_zone_light_1": {
+        "name": "TZL light A"
+      },
+      "tzl_zone_light_2": {
+        "name": "TZL light B"
+      },
+      "tzl_zone_light_3": {
+        "name": "TZL light C"
+      }
+    },
+    "select": {
+      "tzl_color_select": {
+        "name": "TZL color"
+      },
+      "tzl_color_select_1": {
+        "name": "TZL color A"
+      },
+      "tzl_color_select_2": {
+        "name": "TZL color B"
+      },
+      "tzl_color_select_3": {
+        "name": "TZL color C"
+      },
       "light": {
         "name": "Light",
         "state": {
@@ -94,6 +158,13 @@
       },
       "pump_2": {
         "name": "Jets 2",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "pump_3": {
+        "name": "Jets 3",
         "state": {
           "OFF": "Off",
           "HIGH": "On"
@@ -172,6 +243,13 @@
       },
       "pump_2": {
         "name": "Jets 2",
+        "state": {
+          "OFF": "Off",
+          "HIGH": "On"
+        }
+      },
+      "pump_3": {
+        "name": "Jets 3",
         "state": {
           "OFF": "Off",
           "HIGH": "On"
