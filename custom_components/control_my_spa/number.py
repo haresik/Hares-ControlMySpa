@@ -1,7 +1,9 @@
 from homeassistant.components.number import NumberEntity
 from homeassistant.const import UnitOfTemperature
+from homeassistant.core import HomeAssistant
 from .const import DOMAIN
 import logging
+import asyncio
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,6 +49,12 @@ class SpaTargetDesiredTempNumber(NumberEntity):
         self._attr_unique_id = f"number.spa_target_desired_temperature"
         self._attr_translation_key = f"target_desired_temperature"
         self.entity_id = self._attr_unique_id
+        
+        # Debounce mechanismus
+        self._debounce_delay = 2.0  # Zpoždění v sekundách (konfigurovatelné)
+        self._debounce_task = None
+        self._pending_value = None
+        self._is_processing = False
 
     async def async_update(self):
         """Aktualizace hodnoty z datového zdroje."""
@@ -57,19 +65,20 @@ class SpaTargetDesiredTempNumber(NumberEntity):
                 self._state = round((fahrenheit_temp - 32) * 5.0 / 9.0, 1)  # Převod na Celsia
                 _LOGGER.debug("Updated target desired temperature (Celsius): %s", self._state)
 
-    async def async_set_value(self, value: float):
-        """Nastavení nové hodnoty."""
-        if not (self._attr_min_value <= value <= self._attr_max_value):
-            _LOGGER.error("Hodnota %s je mimo rozsah (%s - %s)", value, self._attr_min_value, self._attr_max_value)
+    async def _debounced_set_value(self, value: float):
+        """Skutečné nastavení hodnoty po zpoždění."""
+        if self._is_processing:
+            _LOGGER.debug("Přeskočeno nastavení hodnoty %s - již probíhá zpracování", value)
             return
 
+        self._is_processing = True
         try:
             self._shared_data.pause_updates()
             fahrenheit_temp = round(value * 9.0 / 5.0 + 32, 1)  # Převod na Fahrenheit
             success = await self._shared_data._client.setTemp(fahrenheit_temp)
             if success:
                 self._state = value
-                _LOGGER.info("Úspěšně nastavena požadovaná teplota na %s °C", value)
+                _LOGGER.info("Úspěšně nastavena požadovaná teplota na %s °C (po zpoždění)", value)
             else:
                 _LOGGER.error("Nepodařilo se nastavit požadovanou teplotu na %s °C", value)
             await self._shared_data.async_force_update()
@@ -78,8 +87,62 @@ class SpaTargetDesiredTempNumber(NumberEntity):
             raise
         finally:
             self._shared_data.resume_updates()
+            self._is_processing = False
+
+    async def async_set_value(self, value: float):
+        """Nastavení nové hodnoty s debounce mechanismem."""
+        if not (self._attr_min_value <= value <= self._attr_max_value):
+            _LOGGER.error("Hodnota %s je mimo rozsah (%s - %s)", value, self._attr_min_value, self._attr_max_value)
+            return
+
+        # Zrušit předchozí debounce task pokud existuje
+        if self._debounce_task and not self._debounce_task.done():
+            self._debounce_task.cancel()
+            _LOGGER.debug("Zrušeno předchozí zpožděné nastavení hodnoty")
+
+        # Uložit novou hodnotu
+        self._pending_value = value
+        _LOGGER.debug("Naplánováno nastavení hodnoty %s °C za %s sekund", value, self._debounce_delay)
+
+        # Vytvořit nový debounce task
+        self._debounce_task = asyncio.create_task(self._delayed_set_value())
+
+    async def _delayed_set_value(self):
+        """Zpožděné nastavení hodnoty."""
+        try:
+            await asyncio.sleep(self._debounce_delay)
+            if self._pending_value is not None:
+                value = self._pending_value
+                self._pending_value = None
+                await self._debounced_set_value(value)
+        except asyncio.CancelledError:
+            _LOGGER.debug("Zpožděné nastavení hodnoty bylo zrušeno")
+        except Exception as e:
+            _LOGGER.error("Chyba v zpožděném nastavení hodnoty: %s", str(e))
 
     @property
     def native_value(self):
         """Vrací aktuální hodnotu."""
         return self._state
+
+    @property
+    def extra_state_attributes(self):
+        """Vrátí dodatečné atributy entity."""
+        attrs = {
+            "debounce_delay": self._debounce_delay,
+            "pending_value": self._pending_value,
+            "is_processing": self._is_processing
+        }
+        return attrs
+
+    def set_debounce_delay(self, delay: float):
+        """Nastaví nové zpoždění pro debounce mechanismus."""
+        if delay < 0:
+            _LOGGER.warning("Zpoždění nemůže být záporné, nastavuji na 0")
+            delay = 0.0
+        
+        self._debounce_delay = delay
+        _LOGGER.info("Nastaveno nové zpoždění debounce na %s sekund", delay)
+        
+        # Aktualizovat stav entity
+        self.async_write_ha_state()

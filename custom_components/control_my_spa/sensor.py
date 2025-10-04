@@ -84,6 +84,8 @@ class SpaDesiredTemperatureSensor(SpaSensorBase):
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._state = None
+        self._high_range_value = None  # Poslední hodnota pro HIGH rozsah
+        self._low_range_value = None   # Poslední hodnota pro LOW rozsah
         self._attr_icon = "mdi:thermometer"
         self._attr_device_info = device_info
         self._attr_unique_id = f"sensor.spa_desired_temperature"
@@ -94,14 +96,35 @@ class SpaDesiredTemperatureSensor(SpaSensorBase):
         data = self._shared_data.data
         if data:
             fahrenheit_temp = data.get("desiredTemp")
+            temp_range = data.get("tempRange")
+            
             if fahrenheit_temp is not None:
-                self._state = round((fahrenheit_temp - 32) * 5.0 / 9.0, 1)  # Převod na Celsia
-                _LOGGER.debug("Updated desired temperature (Celsius): %s", self._state)
-                # self.async_write_ha_state()
+                celsius_temp = round((fahrenheit_temp - 32) * 5.0 / 9.0, 1)  # Převod na Celsia
+                self._state = celsius_temp
+                
+                # Uložit hodnotu podle aktuálního rozsahu
+                if temp_range == "HIGH":
+                    self._high_range_value = celsius_temp
+                    _LOGGER.debug("Updated desired temperature (Celsius): %s (HIGH range)", self._state)
+                elif temp_range == "LOW":
+                    self._low_range_value = celsius_temp
+                    _LOGGER.debug("Updated desired temperature (Celsius): %s (LOW range)", self._state)
+                else:
+                    _LOGGER.debug("Updated desired temperature (Celsius): %s (unknown range: %s)", self._state, temp_range)
 
     @property
     def native_value(self):
         return self._state
+
+    @property
+    def extra_state_attributes(self):
+        """Vrátí dodatečné atributy entity."""
+        attrs = {}
+        if self._high_range_value is not None:
+            attrs["high_range_value"] = self._high_range_value
+        if self._low_range_value is not None:
+            attrs["low_range_value"] = self._low_range_value
+        return attrs
 
 class SpaCirculationPumpSensor(SpaSensorBase):
     def __init__(self, shared_data, device_info, pump_data, count_pump):

@@ -1,6 +1,8 @@
 from datetime import timedelta
 from homeassistant.components.select import SelectEntity
 from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.core import HomeAssistant
+from homeassistant.components import persistent_notification
 from .const import DOMAIN
 import logging
 
@@ -49,7 +51,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     entities = [SpaPumpSelect(shared_data, device_info, pump, len(pumps)) for pump in pumps]
     entities += [SpaBlowerSelect(shared_data, device_info, blower, len(blowers)) for blower in blowers]
     entities += [SpaLightSelect(shared_data, device_info, light, len(lights)) for light in lights]
-    entities.append(SpaTempRangeSelect(shared_data, device_info))  # Přidat entitu
+    entities.append(SpaTempRangeSelect(shared_data, device_info, hass))  # Přidat entitu
     entities.append(SpaHeaterModeSelect(shared_data, device_info))  # Přidat entitu pro heater mode
 
     async_add_entities(entities, True)
@@ -64,8 +66,9 @@ class SpaSelectBase(SelectEntity):
     _attr_has_entity_name = True
 
 class SpaTempRangeSelect(SpaSelectBase):
-    def __init__(self, shared_data, device_info):
+    def __init__(self, shared_data, device_info, hass):
         self._shared_data = shared_data
+        self._hass = hass  # Uložit hass objekt pro notifikace
         self._attr_options = ["HIGH", "LOW"]  # Možnosti výběru
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._attr_current_option = None
@@ -109,6 +112,53 @@ class SpaTempRangeSelect(SpaSelectBase):
                     target_state,
                     " (2. pokus)" if is_retry else ""
                 )
+
+                # Porovnat hodnotu z sensor.spa_desired_temperature s novou hodnotou desiredTemp
+                if target_state == "HIGH":
+                    try:
+                        # Získat aktuální hodnotu z sensor.spa_desired_temperature
+                        desired_temp_sensor = self._hass.states.get("sensor.spa_desired_temperature")
+                        current_high_range_temp = None
+                        
+                        if desired_temp_sensor and desired_temp_sensor.state not in ["unavailable", "unknown"]:
+                            # Zkusit získat poslední hodnotu pro HIGH rozsah z atributů
+                            high_range_attr = desired_temp_sensor.attributes.get("high_range_value")
+                            if high_range_attr is not None:
+                                current_high_range_temp = float(high_range_attr)
+                                _LOGGER.debug("Using high range value from attributes: %s", current_high_range_temp)
+                        
+                        # Získat novou hodnotu desiredTemp z odpovědi
+                        new_desired_temp_f = response_data.get("desiredTemp")
+                        if new_desired_temp_f is not None and current_high_range_temp is not None:
+                            new_desired_temp_c = round((new_desired_temp_f - 32) * 5.0 / 9.0, 1)
+                            
+                            # Porovnat hodnoty
+                            if abs(current_high_range_temp - new_desired_temp_c) > 0.1:  # Tolerance 0.1°C
+                                # Vytvořit notifikaci
+                                notification_title = "Změna požadované teploty v HIGH rozsahu"
+                                notification_message = (
+                                    f"Požadovaná teplota v HIGH rozsahu se změnila!\n"
+                                    f"Předchozí hodnota: {current_high_range_temp}°C\n"
+                                    f"Nová hodnota: {new_desired_temp_c}°C\n"
+                                    f"Rozdíl: {new_desired_temp_c - current_high_range_temp:+.1f}°C"
+                                )
+                                
+                                # Odeslat notifikaci
+                                persistent_notification.async_create(
+                                    self._hass,
+                                    notification_message,
+                                    title=notification_title,
+                                    notification_id=f"spa_temp_change_{int(self._hass.time.time())}"
+                                )
+                                
+                                _LOGGER.info(
+                                    "Notifikace odeslána: Změna požadované teploty v HIGH rozsahu z %s°C na %s°C",
+                                    current_high_range_temp,
+                                    new_desired_temp_c
+                                )
+                    except (ValueError, AttributeError) as e:
+                        _LOGGER.warning("Chyba při porovnávání teplot: %s", str(e))
+
                 return True
             else:
                 _LOGGER.warning(
