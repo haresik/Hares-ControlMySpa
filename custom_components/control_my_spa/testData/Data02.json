@@ -209,7 +209,7 @@
             "zoneId": "2",
             "zoneName": "B",
             "state": "NORMAL",
-            "intensity": 0,
+            "intensity": 8,
             "speed": 0,
             "red": 255,
             "green": 255,
@@ -218,7 +218,7 @@
           {
             "zoneId": "3",
             "zoneName": "C",
-            "state": "OFF",
+            "state": "RELAX",
             "intensity": 8,
             "speed": 0,
             "red": 177,

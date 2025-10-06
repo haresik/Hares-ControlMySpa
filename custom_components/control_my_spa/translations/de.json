@@ -110,16 +110,124 @@
     },
     "select": {
       "tzl_color_select": {
-        "name": "TZL Farbe"
+        "name": "TZL Farbe",
+        "state": {
+          "OFF": "Aus"
+        }
       },
       "tzl_color_select_1": {
-        "name": "TZL Farbe A"
+        "name": "TZL Farbe A",
+        "state": {
+          "OFF": "Aus"
+        }
       },
       "tzl_color_select_2": {
-        "name": "TZL Farbe B"
+        "name": "TZL Farbe B",
+        "state": {
+          "OFF": "Aus"
+        }
       },
       "tzl_color_select_3": {
-        "name": "TZL Farbe C"
+        "name": "TZL Farbe C",
+        "state": {
+          "OFF": "Aus"
+        }
+      },
+      "tzl_zone_mode": {
+        "name": "TZL Zonenmodus",
+        "state": {
+          "OFF": "Aus",
+          "PARTY": "Party",
+          "RELAX": "Entspannung",
+          "WHEEL": "Rad",
+          "NORMAL": "Normal"
+        }
+      },
+      "tzl_zone_mode_1": {
+        "name": "TZL Zonenmodus A",
+        "state": {
+          "OFF": "Aus",
+          "PARTY": "Party",
+          "RELAX": "Entspannung",
+          "WHEEL": "Rad",
+          "NORMAL": "Normal"
+        }
+      },
+      "tzl_zone_mode_2": {
+        "name": "TZL Zonenmodus B",
+        "state": {
+          "OFF": "Aus",
+          "PARTY": "Party",
+          "RELAX": "Entspannung",
+          "WHEEL": "Rad",
+          "NORMAL": "Normal"
+        }
+      },
+      "tzl_zone_mode_3": {
+        "name": "TZL Zonenmodus C",
+        "state": {
+          "OFF": "Aus",
+          "PARTY": "Party",
+          "RELAX": "Entspannung",
+          "WHEEL": "Rad",
+          "NORMAL": "Normal"
+        }
+      },
+      "tzl_zone_intensity": {
+        "name": "TZL - Zonen-Intensität",
+        "state": {
+          "0": "Aus",
+          "1": "Sehr schwach",
+          "2": "Schwach",
+          "3": "Mittel schwach",
+          "4": "Mittel",
+          "5": "Mittel stark",
+          "6": "Stark",
+          "7": "Sehr stark",
+          "8": "Maximum"
+        }
+      },
+      "tzl_zone_intensity_1": {
+        "name": "TZL - Zonen-Intensität A",
+        "state": {
+          "0": "Aus",
+          "1": "Sehr schwach",
+          "2": "Schwach",
+          "3": "Mittel schwach",
+          "4": "Mittel",
+          "5": "Mittel stark",
+          "6": "Stark",
+          "7": "Sehr stark",
+          "8": "Maximum"
+        }
+      },
+      "tzl_zone_intensity_2": {
+        "name": "TZL - Zonen-Intensität B",
+        "state": {
+          "0": "Aus",
+          "1": "Sehr schwach",
+          "2": "Schwach",
+          "3": "Mittel schwach",
+          "4": "Mittel",
+          "5": "Mittel stark",
+          "6": "Stark",
+          "7": "Sehr stark",
+          "8": "Maximum"
+        }
+      },
+      "tzl_zone_intensity_3": {
+        "name": "TZL - Zonen-Intensität C",
+        "state": {
+          "0": "Aus",
+          "1": "Sehr schwach",
+          "2": "Schwach",
+          "3": "Mittel schwach",
+          "4": "Mittel",
+          "5": "Mittel stark",
+          "6": "Stark",
+          "7": "Sehr stark",
+          "8": "Maximum"
+        }
       },
       "light": {
         "name": "Beleuchtung",

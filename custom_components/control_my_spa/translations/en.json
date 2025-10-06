@@ -80,20 +80,6 @@
         "name": "TZL RGB C"
       }
     },
-    "select": {
-      "tzl_color_select": {
-        "name": "TZL color"
-      },
-      "tzl_color_select_1": {
-        "name": "TZL color A"
-      },
-      "tzl_color_select_2": {
-        "name": "TZL color B"
-      },
-      "tzl_color_select_3": {
-        "name": "TZL color C"
-      }
-    },
     "light": {
       "tzl_zone_light": {
         "name": "TZL light"
@@ -110,16 +96,124 @@
     },
     "select": {
       "tzl_color_select": {
-        "name": "TZL color"
+        "name": "TZL color",
+        "state": {
+          "OFF": "Off"
+        }
       },
       "tzl_color_select_1": {
-        "name": "TZL color A"
+        "name": "TZL color A",
+        "state": {
+          "OFF": "Off"
+        }
       },
       "tzl_color_select_2": {
-        "name": "TZL color B"
+        "name": "TZL color B",
+        "state": {
+          "OFF": "Off"
+        }
       },
       "tzl_color_select_3": {
-        "name": "TZL color C"
+        "name": "TZL color C",
+        "state": {
+          "OFF": "Off"
+        }
+      },
+      "tzl_zone_mode": {
+        "name": "TZL zone mode",
+        "state": {
+          "OFF": "Off",
+          "PARTY": "Party",
+          "RELAX": "Relax",
+          "WHEEL": "Wheel",
+          "NORMAL": "Normal"
+        }
+      },
+      "tzl_zone_mode_1": {
+        "name": "TZL zone mode A",
+        "state": {
+          "OFF": "Off",
+          "PARTY": "Party",
+          "RELAX": "Relax",
+          "WHEEL": "Wheel",
+          "NORMAL": "Normal"
+        }
+      },
+      "tzl_zone_mode_2": {
+        "name": "TZL zone mode B",
+        "state": {
+          "OFF": "Off",
+          "PARTY": "Party",
+          "RELAX": "Relax",
+          "WHEEL": "Wheel",
+          "NORMAL": "Normal"
+        }
+      },
+      "tzl_zone_mode_3": {
+        "name": "TZL zone mode C",
+        "state": {
+          "OFF": "Off",
+          "PARTY": "Party",
+          "RELAX": "Relax",
+          "WHEEL": "Wheel",
+          "NORMAL": "Normal"
+        }
+      },
+      "tzl_zone_intensity": {
+        "name": "TZL - Zone intensity",
+        "state": {
+          "0": "Off",
+          "1": "Very low",
+          "2": "Low",
+          "3": "Medium low",
+          "4": "Medium",
+          "5": "Medium high",
+          "6": "High",
+          "7": "Very high",
+          "8": "Maximum"
+        }
+      },
+      "tzl_zone_intensity_1": {
+        "name": "TZL - Zone intensity A",
+        "state": {
+          "0": "Off",
+          "1": "Very low",
+          "2": "Low",
+          "3": "Medium low",
+          "4": "Medium",
+          "5": "Medium high",
+          "6": "High",
+          "7": "Very high",
+          "8": "Maximum"
+        }
+      },
+      "tzl_zone_intensity_2": {
+        "name": "TZL - Zone intensity B",
+        "state": {
+          "0": "Off",
+          "1": "Very low",
+          "2": "Low",
+          "3": "Medium low",
+          "4": "Medium",
+          "5": "Medium high",
+          "6": "High",
+          "7": "Very high",
+          "8": "Maximum"
+        }
+      },
+      "tzl_zone_intensity_3": {
+        "name": "TZL - Zone intensity C",
+        "state": {
+          "0": "Off",
+          "1": "Very low",
+          "2": "Low",
+          "3": "Medium low",
+          "4": "Medium",
+          "5": "Medium high",
+          "6": "High",
+          "7": "Very high",
+          "8": "Maximum"
+        }
       },
       "light": {
         "name": "Light",

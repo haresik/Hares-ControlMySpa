@@ -96,30 +96,138 @@
     },
     "light": {
       "tzl_zone_light": {
-        "name": "TZL světlo"
+        "name": "TZL - Světlo"
       },
       "tzl_zone_light_1": {
-        "name": "TZL světlo A"
+        "name": "TZL - Světlo A"
       },
       "tzl_zone_light_2": {
-        "name": "TZL světlo B"
+        "name": "TZL - Světlo B"
       },
       "tzl_zone_light_3": {
-        "name": "TZL světlo C"
+        "name": "TZL - Světlo C"
       }
     },
     "select": {
       "tzl_color_select": {
-        "name": "TZL barva"
+        "name": "TZL - Barva",
+        "state": {
+          "OFF": "Vypnuto"
+        }
       },
       "tzl_color_select_1": {
-        "name": "TZL barva A"
+        "name": "TZL - Barva A",
+        "state": {
+          "OFF": "Vypnuto"
+        }
       },
       "tzl_color_select_2": {
-        "name": "TZL barva B"
+        "name": "TZL - Barva B",
+        "state": {
+          "OFF": "Vypnuto"
+        }
       },
       "tzl_color_select_3": {
-        "name": "TZL barva C"
+        "name": "TZL - Barva C",
+        "state": {
+          "OFF": "Vypnuto"
+        }
+      },
+      "tzl_zone_mode": {
+        "name": "TZL - Režim zóny",
+        "state": {
+          "OFF": "Vypnuto",
+          "PARTY": "Párty",
+          "RELAX": "Relax",
+          "WHEEL": "Kolo",
+          "NORMAL": "Normální"
+        }
+      },
+      "tzl_zone_mode_1": {
+        "name": "TZL režim zóny A",
+        "state": {
+          "OFF": "Vypnuto",
+          "PARTY": "Párty",
+          "RELAX": "Relax",
+          "WHEEL": "Kolo",
+          "NORMAL": "Normální"
+        }
+      },
+      "tzl_zone_mode_2": {
+        "name": "TZL režim zóny B",
+        "state": {
+          "OFF": "Vypnuto",
+          "PARTY": "Párty",
+          "RELAX": "Relax",
+          "WHEEL": "Kolo",
+          "NORMAL": "Normální"
+        }
+      },
+      "tzl_zone_mode_3": {
+        "name": "TZL režim zóny C",
+        "state": {
+          "OFF": "Vypnuto",
+          "PARTY": "Párty",
+          "RELAX": "Relax",
+          "WHEEL": "Kolo",
+          "NORMAL": "Normální"
+        }
+      },
+      "tzl_zone_intensity": {
+        "name": "TZL - Intenzita zóny",
+        "state": {
+          "0": "Vypnuto",
+          "1": "Velmi slabá",
+          "2": "Slabá",
+          "3": "Středně slabá",
+          "4": "Střední",
+          "5": "Středně silná",
+          "6": "Silná",
+          "7": "Velmi silná",
+          "8": "Maximum"
+        }
+      },
+      "tzl_zone_intensity_1": {
+        "name": "TZL - Intenzita zóny A",
+        "state": {
+          "0": "Vypnuto",
+          "1": "Velmi slabá",
+          "2": "Slabá",
+          "3": "Středně slabá",
+          "4": "Střední",
+          "5": "Středně silná",
+          "6": "Silná",
+          "7": "Velmi silná",
+          "8": "Maximum"
+        }
+      },
+      "tzl_zone_intensity_2": {
+        "name": "TZL - Intenzita zóny B",
+        "state": {
+          "0": "Vypnuto",
+          "1": "Velmi slabá",
+          "2": "Slabá",
+          "3": "Středně slabá",
+          "4": "Střední",
+          "5": "Středně silná",
+          "6": "Silná",
+          "7": "Velmi silná",
+          "8": "Maximum"
+        }
+      },
+      "tzl_zone_intensity_3": {
+        "name": "TZL - Intenzita zóny C",
+        "state": {
+          "0": "Vypnuto",
+          "1": "Velmi slabá",
+          "2": "Slabá",
+          "3": "Středně slabá",
+          "4": "Střední",
+          "5": "Středně silná",
+          "6": "Silná",
+          "7": "Velmi silná",
+          "8": "Maximum"
+        }
       },
       "light": {
         "name": "Osvětlení",

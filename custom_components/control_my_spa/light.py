@@ -22,7 +22,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
 
     # Vytvořit Light entity pro každou TZL zone
     # entities = [SpaTzlZoneLight(shared_data, device_info, tzl_zone_data, len(tzl_zones)) for tzl_zone_data in tzl_zones]
-    entities = []  # Prázdný seznam, protože Light entity jsou zakomentované
+    entities = []  # Prázdný seznam, protože Light entity jsou zakomentované - JEN TEST !!!!!!!!!!!
 
     async_add_entities(entities, True)
     _LOGGER.debug("START Light control_my_spa")

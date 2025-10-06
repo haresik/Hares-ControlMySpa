@@ -288,4 +288,47 @@ class ControlMySpa:
                 index += 1
         self.scheduleFilterIntervalEnum = intervals
 
+    
+    async def setChromazonePower(self, power_state):
+        # Zapne/vypne chromazone (ON/OFF)
+        return await self._postAndRefresh("/spa-commands/chromozone/power", {
+            "spaId": self.spaId,
+            "via": "MOBILE",
+            "state": power_state,
+        })
+
+    async def setChromazoneFunction(self, zone_state, zone):
+        # Nastaví funkci zóny (OFF, PARTY, RELAX, WHEEL, NORMAL)
+        return await self._postAndRefresh("/spa-commands/chromozone/state", {
+            "spaId": self.spaId,
+            "via": "MOBILE",
+            "state": zone_state,
+            "location": zone,
+            "locationType": "ZONE",
+        })
+    
+    async def setChromazoneColor(self, color_id, zone):
+        # Nastaví barvu pro konkrétní zónu
+        return await self._postAndRefresh("/spa-commands/chromozone/color", {
+            "spaId": self.spaId,
+            "via": "MOBILE",
+            "color": color_id,
+            "location": zone,
+            "locationType": "ZONE",
+        })
+
+    async def setChromazoneBrightness(self, intensity, zone):
+        # Nastaví jas pro konkrétní zónu Jas (0-100)
+        return await self._postAndRefresh("/spa-commands/chromozone/intensity", {
+            "spaId": self.spaId,
+            "via": "MOBILE",
+            "intensity": intensity,
+            "location": zone,
+            "locationType": "ZONE",
+        })
+
+
+    
+
+
 
