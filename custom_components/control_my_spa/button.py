@@ -44,4 +44,4 @@ class SpaUpdateTimeButton(ButtonEntity):
             )
             _LOGGER.info("Služba pro aktualizaci času byla úspěšně zavolána")
         except Exception as e:
-            _LOGGER.error("Chyba při volání služby pro aktualizaci času: %s", str(e)) 
+            _LOGGER.error("Error calling time update service: %s", str(e)) 

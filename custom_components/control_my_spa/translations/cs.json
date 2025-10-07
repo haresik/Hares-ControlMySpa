@@ -311,7 +311,7 @@
         "state": {
           "READY": "Ohřev i mimo cirkulaci",
           "REST": "Ohřev jen při cirkulaci",
-          "READY_IN_REST": "Ohřev dle zařízení"
+          "READY_REST": "Ohřev dle zařízení"
         }
       }
     },

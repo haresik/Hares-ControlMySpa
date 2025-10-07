@@ -1,4 +1,5 @@
 import aiohttp
+import aiofiles
 import time
 import asyncio
 import logging
@@ -119,18 +120,19 @@ class ControlMySpa:
             if const.TEST_MODE and const.TEST_MODE.startswith("Data"):
                 test_file_path = os.path.join(os.path.dirname(__file__), 'testData', f'{const.TEST_MODE}.json')
                 try:
-                    with open(test_file_path, 'r', encoding='utf-8') as f:
-                        test_data = json.load(f)
+                    async with aiofiles.open(test_file_path, 'r', encoding='utf-8') as f:
+                        data = await f.read()
+                        test_data = json.loads(data)
                         _LOGGER.info(f"Načtena testovací data z {test_file_path}")
                         return self.constructCurrentState(test_data.get('data'))
                 except FileNotFoundError:
-                    _LOGGER.error(f"Testovací soubor nenalezen: {test_file_path}")
+                    _LOGGER.error(f"Test file not found: {test_file_path}")
                     return None
                 except json.JSONDecodeError as e:
-                    _LOGGER.error(f"Chyba při parsování JSON souboru: {e}")
+                    _LOGGER.error(f"Error parsing JSON file: {e}")
                     return None
                 except Exception as e:
-                    _LOGGER.error(f"Chyba při načítání testovacích dat: {e}")
+                    _LOGGER.error(f"Error loading test data: {e}")
                     return None
             
             # Normální režim - načtení dat z API

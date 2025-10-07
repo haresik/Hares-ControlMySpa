@@ -65,14 +65,15 @@ async def async_setup_services(hass: HomeAssistant) -> None:
                     _LOGGER.debug("Dostupné překlady: %s", translations)
                     
                 except Exception as e:
-                    _LOGGER.error("Chyba při aktualizaci času: %s", str(e))
+                    _LOGGER.error("Error updating time: %s", str(e))
                     raise HomeAssistantError(f"Chyba při aktualizaci času: {str(e)}")
 
     # Registrace služby
     hass.services.async_register(
         DOMAIN,
         "update_time",
-        handle_update_time
+        handle_update_time,
+        schema=vol.Schema({})
     )
 
 async def async_unload_services(hass: HomeAssistant) -> None:

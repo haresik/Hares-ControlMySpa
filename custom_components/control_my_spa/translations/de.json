@@ -311,7 +311,7 @@
         "state": {
           "READY": "Heizung auch außerhalb der Zirkulation",
           "REST": "Heizung nur während der Zirkulation",
-          "READY_IN_REST": "Heizung nach Geräteeinstellung"
+          "READY_REST": "Heizung nach Geräteeinstellung"
         }
       }
     },

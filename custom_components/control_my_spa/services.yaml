@@ -1,0 +1,3 @@
+update_time:
+  name: Update spa time
+  description: Updates the spa time to current system time

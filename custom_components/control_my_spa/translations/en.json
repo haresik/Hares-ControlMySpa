@@ -297,7 +297,7 @@
         "state": {
           "READY": "Heating also outside circulation",
           "REST": "Heating only during circulation",
-          "READY_IN_REST": "Heating as per device"
+          "READY_REST": "Heating as per device"
         }
       }
     },

@@ -99,7 +99,7 @@ class SpaClimate(ClimateEntity):
         return [HVACMode.HEAT]
 
     async def async_set_hvac_mode(self, hvac_mode):
-        _LOGGER.warning("Nepodporovaný režim: %s", hvac_mode)
+        _LOGGER.warning("Unsupported mode: %s", hvac_mode)
         self.async_write_ha_state()
 
     @property

@@ -111,6 +111,9 @@ class SpaTempRangeSelect(SpaSelectBase):
         
         try:
             response_data = await self._shared_data._client.setTempRange(target_state == "HIGH")
+            if response_data is None:
+                _LOGGER.warning("Function setTempRange, parameter %s is not supported", target_state)
+                return False
             new_state = response_data.get("tempRange")
             
             if new_state == target_state:
@@ -165,12 +168,12 @@ class SpaTempRangeSelect(SpaSelectBase):
                                     new_desired_temp_c
                                 )
                     except (ValueError, AttributeError) as e:
-                        _LOGGER.warning("Chyba při porovnávání teplot: %s", str(e))
+                        _LOGGER.warning("Error comparing temperatures: %s", str(e))
 
                 return True
             else:
                 _LOGGER.warning(
-                    "Teplotní rozsah nebyl nastaven. Očekávaný stav: %s, Aktuální stav: %s%s",
+                    "Temperature range was not set. Expected state: %s, Current state: %s%s",
                     target_state,
                     new_state,
                     " (2. pokus)" if is_retry else ""
@@ -198,7 +201,7 @@ class SpaTempRangeSelect(SpaSelectBase):
                 
             await self._shared_data.async_force_update()
         except Exception as e:
-            _LOGGER.error("Chyba při nastavování teplotního rozsahu na %s: %s", option, str(e))
+            _LOGGER.error("Error setting temperature range to %s: %s", option, str(e))
             raise
         finally:
             self._shared_data.resume_updates()
@@ -247,6 +250,9 @@ class SpaPumpSelect(SpaSelectBase):
         
         try:
             response_data = await self._shared_data._client.setJetState(device_number, target_state)
+            if response_data is None:
+                _LOGGER.warning("Function setJetState, parameter %s is not supported", target_state)
+                return False
             pump = next(
                 (comp for comp in response_data["components"] if comp["componentType"] == "PUMP" and comp["port"] == self._pump_data["port"]),
                 None
@@ -264,7 +270,7 @@ class SpaPumpSelect(SpaSelectBase):
                 return True
             else:
                 _LOGGER.warning(
-                    "Čerpadlo %s nebylo nastaveno. Očekávaný stav: %s, Aktuální stav: %s%s",
+                    "Pump %s was not set. Expected state: %s, Current state: %s%s",
                     self._pump_data["port"],
                     target_state,
                     new_state,
@@ -294,9 +300,9 @@ class SpaPumpSelect(SpaSelectBase):
                 
             await self._shared_data.async_force_update()
         except ValueError as ve:
-            _LOGGER.error("Neplatná hodnota portu pro čerpadlo: %s", self._pump_data["port"])
+            _LOGGER.error("Invalid port value for pump: %s", self._pump_data["port"])
         except Exception as e:
-            _LOGGER.error("Chyba při nastavování čerpadla (port %s) na %s: %s", self._pump_data["port"], option, str(e))
+            _LOGGER.error("Error setting pump (port %s) to %s: %s", self._pump_data["port"], option, str(e))
             raise
         finally:
             self._shared_data.resume_updates()
@@ -345,6 +351,9 @@ class SpaLightSelect(SpaSelectBase):
         
         try:
             response_data = await self._shared_data._client.setLightState(device_number, target_state)
+            if response_data is None:
+                _LOGGER.warning("Function setLightState, parameter %s is not supported", target_state)
+                return False
             light = next(
                 (comp for comp in response_data["components"] if comp["componentType"] == "LIGHT" and comp["port"] == self._light_data["port"]),
                 None
@@ -362,7 +371,7 @@ class SpaLightSelect(SpaSelectBase):
                 return True
             else:
                 _LOGGER.warning(
-                    "Světlo %s nebylo nastaveno. Očekávaný stav: %s, Aktuální stav: %s%s",
+                    "Light %s was not set. Expected state: %s, Current state: %s%s",
                     self._light_data["port"],
                     target_state,
                     new_state,
@@ -392,9 +401,9 @@ class SpaLightSelect(SpaSelectBase):
                 
             await self._shared_data.async_force_update()
         except ValueError as ve:
-            _LOGGER.error("Neplatná hodnota portu pro světlo: %s", self._light_data["port"])
+            _LOGGER.error("Invalid port value for light: %s", self._light_data["port"])
         except Exception as e:
-            _LOGGER.error("Chyba při nastavování světla (port %s) na %s: %s", self._light_data["port"], option, str(e))
+            _LOGGER.error("Error setting light (port %s) to %s: %s", self._light_data["port"], option, str(e))
             raise
         finally:
             self._shared_data.resume_updates()
@@ -443,6 +452,9 @@ class SpaBlowerSelect(SpaSelectBase):
         
         try:
             response_data = await self._shared_data._client.setBlowerState(device_number, target_state)
+            if response_data is None:
+                _LOGGER.warning("Function setBlowerState, parameter %s is not supported", target_state)
+                return False
             blower = next(
                 (comp for comp in response_data["components"] if comp["componentType"] == "BLOWER" and comp["port"] == self._blower_data["port"]),
                 None
@@ -460,7 +472,7 @@ class SpaBlowerSelect(SpaSelectBase):
                 return True
             else:
                 _LOGGER.warning(
-                    "Vzduchovač %s nebyl nastaven. Očekávaný stav: %s, Aktuální stav: %s%s",
+                    "Blower %s was not set. Expected state: %s, Current state: %s%s",
                     self._blower_data["port"],
                     target_state,
                     new_state,
@@ -490,9 +502,9 @@ class SpaBlowerSelect(SpaSelectBase):
                 
             await self._shared_data.async_force_update()
         except ValueError as ve:
-            _LOGGER.error("Neplatná hodnota portu pro vzduchovač: %s", self._blower_data["port"])
+            _LOGGER.error("Invalid port value for blower: %s", self._blower_data["port"])
         except Exception as e:
-            _LOGGER.error("Chyba při nastavování vzduchovače (port %s) na %s: %s", self._blower_data["port"], option, str(e))
+            _LOGGER.error("Error setting blower (port %s) to %s: %s", self._blower_data["port"], option, str(e))
             raise
         finally:
             self._shared_data.resume_updates()
@@ -500,7 +512,7 @@ class SpaBlowerSelect(SpaSelectBase):
 class SpaHeaterModeSelect(SpaSelectBase):
     def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
-        self._attr_options = ["READY", "REST", "READY_IN_REST"]  
+        self._attr_options = ["READY", "REST", "READY_REST"]  
         self._attr_should_poll = False
         self._attr_current_option = None
         self._attr_device_info = device_info
@@ -534,6 +546,10 @@ class SpaHeaterModeSelect(SpaSelectBase):
         
         try:
             response_data = await self._shared_data._client.setHeaterMode(target_state)
+            if response_data is None:
+                _LOGGER.warning("Function setHeaterMode, parameter %s is not supported", target_state)
+                return False
+
             new_state = response_data.get("heaterMode")
             
             if new_state == target_state:
@@ -546,7 +562,7 @@ class SpaHeaterModeSelect(SpaSelectBase):
                 return True
             else:
                 _LOGGER.warning(
-                    "Režim ohřevu nebyl nastaven. Očekávaný stav: %s, Aktuální stav: %s%s",
+                    "Heater mode was not set. Expected state: %s, Current state: %s%s",
                     target_state,
                     new_state,
                     " (2. pokus)" if is_retry else ""
@@ -574,7 +590,7 @@ class SpaHeaterModeSelect(SpaSelectBase):
                 
             await self._shared_data.async_force_update()
         except Exception as e:
-            _LOGGER.error("Chyba při nastavování režimu ohřevu na %s: %s", option, str(e))
+            _LOGGER.error("Error setting heater mode to %s: %s", option, str(e))
 
 
 class SpaTzlZoneModeSelect(SpaSelectBase):
@@ -638,6 +654,10 @@ class SpaTzlZoneModeSelect(SpaSelectBase):
                 self._tzl_zone_data["zoneId"]
             )
             
+            if response_data is None:
+                _LOGGER.warning("Function setChromazoneFunction, parameter %s is not supported", target_state)
+                return False
+            
             if response_data:
                 # Najít odpovídající TZL zone v odpovědi
                 tzl_zone = next(
@@ -661,7 +681,7 @@ class SpaTzlZoneModeSelect(SpaSelectBase):
                     return True
                 else:
                     _LOGGER.warning(
-                        "TZL zóna %s nebyla nastavena. Očekávaný stav: %s, Aktuální stav: %s%s",
+                        "TZL zone %s was not set. Expected state: %s, Current state: %s%s",
                         self._tzl_zone_data["zoneId"],
                         target_state,
                         new_state,
@@ -669,12 +689,12 @@ class SpaTzlZoneModeSelect(SpaSelectBase):
                     )
                     return False
             else:
-                _LOGGER.error("Žádná odpověď z API pro TZL zónu %s", self._tzl_zone_data["zoneId"])
+                _LOGGER.error("No API response for TZL zone %s", self._tzl_zone_data["zoneId"])
                 return False
             
         except Exception as e:
             _LOGGER.error(
-                "Chyba při nastavování TZL zóny %s na %s: %s",
+                "Error setting TZL zone %s to %s: %s",
                 self._tzl_zone_data["zoneId"],
                 target_state,
                 str(e)
@@ -702,7 +722,7 @@ class SpaTzlZoneModeSelect(SpaSelectBase):
                 
             await self._shared_data.async_force_update()
         except Exception as e:
-            _LOGGER.error("Chyba při nastavování TZL zóny (ID %s) na %s: %s", self._tzl_zone_data["zoneId"], option, str(e))
+            _LOGGER.error("Error setting TZL zone (ID %s) to %s: %s", self._tzl_zone_data["zoneId"], option, str(e))
             raise
         finally:
             self._shared_data.resume_updates()
@@ -1023,6 +1043,10 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
                 self._tzl_zone_data["zoneId"]
             )
             
+            if response_data is None:
+                _LOGGER.warning("Function setChromazoneFunction (OFF), parameter is not supported")
+                return False
+            
             if response_data:
                 # Najít odpovídající TZL zone v odpovědi
                 tzl_zone = next(
@@ -1045,19 +1069,19 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
                     return True
                 else:
                     _LOGGER.warning(
-                        "TZL zóna %s nebyla vypnuta. Očekávaný stav: OFF, Aktuální stav: %s%s",
+                        "TZL zone %s was not turned off. Expected state: OFF, Current state: %s%s",
                         self._tzl_zone_data["zoneId"],
                         new_state,
                         " (2. pokus)" if is_retry else ""
                     )
                     return False
             else:
-                _LOGGER.error("Žádná odpověď z API pro vypnutí TZL zóny %s", self._tzl_zone_data["zoneId"])
+                _LOGGER.error("No API response for turning off TZL zone %s", self._tzl_zone_data["zoneId"])
                 return False
                 
         except Exception as e:
             _LOGGER.error(
-                "Chyba při vypínání TZL zóny %s: %s",
+                "Error turning off TZL zone %s: %s",
                 self._tzl_zone_data["zoneId"],
                 str(e)
             )
@@ -1070,6 +1094,10 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
                 color_id, 
                 self._tzl_zone_data["zoneId"]
             )
+            
+            if response_data is None:
+                _LOGGER.warning("Function setChromazoneColor, parameter %s is not supported", color_id)
+                return False
             
             if response_data:
                 # Najít odpovídající TZL zone v odpovědi
@@ -1114,7 +1142,7 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
                             return True
                         else:
                             _LOGGER.warning(
-                                "TZL zóna %s nebyla nastavena na správnou barvu. Očekávaná: RGB(%s,%s,%s), Aktuální: RGB(%s,%s,%s)%s",
+                                "TZL zone %s was not set to correct color. Expected: RGB(%s,%s,%s), Current: RGB(%s,%s,%s)%s",
                                 self._tzl_zone_data["zoneId"],
                                 expected_red, expected_green, expected_blue,
                                 red, green, blue,
@@ -1122,18 +1150,18 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
                             )
                             return False
                     else:
-                        _LOGGER.warning("Nenalezena očekávaná barva pro color_id %s", color_id)
+                        _LOGGER.warning("Expected color not found for color_id %s", color_id)
                         return False
                 else:
-                    _LOGGER.error("TZL zóna %s nebyla nalezena v odpovědi", self._tzl_zone_data["zoneId"])
+                    _LOGGER.error("TZL zone %s was not found in response", self._tzl_zone_data["zoneId"])
                     return False
             else:
-                _LOGGER.error("Žádná odpověď z API pro nastavení barvy TZL zóny %s", self._tzl_zone_data["zoneId"])
+                _LOGGER.error("No API response for setting TZL zone color %s", self._tzl_zone_data["zoneId"])
                 return False
                 
         except Exception as e:
             _LOGGER.error(
-                "Chyba při nastavování barvy TZL zóny %s na color_id %s: %s",
+                "Error setting TZL zone color %s to color_id %s: %s",
                 self._tzl_zone_data["zoneId"],
                 color_id,
                 str(e)
@@ -1174,7 +1202,7 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
             
             await self._shared_data.async_force_update()
         except Exception as e:
-            _LOGGER.error("Chyba při nastavování TZL barvy (ID %s) na %s: %s", 
+            _LOGGER.error("Error setting TZL color (ID %s) to %s: %s", 
                          self._tzl_zone_data["zoneId"], option, str(e))
         finally:
             self._shared_data.resume_updates()
@@ -1270,6 +1298,10 @@ class SpaTzlZoneIntensitySelect(SpaSelectBase):
                 self._tzl_zone_data["zoneId"]
             )
             
+            if response_data is None:
+                _LOGGER.warning("Function setChromazoneBrightness, parameter %s is not supported", intensity)
+                return False
+            
             if response_data:
                 # Najít odpovídající TZL zone v odpovědi
                 tzl_zone = next(
@@ -1293,7 +1325,7 @@ class SpaTzlZoneIntensitySelect(SpaSelectBase):
                     return True
                 else:
                     _LOGGER.warning(
-                        "TZL zóna %s nebyla nastavena na správnou intenzitu. Očekávaná: %s, Aktuální: %s%s",
+                        "TZL zone %s was not set to correct intensity. Expected: %s, Current: %s%s",
                         self._tzl_zone_data["zoneId"],
                         intensity,
                         new_intensity,
@@ -1301,12 +1333,12 @@ class SpaTzlZoneIntensitySelect(SpaSelectBase):
                     )
                     return False
             else:
-                _LOGGER.error("Žádná odpověď z API pro TZL zónu %s", self._tzl_zone_data["zoneId"])
+                _LOGGER.error("No API response for TZL zone %s", self._tzl_zone_data["zoneId"])
                 return False
             
         except Exception as e:
             _LOGGER.error(
-                "Chyba při nastavování intenzity TZL zóny %s na %s: %s",
+                "Error setting TZL zone intensity %s to %s: %s",
                 self._tzl_zone_data["zoneId"],
                 intensity,
                 str(e)
@@ -1335,9 +1367,9 @@ class SpaTzlZoneIntensitySelect(SpaSelectBase):
                 
             await self._shared_data.async_force_update()
         except ValueError:
-            _LOGGER.error("Neplatná hodnota intenzity: %s", option)
+            _LOGGER.error("Invalid intensity value: %s", option)
         except Exception as e:
-            _LOGGER.error("Chyba při nastavování intenzity TZL zóny (ID %s) na %s: %s", self._tzl_zone_data["zoneId"], option, str(e))
+            _LOGGER.error("Error setting TZL zone intensity (ID %s) to %s: %s", self._tzl_zone_data["zoneId"], option, str(e))
             raise
         finally:
             self._shared_data.resume_updates()

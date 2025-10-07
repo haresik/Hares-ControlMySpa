@@ -119,6 +119,9 @@ class SpaLightSwitch(SpaSwitchBase):
         
         try:
             response_data = await self._shared_data._client.setLightState(device_number, target_state)
+            if response_data is None:
+                _LOGGER.warning("Function setLightState, parameter %s is not supported", target_state)
+                return False
             new_state = self._get_light_state(response_data)
             
             if new_state == target_state:
@@ -132,7 +135,7 @@ class SpaLightSwitch(SpaSwitchBase):
                 return True
             else:
                 _LOGGER.warning(
-                    "Světlo %s nebylo %s. Očekávaný stav: %s, Aktuální stav: %s%s",
+                    "Light %s was not %s. Expected state: %s, Current state: %s%s",
                     self._light_data["port"],
                     "zapnuto" if target_state == self._on_value else "vypnuto",
                     target_state,
@@ -159,9 +162,9 @@ class SpaLightSwitch(SpaSwitchBase):
                 
             await self._shared_data.async_force_update()
         except ValueError as ve:
-            _LOGGER.error("Neplatná hodnota portu pro světlo: %s", self._light_data["port"])
+            _LOGGER.error("Invalid port value for light: %s", self._light_data["port"])
         except Exception as e:
-            _LOGGER.error("Chyba při zapínání světla (port %s): %s", self._light_data["port"], str(e))
+            _LOGGER.error("Error turning on light (port %s): %s", self._light_data["port"], str(e))
             raise
         finally:
             self._shared_data.resume_updates()
@@ -181,9 +184,9 @@ class SpaLightSwitch(SpaSwitchBase):
                 
             await self._shared_data.async_force_update()
         except ValueError as ve:
-            _LOGGER.error("Neplatná hodnota portu pro světlo: %s", self._light_data["port"])
+            _LOGGER.error("Invalid port value for light: %s", self._light_data["port"])
         except Exception as e:
-            _LOGGER.error("Chyba při vypínání světla (port %s): %s", self._light_data["port"], str(e))
+            _LOGGER.error("Error turning off light (port %s): %s", self._light_data["port"], str(e))
             raise
         finally:
             self._shared_data.resume_updates()
@@ -244,6 +247,9 @@ class SpaPumpSwitch(SpaSwitchBase):
         
         try:
             response_data = await self._shared_data._client.setJetState(device_number, target_state)
+            if response_data is None:
+                _LOGGER.warning("Function setJetState, parameter %s is not supported", target_state)
+                return False
             pump = next(
                 (comp for comp in response_data["components"] if comp["componentType"] == "PUMP" and comp["port"] == self._pump_data["port"]),
                 None
@@ -261,7 +267,7 @@ class SpaPumpSwitch(SpaSwitchBase):
                 return True
             else:
                 _LOGGER.warning(
-                    "Čerpadlo %s nebylo %s. Očekávaný stav: %s, Aktuální stav: %s%s",
+                    "Pump %s was not %s. Expected state: %s, Current state: %s%s",
                     self._pump_data["port"],
                     "zapnuto" if target_state == self._on_value else "vypnuto",
                     target_state,
@@ -288,9 +294,9 @@ class SpaPumpSwitch(SpaSwitchBase):
                 
             await self._shared_data.async_force_update()
         except ValueError as ve:
-            _LOGGER.error("Neplatná hodnota portu pro čerpadlo: %s", self._pump_data["port"])
+            _LOGGER.error("Invalid port value for pump: %s", self._pump_data["port"])
         except Exception as e:
-            _LOGGER.error("Chyba při zapínání čerpadla (port %s): %s", self._pump_data["port"], str(e))
+            _LOGGER.error("Error turning on pump (port %s): %s", self._pump_data["port"], str(e))
             raise
         finally:
             self._shared_data.resume_updates()
@@ -310,9 +316,9 @@ class SpaPumpSwitch(SpaSwitchBase):
                 
             await self._shared_data.async_force_update()
         except ValueError as ve:
-            _LOGGER.error("Neplatná hodnota portu pro čerpadlo: %s", self._pump_data["port"])
+            _LOGGER.error("Invalid port value for pump: %s", self._pump_data["port"])
         except Exception as e:
-            _LOGGER.error("Chyba při vypínání čerpadla (port %s): %s", self._pump_data["port"], str(e))
+            _LOGGER.error("Error turning off pump (port %s): %s", self._pump_data["port"], str(e))
             raise
         finally:
             self._shared_data.resume_updates()
@@ -373,6 +379,9 @@ class SpaBlowerSwitch(SpaSwitchBase):
         
         try:
             response_data = await self._shared_data._client.setBlowerState(device_number, target_state)
+            if response_data is None:
+                _LOGGER.warning("Function setBlowerState, parameter %s is not supported", target_state)
+                return False
             blower = next(
                 (comp for comp in response_data["components"] if comp["componentType"] == "BLOWER" and comp["port"] == self._blower_data["port"]),
                 None
@@ -390,7 +399,7 @@ class SpaBlowerSwitch(SpaSwitchBase):
                 return True
             else:
                 _LOGGER.warning(
-                    "Vzduchovač %s nebyl %s. Očekávaný stav: %s, Aktuální stav: %s%s",
+                    "Blower %s was not %s. Expected state: %s, Current state: %s%s",
                     self._blower_data["port"],
                     "zapnut" if target_state == self._on_value else "vypnut",
                     target_state,
@@ -417,9 +426,9 @@ class SpaBlowerSwitch(SpaSwitchBase):
                 
             await self._shared_data.async_force_update()
         except ValueError as ve:
-            _LOGGER.error("Neplatná hodnota portu pro vzduchovač: %s", self._blower_data["port"])
+            _LOGGER.error("Invalid port value for blower: %s", self._blower_data["port"])
         except Exception as e:
-            _LOGGER.error("Chyba při zapínání vzduchovače (port %s): %s", self._blower_data["port"], str(e))
+            _LOGGER.error("Error turning on blower (port %s): %s", self._blower_data["port"], str(e))
             raise
         finally:
             self._shared_data.resume_updates()
@@ -439,9 +448,9 @@ class SpaBlowerSwitch(SpaSwitchBase):
                 
             await self._shared_data.async_force_update()
         except ValueError as ve:
-            _LOGGER.error("Neplatná hodnota portu pro vzduchovač: %s", self._blower_data["port"])
+            _LOGGER.error("Invalid port value for blower: %s", self._blower_data["port"])
         except Exception as e:
-            _LOGGER.error("Chyba při vypínání vzduchovače (port %s): %s", self._blower_data["port"], str(e))
+            _LOGGER.error("Error turning off blower (port %s): %s", self._blower_data["port"], str(e))
             raise
         finally:
             self._shared_data.resume_updates()
