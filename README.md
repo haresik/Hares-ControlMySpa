@@ -34,9 +34,8 @@ After adding the repository, the component will appear in the standard list of i
 
 ![Preview](img/scan1en.png)
 
-Newly added control for external lighting TZL.
-
-![Preview](img/tzlLigth.png)
+Newly added control for external lighting Chromazone.
+![Preview](img/cromazone.png)
 ***
 
 # ControlMySpa Hares pro Home Assistant (experimentální)

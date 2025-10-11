@@ -22,3 +22,5 @@ This is my first project for Home Assistant. Please be patient regarding functio
 
 ## Inspiration Code
 https://github.com/oh2th-homey/com.balboa 
+
+https://github.com/j9brown/scenery (Favorite Color light)
