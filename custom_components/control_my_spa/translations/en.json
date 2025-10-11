@@ -82,45 +82,45 @@
     },
     "light": {
       "tzl_zone_light": {
-        "name": "TZL light"
+        "name": "Chromazone light"
       },
       "tzl_zone_light_1": {
-        "name": "TZL light A"
+        "name": "Chromazone light A"
       },
       "tzl_zone_light_2": {
-        "name": "TZL light B"
+        "name": "Chromazone light B"
       },
       "tzl_zone_light_3": {
-        "name": "TZL light C"
+        "name": "Chromazone light C"
       }
     },
     "select": {
       "tzl_color_select": {
-        "name": "TZL color",
+        "name": "Chromazone color",
         "state": {
           "OFF": "Off"
         }
       },
       "tzl_color_select_1": {
-        "name": "TZL color A",
+        "name": "Chromazone color A",
         "state": {
           "OFF": "Off"
         }
       },
       "tzl_color_select_2": {
-        "name": "TZL color B",
+        "name": "Chromazone color B",
         "state": {
           "OFF": "Off"
         }
       },
       "tzl_color_select_3": {
-        "name": "TZL color C",
+        "name": "Chromazone color C",
         "state": {
           "OFF": "Off"
         }
       },
       "tzl_zone_mode": {
-        "name": "TZL zone mode",
+        "name": "Chromazone zone mode",
         "state": {
           "OFF": "Off",
           "PARTY": "Party",
@@ -130,7 +130,7 @@
         }
       },
       "tzl_zone_mode_1": {
-        "name": "TZL zone mode A",
+        "name": "Chromazone zone mode A",
         "state": {
           "OFF": "Off",
           "PARTY": "Party",
@@ -140,7 +140,7 @@
         }
       },
       "tzl_zone_mode_2": {
-        "name": "TZL zone mode B",
+        "name": "Chromazone zone mode B",
         "state": {
           "OFF": "Off",
           "PARTY": "Party",
@@ -150,7 +150,7 @@
         }
       },
       "tzl_zone_mode_3": {
-        "name": "TZL zone mode C",
+        "name": "Chromazone zone mode C",
         "state": {
           "OFF": "Off",
           "PARTY": "Party",
@@ -160,7 +160,7 @@
         }
       },
       "tzl_zone_intensity": {
-        "name": "TZL - Zone intensity",
+        "name": "Chromazone - Zone intensity",
         "state": {
           "0": "Off",
           "1": "Very low",
@@ -174,7 +174,7 @@
         }
       },
       "tzl_zone_intensity_1": {
-        "name": "TZL - Zone intensity A",
+        "name": "Chromazone - Zone intensity A",
         "state": {
           "0": "Off",
           "1": "Very low",
@@ -188,7 +188,7 @@
         }
       },
       "tzl_zone_intensity_2": {
-        "name": "TZL - Zone intensity B",
+        "name": "Chromazone - Zone intensity B",
         "state": {
           "0": "Off",
           "1": "Very low",
@@ -202,7 +202,7 @@
         }
       },
       "tzl_zone_intensity_3": {
-        "name": "TZL - Zone intensity C",
+        "name": "Chromazone - Zone intensity C",
         "state": {
           "0": "Off",
           "1": "Very low",
@@ -213,6 +213,50 @@
           "6": "High",
           "7": "Very high",
           "8": "Maximum"
+        }
+      },
+      "tzl_zone_speed": {
+        "name": "Chromazone - Zone speed",
+        "state": {
+          "0": "Off",
+          "1": "Very slow",
+          "2": "Slow",
+          "3": "Medium",
+          "4": "Fast",
+          "5": "Maximum"
+        }
+      },
+      "tzl_zone_speed_1": {
+        "name": "Chromazone - Zone speed A",
+        "state": {
+          "0": "Off",
+          "1": "Very slow",
+          "2": "Slow",
+          "3": "Medium",
+          "4": "Fast",
+          "5": "Maximum"
+        }
+      },
+      "tzl_zone_speed_2": {
+        "name": "Chromazone - Zone speed B",
+        "state": {
+          "0": "Off",
+          "1": "Very slow",
+          "2": "Slow",
+          "3": "Medium",
+          "4": "Fast",
+          "5": "Maximum"
+        }
+      },
+      "tzl_zone_speed_3": {
+        "name": "Chromazone - Zone speed C",
+        "state": {
+          "0": "Off",
+          "1": "Very slow",
+          "2": "Slow",
+          "3": "Medium",
+          "4": "Fast",
+          "5": "Maximum"
         }
       },
       "light": {
@@ -369,6 +413,13 @@
           "OFF": "Off",
           "HIGH": "On"
         }
+      },
+      "tzl_power": {
+        "name": "TZL lights",
+        "state": {
+          "on": "On",
+          "off": "Off"
+        }
       }
     },
     "climate": {
@@ -386,6 +437,12 @@
     "button": {
       "update_time": {
         "name": "Update time",
+        "state": {
+          "pressed": "Pressed"
+        }
+      },
+      "tzl_light_off": {
+        "name": "Turn off TZL lights",
         "state": {
           "pressed": "Pressed"
         }

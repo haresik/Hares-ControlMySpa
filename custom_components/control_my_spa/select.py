@@ -61,6 +61,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     entities += [SpaTzlZoneModeSelect(shared_data, device_info, tzl_zone_data, len(tzl_zones)) for tzl_zone_data in tzl_zones]
     entities += [SpaTzlZoneColorSelect(shared_data, device_info, tzl_zone_data, tzl_colors, len(tzl_zones), hass) for tzl_zone_data in tzl_zones]
     entities += [SpaTzlZoneIntensitySelect(shared_data, device_info, tzl_zone_data, len(tzl_zones)) for tzl_zone_data in tzl_zones]
+    entities += [SpaTzlZoneSpeedSelect(shared_data, device_info, tzl_zone_data, len(tzl_zones)) for tzl_zone_data in tzl_zones]
 
     async_add_entities(entities, True)
     _LOGGER.debug("START Select control_my_spa")
@@ -998,6 +999,15 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
     async def async_update(self):
         data = self._shared_data.data
         if data:
+            # Kontrola, jestli se změnily tzl_colors
+            current_tzl_colors = data.get("tzlColors", [])
+            if current_tzl_colors != self._tzl_colors:
+                _LOGGER.info("TZL colors changed, reloading color options for zone %s", self._tzl_zone_data["zoneId"])
+                self._tzl_colors = current_tzl_colors
+                self._options = self._create_color_options()
+                self._attr_options = self._options
+                self.async_write_ha_state()
+            
             # Najít odpovídající TZL zone podle zoneId
             tzl_zone = next(
                 (
@@ -1394,4 +1404,164 @@ class SpaTzlZoneIntensitySelect(SpaSelectBase):
                     "intensity": tzl_zone.get("intensity"),
                 }
                 return attrs
- # type: ignore
+
+
+class SpaTzlZoneSpeedSelect(SpaSelectBase):
+    def __init__(self, shared_data, device_info, tzl_zone_data, count_tzl_zones):
+        self._shared_data = shared_data
+        self._tzl_zone_data = tzl_zone_data
+        self._attr_options = ["0", "1", "2", "3", "4", "5"]  # Rychlost 0-5
+        self._attr_should_poll = False  # Data jsou sdílena, posluchač
+        self._attr_current_option = None
+        self._attr_device_info = device_info
+        self._attr_icon = "mdi:speedometer"
+        self._attr_unique_id = (
+            f"select.spa_tzl_zone_speed"
+            if count_tzl_zones == 1
+            else f"select.spa_tzl_zone_speed_{tzl_zone_data['zoneId']}"
+        )
+        self._attr_translation_key = (
+            "tzl_zone_speed"
+            if count_tzl_zones == 1
+            else f"tzl_zone_speed_{tzl_zone_data['zoneId']}"
+        )
+        self.entity_id = self._attr_unique_id
+        self._is_processing = False  # Příznak zpracování
+
+    @property
+    def available(self) -> bool:
+        """Indikuje, zda je entita dostupná pro ovládání."""
+        return not self._is_processing
+
+    @property
+    def icon(self):
+        if self._is_processing:
+            return "mdi:sync"  # Ikona pro zpracování
+        return "mdi:speedometer"
+
+    async def async_update(self):
+        data = self._shared_data.data
+        if data:
+            # Najít odpovídající TZL zone podle zoneId
+            tzl_zone = next(
+                (
+                    zone
+                    for zone in data.get("tzlZones", [])
+                    if zone["zoneId"] == self._tzl_zone_data["zoneId"]
+                ),
+                None,
+            )
+            if tzl_zone:
+                speed = tzl_zone.get("speed", 0)
+                self._attr_current_option = str(speed)
+                _LOGGER.debug("Updated TZL Zone Speed %s: %s", self._tzl_zone_data["zoneId"], speed)
+
+    async def _try_set_tzl_zone_speed(self, speed: int, is_retry: bool = False) -> bool:
+        """Pokus o nastavení rychlosti TZL zóny s možností opakování."""
+        self._is_processing = True  # Zneplatnění tlačítka
+        self.async_write_ha_state()
+        
+        try:
+            # Volání API pro nastavení rychlosti TZL zóny
+            response_data = await self._shared_data._client.setChromazoneSpeed(
+                speed, 
+                self._tzl_zone_data["zoneId"]
+            )
+            
+            if response_data is None:
+                _LOGGER.warning("Function setChromazoneSpeed, parameter %s is not supported", speed)
+                return False
+            
+            if response_data:
+                # Najít odpovídající TZL zone v odpovědi
+                tzl_zone = next(
+                    (
+                        zone
+                        for zone in response_data.get("tzlZones", [])
+                        if zone["zoneId"] == self._tzl_zone_data["zoneId"]
+                    ),
+                    None,
+                )
+                new_speed = tzl_zone.get("speed") if tzl_zone else None
+                
+                if new_speed == speed:
+                    self._attr_current_option = str(speed)
+                    _LOGGER.info(
+                        "Úspěšně nastavena rychlost TZL zóny %s na %s%s",
+                        self._tzl_zone_data["zoneId"],
+                        speed,
+                        " (2. pokus)" if is_retry else ""
+                    )
+                    return True
+                else:
+                    _LOGGER.warning(
+                        "TZL zone %s was not set to correct speed. Expected: %s, Current: %s%s",
+                        self._tzl_zone_data["zoneId"],
+                        speed,
+                        new_speed,
+                        " (2. pokus)" if is_retry else ""
+                    )
+                    return False
+            else:
+                _LOGGER.error("No API response for TZL zone %s", self._tzl_zone_data["zoneId"])
+                return False
+            
+        except Exception as e:
+            _LOGGER.error(
+                "Error setting TZL zone speed %s to %s: %s",
+                self._tzl_zone_data["zoneId"],
+                speed,
+                str(e)
+            )
+            return False
+        finally:
+            self._is_processing = False  # Obnovení tlačítka
+            self.async_write_ha_state()
+
+    async def async_select_option(self, option: str):
+        """Změna rychlosti TZL zóny a odeslání do zařízení."""
+        if option not in self._attr_options:
+            return
+
+        try:
+            self._shared_data.pause_updates()
+            speed = int(option)
+            
+            # První pokus
+            success = await self._try_set_tzl_zone_speed(speed)
+            
+            # Druhý pokus pokud první selhal
+            if not success:
+                _LOGGER.info("Zkouším znovu nastavit rychlost TZL zóny %s na %s", self._tzl_zone_data["zoneId"], speed)
+                success = await self._try_set_tzl_zone_speed(speed, True)
+                
+            await self._shared_data.async_force_update()
+        except ValueError:
+            _LOGGER.error("Invalid speed value: %s", option)
+        except Exception as e:
+            _LOGGER.error("Error setting TZL zone speed (ID %s) to %s: %s", self._tzl_zone_data["zoneId"], option, str(e))
+            raise
+        finally:
+            self._shared_data.resume_updates()
+
+    @property
+    def extra_state_attributes(self):
+        data = self._shared_data.data
+        if data:
+            # Najít odpovídající TZL zone podle zoneId
+            tzl_zone = next(
+                (
+                    zone
+                    for zone in data.get("tzlZones", [])
+                    if zone["zoneId"] == self._tzl_zone_data["zoneId"]
+                ),
+                None,
+            )
+            if tzl_zone:
+                attrs = {
+                    "zone_name": tzl_zone.get("zoneName"),
+                    "zone_id": tzl_zone.get("zoneId"),
+                    "speed": tzl_zone.get("speed"),
+                }
+                return attrs
+  # type: ignore

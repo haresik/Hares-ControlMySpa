@@ -96,45 +96,45 @@
     },
     "light": {
       "tzl_zone_light": {
-        "name": "TZL - Světlo"
+        "name": "Chromazone - Světlo"
       },
       "tzl_zone_light_1": {
-        "name": "TZL - Světlo A"
+        "name": "Chromazone - Světlo A"
       },
       "tzl_zone_light_2": {
-        "name": "TZL - Světlo B"
+        "name": "Chromazone - Světlo B"
       },
       "tzl_zone_light_3": {
-        "name": "TZL - Světlo C"
+        "name": "Chromazone - Světlo C"
       }
     },
     "select": {
       "tzl_color_select": {
-        "name": "TZL - Barva",
+        "name": "Chromazone - Barva",
         "state": {
           "OFF": "Vypnuto"
         }
       },
       "tzl_color_select_1": {
-        "name": "TZL - Barva A",
+        "name": "Chromazone - Barva A",
         "state": {
           "OFF": "Vypnuto"
         }
       },
       "tzl_color_select_2": {
-        "name": "TZL - Barva B",
+        "name": "Chromazone - Barva B",
         "state": {
           "OFF": "Vypnuto"
         }
       },
       "tzl_color_select_3": {
-        "name": "TZL - Barva C",
+        "name": "Chromazone - Barva C",
         "state": {
           "OFF": "Vypnuto"
         }
       },
       "tzl_zone_mode": {
-        "name": "TZL - Režim zóny",
+        "name": "Chromazone - Režim zóny",
         "state": {
           "OFF": "Vypnuto",
           "PARTY": "Párty",
@@ -144,7 +144,7 @@
         }
       },
       "tzl_zone_mode_1": {
-        "name": "TZL režim zóny A",
+        "name": "Chromazone režim zóny A",
         "state": {
           "OFF": "Vypnuto",
           "PARTY": "Párty",
@@ -154,7 +154,7 @@
         }
       },
       "tzl_zone_mode_2": {
-        "name": "TZL režim zóny B",
+        "name": "Chromazone režim zóny B",
         "state": {
           "OFF": "Vypnuto",
           "PARTY": "Párty",
@@ -164,7 +164,7 @@
         }
       },
       "tzl_zone_mode_3": {
-        "name": "TZL režim zóny C",
+        "name": "Chromazone režim zóny C",
         "state": {
           "OFF": "Vypnuto",
           "PARTY": "Párty",
@@ -174,7 +174,7 @@
         }
       },
       "tzl_zone_intensity": {
-        "name": "TZL - Intenzita zóny",
+        "name": "Chromazone - Intenzita zóny",
         "state": {
           "0": "Vypnuto",
           "1": "Velmi slabá",
@@ -188,7 +188,7 @@
         }
       },
       "tzl_zone_intensity_1": {
-        "name": "TZL - Intenzita zóny A",
+        "name": "Chromazone - Intenzita zóny A",
         "state": {
           "0": "Vypnuto",
           "1": "Velmi slabá",
@@ -202,7 +202,7 @@
         }
       },
       "tzl_zone_intensity_2": {
-        "name": "TZL - Intenzita zóny B",
+        "name": "Chromazone - Intenzita zóny B",
         "state": {
           "0": "Vypnuto",
           "1": "Velmi slabá",
@@ -216,7 +216,7 @@
         }
       },
       "tzl_zone_intensity_3": {
-        "name": "TZL - Intenzita zóny C",
+        "name": "Chromazone - Intenzita zóny C",
         "state": {
           "0": "Vypnuto",
           "1": "Velmi slabá",
@@ -227,6 +227,50 @@
           "6": "Silná",
           "7": "Velmi silná",
           "8": "Maximum"
+        }
+      },
+      "tzl_zone_speed": {
+        "name": "Chromazone - Rychlost zóny",
+        "state": {
+          "0": "Vypnuto",
+          "1": "Velmi pomalá",
+          "2": "Pomalá",
+          "3": "Střední",
+          "4": "Rychlá",
+          "5": "Maximum"
+        }
+      },
+      "tzl_zone_speed_1": {
+        "name": "Chromazone - Rychlost zóny A",
+        "state": {
+          "0": "Vypnuto",
+          "1": "Velmi pomalá",
+          "2": "Pomalá",
+          "3": "Střední",
+          "4": "Rychlá",
+          "5": "Maximum"
+        }
+      },
+      "tzl_zone_speed_2": {
+        "name": "Chromazone - Rychlost zóny B",
+        "state": {
+          "0": "Vypnuto",
+          "1": "Velmi pomalá",
+          "2": "Pomalá",
+          "3": "Střední",
+          "4": "Rychlá",
+          "5": "Maximum"
+        }
+      },
+      "tzl_zone_speed_3": {
+        "name": "Chromazone - Rychlost zóny C",
+        "state": {
+          "0": "Vypnuto",
+          "1": "Velmi pomalá",
+          "2": "Pomalá",
+          "3": "Střední",
+          "4": "Rychlá",
+          "5": "Maximum"
         }
       },
       "light": {
@@ -383,6 +427,13 @@
           "OFF": "Vypnuto",
           "HIGH": "Zapnuto"
         }
+      },
+      "tzl_power": {
+        "name": "TZL světla",
+        "state": {
+          "on": "Zapnuto",
+          "off": "Vypnuto"
+        }
       }
     },
     "climate": {
@@ -400,6 +451,12 @@
     "button": {
       "update_time": {
         "name": "Aktualizovat čas",
+        "state": {
+          "pressed": "Stisknuto"
+        }
+      },
+      "tzl_light_off": {
+        "name": "Vypnout TZL světla",
         "state": {
           "pressed": "Stisknuto"
         }

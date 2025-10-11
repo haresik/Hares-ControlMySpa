@@ -16,8 +16,18 @@ async def async_setup_entry(
     """Nastavení tlačítek pro Control My Spa."""
     data = hass.data[DOMAIN][config_entry.entry_id]
     device_info = data["device_info"]
+    shared_data = data["data"]
 
-    async_add_entities([SpaUpdateTimeButton(hass, device_info)], True)
+    # Seznam tlačítek k přidání
+    buttons = [SpaUpdateTimeButton(hass, device_info)]
+    
+    # Kontrola, jestli jsou k dispozici TZL zóny
+    if shared_data.data:
+        tzl_zones = shared_data.data.get("tzlZones", [])
+        #if tzl_zones:
+        #    buttons.append(SpaTzlLightOffButton(hass, device_info))
+
+    async_add_entities(buttons, True)
 
 class SpaUpdateTimeButton(ButtonEntity):
     """Tlačítko pro aktualizaci času v Control My Spa."""
@@ -44,4 +54,36 @@ class SpaUpdateTimeButton(ButtonEntity):
             )
             _LOGGER.info("Služba pro aktualizaci času byla úspěšně zavolána")
         except Exception as e:
-            _LOGGER.error("Error calling time update service: %s", str(e)) 
+            _LOGGER.error("Error calling time update service: %s", str(e))
+
+class SpaTzlLightOffButton(ButtonEntity):
+    """Tlačítko pro vypnutí TZL světel v Control My Spa."""
+
+    _attr_has_entity_name = True
+
+    def __init__(self, hass: HomeAssistant, device_info):
+        """Inicializace tlačítka."""
+        self.hass = hass
+        self._attr_device_info = device_info
+        self._attr_unique_id = "button.spa_tzl_light_off"
+        self._attr_translation_key = "tzl_light_off"
+        self._attr_icon = "mdi:lightbulb-off"
+        self.entity_id = self._attr_unique_id
+
+    async def async_press(self) -> None:
+        """Zpracování stisku tlačítka."""
+        try:
+            # Získání všech instancí integrace
+            for entry_id, entry_data in self.hass.data[DOMAIN].items():
+                client = entry_data.get("client")
+                
+                if client:
+                    # Volání metody setChromazonePower s parametrem "OFF"
+                    response = await client.setChromazonePower("OFF")
+                    if response:
+                        _LOGGER.info("TZL světla byla úspěšně vypnuta")
+                    else:
+                        _LOGGER.warning("Failed to turn off TZL lights")
+                    break
+        except Exception as e:
+            _LOGGER.error("Error turning off TZL lights: %s", str(e)) 

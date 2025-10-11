@@ -96,45 +96,45 @@
     },
     "light": {
       "tzl_zone_light": {
-        "name": "TZL Licht"
+        "name": "Chromazone Licht"
       },
       "tzl_zone_light_1": {
-        "name": "TZL Licht A"
+        "name": "Chromazone Licht A"
       },
       "tzl_zone_light_2": {
-        "name": "TZL Licht B"
+        "name": "Chromazone Licht B"
       },
       "tzl_zone_light_3": {
-        "name": "TZL Licht C"
+        "name": "Chromazone Licht C"
       }
     },
     "select": {
       "tzl_color_select": {
-        "name": "TZL Farbe",
+        "name": "Chromazone Farbe",
         "state": {
           "OFF": "Aus"
         }
       },
       "tzl_color_select_1": {
-        "name": "TZL Farbe A",
+        "name": "Chromazone Farbe A",
         "state": {
           "OFF": "Aus"
         }
       },
       "tzl_color_select_2": {
-        "name": "TZL Farbe B",
+        "name": "Chromazone Farbe B",
         "state": {
           "OFF": "Aus"
         }
       },
       "tzl_color_select_3": {
-        "name": "TZL Farbe C",
+        "name": "Chromazone Farbe C",
         "state": {
           "OFF": "Aus"
         }
       },
       "tzl_zone_mode": {
-        "name": "TZL Zonenmodus",
+        "name": "Chromazone Zonenmodus",
         "state": {
           "OFF": "Aus",
           "PARTY": "Party",
@@ -144,7 +144,7 @@
         }
       },
       "tzl_zone_mode_1": {
-        "name": "TZL Zonenmodus A",
+        "name": "Chromazone Zonenmodus A",
         "state": {
           "OFF": "Aus",
           "PARTY": "Party",
@@ -154,7 +154,7 @@
         }
       },
       "tzl_zone_mode_2": {
-        "name": "TZL Zonenmodus B",
+        "name": "Chromazone Zonenmodus B",
         "state": {
           "OFF": "Aus",
           "PARTY": "Party",
@@ -164,7 +164,7 @@
         }
       },
       "tzl_zone_mode_3": {
-        "name": "TZL Zonenmodus C",
+        "name": "Chromazone Zonenmodus C",
         "state": {
           "OFF": "Aus",
           "PARTY": "Party",
@@ -174,7 +174,7 @@
         }
       },
       "tzl_zone_intensity": {
-        "name": "TZL - Zonen-Intensität",
+        "name": "Chromazone - Zonen-Intensität",
         "state": {
           "0": "Aus",
           "1": "Sehr schwach",
@@ -188,7 +188,7 @@
         }
       },
       "tzl_zone_intensity_1": {
-        "name": "TZL - Zonen-Intensität A",
+        "name": "Chromazone - Zonen-Intensität A",
         "state": {
           "0": "Aus",
           "1": "Sehr schwach",
@@ -202,7 +202,7 @@
         }
       },
       "tzl_zone_intensity_2": {
-        "name": "TZL - Zonen-Intensität B",
+        "name": "Chromazone - Zonen-Intensität B",
         "state": {
           "0": "Aus",
           "1": "Sehr schwach",
@@ -216,7 +216,7 @@
         }
       },
       "tzl_zone_intensity_3": {
-        "name": "TZL - Zonen-Intensität C",
+        "name": "Chromazone - Zonen-Intensität C",
         "state": {
           "0": "Aus",
           "1": "Sehr schwach",
@@ -227,6 +227,50 @@
           "6": "Stark",
           "7": "Sehr stark",
           "8": "Maximum"
+        }
+      },
+      "tzl_zone_speed": {
+        "name": "Chromazone - Zonen-Geschwindigkeit",
+        "state": {
+          "0": "Aus",
+          "1": "Sehr langsam",
+          "2": "Langsam",
+          "3": "Mittel",
+          "4": "Schnell",
+          "5": "Maximum"
+        }
+      },
+      "tzl_zone_speed_1": {
+        "name": "Chromazone - Zonen-Geschwindigkeit A",
+        "state": {
+          "0": "Aus",
+          "1": "Sehr langsam",
+          "2": "Langsam",
+          "3": "Mittel",
+          "4": "Schnell",
+          "5": "Maximum"
+        }
+      },
+      "tzl_zone_speed_2": {
+        "name": "Chromazone - Zonen-Geschwindigkeit B",
+        "state": {
+          "0": "Aus",
+          "1": "Sehr langsam",
+          "2": "Langsam",
+          "3": "Mittel",
+          "4": "Schnell",
+          "5": "Maximum"
+        }
+      },
+      "tzl_zone_speed_3": {
+        "name": "Chromazone - Zonen-Geschwindigkeit C",
+        "state": {
+          "0": "Aus",
+          "1": "Sehr langsam",
+          "2": "Langsam",
+          "3": "Mittel",
+          "4": "Schnell",
+          "5": "Maximum"
         }
       },
       "light": {
@@ -383,6 +427,13 @@
           "OFF": "Aus",
           "HIGH": "Ein"
         }
+      },
+      "tzl_power": {
+        "name": "TZL Lichter",
+        "state": {
+          "on": "Ein",
+          "off": "Aus"
+        }
       }
     },
     "climate": {
@@ -400,6 +451,12 @@
     "button": {
       "update_time": {
         "name": "Zeit aktualisieren",
+        "state": {
+          "pressed": "Gedrückt"
+        }
+      },
+      "tzl_light_off": {
+        "name": "TZL Lichter ausschalten",
         "state": {
           "pressed": "Gedrückt"
         }

@@ -320,11 +320,21 @@ class ControlMySpa:
         })
 
     async def setChromazoneBrightness(self, intensity, zone):
-        # Nastaví jas pro konkrétní zónu Jas (0-100)
+        # Nastaví jas pro konkrétní zónu Jas (Stavy 0,1,2 ... 8)
         return await self._postAndRefresh("/spa-commands/chromozone/intensity", {
             "spaId": self.spaId,
             "via": "MOBILE",
             "intensity": intensity,
+            "location": zone,
+            "locationType": "ZONE",
+        })
+
+    async def setChromazoneSpeed(self, speed, zone):
+        # Nastaví Rychlost prolínání barev (Stavy 0,1,2 ... 5)
+        return await self._postAndRefresh("/spa-commands/chromozone/speed", {
+            "spaId": self.spaId,
+            "via": "MOBILE",
+            "speed": speed,
             "location": zone,
             "locationType": "ZONE",
         })
