@@ -35,18 +35,28 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         if component["componentType"] == "BLOWER" and 
         len(component.get("availableValues", ["OFF", "HIGH"])) == 2
     ]
+    # Najít všechny FILTER komponenty
+    filters = [
+        component for component in shared_data.data["components"]
+        if component["componentType"] == "FILTER"
+    ]
 
     # Logování informací o filtrování
     _LOGGER.debug(
-        "Filtered components for Switch - Lights: %d, Pumps: %d, Blowers: %d",
+        "Filtered components for Switch - Lights: %d, Pumps: %d, Blowers: %d, Filters: %d",
         len(lights),
         len(pumps),
-        len(blowers)
+        len(blowers),
+        len(filters)
     )
 
     entities = [SpaLightSwitch(shared_data, device_info, light, len(lights)) for light in lights]
     entities += [SpaPumpSwitch(shared_data, device_info, pump, len(pumps)) for pump in pumps]
     entities += [SpaBlowerSwitch(shared_data, device_info, blower, len(blowers)) for blower in blowers]
+    
+    # Přidání switch pro druhý filtr pouze pokud existují dva filtry
+    if len(filters) >= 2:
+        entities.append(SpaFilter2Switch(shared_data, device_info, client))
     
     # Přidání TZL přepínače pouze pokud jsou k dispozici TZL zóny
     tzl_zones = shared_data.data.get("tzlZones", [])
@@ -574,5 +584,130 @@ class SpaTzlPowerSwitch(SpaSwitchBase):
             await self._shared_data.async_force_update()
         except Exception as e:
             _LOGGER.error("Error turning off TZL lights: %s", str(e))
+        finally:
+            self._shared_data.resume_updates()
+
+class SpaFilter2Switch(SpaSwitchBase):
+    """Přepínač pro druhý filtr (spa_filter_2)."""
+    
+    def __init__(self, shared_data, device_info, client):
+        """Inicializace přepínače druhého filtru."""
+        self._shared_data = shared_data
+        self._attr_device_info = device_info
+        self._client = client
+        self._attr_unique_id = "switch.spa_filter_2"
+        self._attr_translation_key = "filter_2"
+        self._attr_icon = "mdi:water-sync"
+        self._is_processing = False
+
+    @property
+    def available(self) -> bool:
+        """Indikuje, zda je entita dostupná pro ovládání."""
+        return not self._is_processing
+        
+    @property
+    def icon(self):
+        if self._is_processing:
+            return "mdi:sync"  # Ikona pro zpracování
+        if self.is_on:
+            return "mdi:water-sync"
+        else:
+            return "mdi:water-remove"
+
+    def _get_filter2_state(self, data):
+        """Získá stav druhého filtru z dat."""
+        if not data:
+            return False
+        # Najít druhý filtr (port "1")
+        filter_comp = next(
+            (
+                comp
+                for comp in data["components"]
+                if comp["componentType"] == "FILTER" and comp["port"] == "1"
+            ),
+            None,
+        )
+        if filter_comp:
+            # Pokud je stav "DISABLED", switch je vypnutý, jinak zapnutý
+            return filter_comp["value"] != "DISABLED"
+        return False
+
+    async def async_update(self):
+        """Aktualizace stavu přepínače."""
+        data = self._shared_data.data
+        if data:
+            self._attr_is_on = self._get_filter2_state(data)
+            _LOGGER.debug("Updated Filter 2: %s", self._attr_is_on)
+
+    async def _try_set_filter2_state(self, state: str, is_retry: bool = False) -> bool:
+        """Pokus o nastavení stavu druhého filtru s možností opakování."""
+        self._is_processing = True  # Zneplatnění tlačítka
+        self.async_write_ha_state()
+        
+        try:
+            response_data = await self._client.setFilter2Toggle(state)
+            if response_data is None:
+                _LOGGER.warning("Function setFilter2Toggle, parameter %s is not supported", state)
+                return False
+            
+            new_state = self._get_filter2_state(response_data)
+            expected_state = (state == "ON")
+            
+            if new_state == expected_state:
+                self._attr_is_on = expected_state
+                _LOGGER.info(
+                    "Úspěšně %s druhý filtr%s",
+                    "zapnuto" if state == "ON" else "vypnuto",
+                    " (2. pokus)" if is_retry else ""
+                )
+                return True
+            else:
+                _LOGGER.warning(
+                    "Druhý filtr nebyl %s. Očekávaný stav: %s, Aktuální stav: %s%s",
+                    "zapnuto" if state == "ON" else "vypnuto",
+                    expected_state,
+                    new_state,
+                    " (2. pokus)" if is_retry else ""
+                )
+                return False
+        finally:
+            self._is_processing = False  # Obnovení tlačítka
+            self.async_write_ha_state()
+
+    async def async_turn_on(self, **kwargs):
+        """Zapnutí druhého filtru."""
+        try:
+            self._shared_data.pause_updates()
+            
+            # První pokus
+            success = await self._try_set_filter2_state("ON")
+            
+            # Druhý pokus pokud první selhal
+            if not success:
+                _LOGGER.info("Zkouším znovu zapnout druhý filtr")
+                success = await self._try_set_filter2_state("ON", True)
+                
+            await self._shared_data.async_force_update()
+        except Exception as e:
+            _LOGGER.error("Error turning on filter 2: %s", str(e))
+        finally:
+            self._shared_data.resume_updates()
+
+    async def async_turn_off(self, **kwargs):
+        """Vypnutí druhého filtru."""
+        try:
+            self._shared_data.pause_updates()
+            
+            # První pokus
+            success = await self._try_set_filter2_state("OFF")
+            
+            # Druhý pokus pokud první selhal
+            if not success:
+                _LOGGER.info("Zkouším znovu vypnout druhý filtr")
+                success = await self._try_set_filter2_state("OFF", True)
+                
+            await self._shared_data.async_force_update()
+        except Exception as e:
+            _LOGGER.error("Error turning off filter 2: %s", str(e))
         finally:
             self._shared_data.resume_updates()

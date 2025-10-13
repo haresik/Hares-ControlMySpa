@@ -357,6 +357,24 @@
           "REST": "Ohřev jen při cirkulaci",
           "READY_REST": "Ohřev dle zařízení"
         }
+      },
+      "filter_time": {
+        "name": "Čas filtru"
+      },
+      "filter_time_1": {
+        "name": "Čas filtru 1"
+      },
+      "filter_time_2": {
+        "name": "Čas filtru 2"
+      },
+      "filter_duration": {
+        "name": "Délka filtru"
+      },
+      "filter_duration_1": {
+        "name": "Délka filtru 1"
+      },
+      "filter_duration_2": {
+        "name": "Délka filtru 2"
       }
     },
     "number": {
@@ -430,6 +448,13 @@
       },
       "tzl_power": {
         "name": "TZL světla",
+        "state": {
+          "on": "Zapnuto",
+          "off": "Vypnuto"
+        }
+      },
+      "filter_2": {
+        "name": "Filtrační cyklus 2",
         "state": {
           "on": "Zapnuto",
           "off": "Vypnuto"

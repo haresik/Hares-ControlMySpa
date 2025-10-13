@@ -343,6 +343,24 @@
           "REST": "Heating only during circulation",
           "READY_REST": "Heating as per device"
         }
+      },
+      "filter_time": {
+        "name": "Filter time"
+      },
+      "filter_time_1": {
+        "name": "Filter time 1"
+      },
+      "filter_time_2": {
+        "name": "Filter time 2"
+      },
+      "filter_duration": {
+        "name": "Filter duration"
+      },
+      "filter_duration_1": {
+        "name": "Filter duration 1"
+      },
+      "filter_duration_2": {
+        "name": "Filter duration 2"
       }
     },
     "number": {
@@ -416,6 +434,13 @@
       },
       "tzl_power": {
         "name": "TZL lights",
+        "state": {
+          "on": "On",
+          "off": "Off"
+        }
+      },
+      "filter_2": {
+        "name": "Filter cycle 2",
         "state": {
           "on": "On",
           "off": "Off"

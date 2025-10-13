@@ -23,7 +23,6 @@ class ControlMySpa:
         self.scheduleFilterIntervalEnum = None
         self.spaId = None
         self.session = None
-        self.createFilterScheduleIntervals()
 
     async def init_session(self):
         if self.session is None:
@@ -267,6 +266,7 @@ class ControlMySpa:
             "mode": mode
         })
 
+    #time format "14:30", numOfIntervals 2 hours
     async def setFilterCycle(self, deviceNumber, numOfIntervals, time_str):
         return await self._postAndRefresh("/spa-commands/filter-cycles/schedule", {
             "spaId": self.spaId,
@@ -275,21 +275,14 @@ class ControlMySpa:
             "numOfIntervals": numOfIntervals,
             "time": time_str
         })
-
-    def createFilterScheduleIntervals(self):
-        intervals = {'idisabled': 0}
-        index = 1
-        for hours in range(0, 25):
-            for minutes in [0, 15, 30, 45]:
-                if hours == 0 and minutes == 0:
-                    continue
-                if hours == 24 and minutes > 0:
-                    continue
-                label = f"i{hours}hour{'s' if hours != 1 else ''}{minutes}minutes" if minutes else f"i{hours}hour{'s' if hours != 1 else ''}"
-                intervals[label] = index
-                index += 1
-        self.scheduleFilterIntervalEnum = intervals
-
+    
+    #only ON/OFF
+    async def setFilter2Toggle(self, state):
+        return await self._postAndRefresh("/spa-commands/filter-cycles/toggle-filter2-state", {
+            "spaId": self.spaId,
+            "via": "MOBILE",
+            "state": state,
+        })
     
     async def setChromazonePower(self, power_state):
         # Zapne/vypne chromazone (ON/OFF)
@@ -338,6 +331,41 @@ class ControlMySpa:
             "location": zone,
             "locationType": "ZONE",
         })
+
+    def createTimeOptions(self):
+        """Vytvoří seznam časových možností po 15 minutách."""
+        time_options = []
+        for hour in range(24):
+            for minute in [0, 15, 30, 45]:
+                time_str = f"{hour:02d}:{minute:02d}"
+                time_options.append(time_str)
+        return time_options
+
+    def createDurationOptions(self):
+        """Vytvoří seznam možností délky filtračního cyklu od 15 minut do 12 hodin."""
+        duration_options = []
+        
+        # 15 minut až 1 hodina (po 15 minutách)
+        for minutes in range(15, 61, 15):
+            if minutes < 60:
+                duration_options.append(f"{minutes}m")
+            else:
+                duration_options.append("1h")
+        
+        # 1 hodina 15 minut až 12 hodin (po 15 minutách)
+        for hours in range(1, 13):
+            for minutes in [0, 15, 30, 45]:
+                if hours == 1 and minutes == 0:
+                    continue  # "1h" už je v seznamu
+                if hours == 12 and minutes > 0:
+                    continue  # Pouze "12h"
+                
+                if minutes == 0:
+                    duration_options.append(f"{hours}h")
+                else:
+                    duration_options.append(f"{hours}h {minutes}m")
+        
+        return duration_options
 
 
     

@@ -357,6 +357,24 @@
           "REST": "Heizung nur während der Zirkulation",
           "READY_REST": "Heizung nach Geräteeinstellung"
         }
+      },
+      "filter_time": {
+        "name": "Filterzeit"
+      },
+      "filter_time_1": {
+        "name": "Filterzeit 1"
+      },
+      "filter_time_2": {
+        "name": "Filterzeit 2"
+      },
+      "filter_duration": {
+        "name": "Filterdauer"
+      },
+      "filter_duration_1": {
+        "name": "Filterdauer 1"
+      },
+      "filter_duration_2": {
+        "name": "Filterdauer 2"
       }
     },
     "number": {
@@ -430,6 +448,13 @@
       },
       "tzl_power": {
         "name": "TZL Lichter",
+        "state": {
+          "on": "Ein",
+          "off": "Aus"
+        }
+      },
+      "filter_2": {
+        "name": "Filterzyklus 2",
         "state": {
           "on": "Ein",
           "off": "Aus"
