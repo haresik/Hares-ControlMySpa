@@ -157,6 +157,7 @@ class ControlMySpa:
                 'desiredTemp': float(spaData['desiredTemp']),
                 'targetDesiredTemp': float(spaData['desiredTemp']),
                 'currentTemp': float(spaData['currentTemp']),
+                'celsius': bool(spaData['isCelsius']),
                 'panelLock': spaData['isPanelLocked'],
                 'heaterMode': spaData['heaterMode'],
                 'components': spaData.get('components', []),

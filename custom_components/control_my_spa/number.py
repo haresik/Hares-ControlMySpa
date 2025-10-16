@@ -34,14 +34,14 @@ class SpaTargetDesiredTempNumber(NumberEntity):
 
     _attr_has_entity_name = True
     _attr_mode = "box"  # ✅ místo deprecated 'mode'
-    native_unit_of_measurement = UnitOfTemperature.CELSIUS  # ✅ nové API
+    native_unit_of_measurement = UnitOfTemperature.CELSIUS  # Výchozí hodnota
     _attr_icon = "mdi:thermometer-water"
     _attr_should_poll = False
     _attr_translation_key = "target_desired_temperature"
 
     # ✅ pouze moderní "native_" atributy
     native_step = 0.5
-    native_min_value = 10.0
+    native_min_value = 10.0  # Výchozí hodnoty pro stupně
     native_max_value = 40.0
 
     def __init__(self, shared_data, device_info):
@@ -62,10 +62,23 @@ class SpaTargetDesiredTempNumber(NumberEntity):
         if data:
             fahrenheit_temp = data.get("targetDesiredTemp")
             if fahrenheit_temp is not None:
-                self._state = round((fahrenheit_temp - 32) * 5.0 / 9.0, 1)
-                _LOGGER.debug(
-                    "Aktualizována cílová teplota: %s °C", self._state
-                )
+                # Nastavit jednotku podle data.get("celsius")
+                if data.get("celsius"):
+                    self.native_unit_of_measurement = UnitOfTemperature.CELSIUS
+                    self.native_min_value = 10.0
+                    self.native_max_value = 40.0
+                    self._state = round((fahrenheit_temp - 32) * 5.0 / 9.0, 1)
+                    _LOGGER.debug(
+                        "Aktualizována cílová teplota: %s °C", self._state
+                    )
+                else:
+                    self.native_unit_of_measurement = UnitOfTemperature.FAHRENHEIT
+                    self.native_min_value = 50.0
+                    self.native_max_value = 104.0
+                    self._state = fahrenheit_temp
+                    _LOGGER.debug(
+                        "Aktualizována cílová teplota: %s °F", self._state
+                    )
 
     @property
     def native_value(self) -> float | None:
@@ -98,9 +111,11 @@ class SpaTargetDesiredTempNumber(NumberEntity):
             _LOGGER.debug("Zrušeno předchozí zpožděné nastavení hodnoty")
 
         self._pending_value = value
+        unit_symbol = "°C" if self.native_unit_of_measurement == UnitOfTemperature.CELSIUS else "°F"
         _LOGGER.debug(
-            "Naplánováno nastavení teploty %s °C za %.1f s",
+            "Naplánováno nastavení teploty %s %s za %.1f s",
             value,
+            unit_symbol,
             self._debounce_delay,
         )
 
@@ -122,24 +137,34 @@ class SpaTargetDesiredTempNumber(NumberEntity):
     async def _debounced_set_value(self, value: float):
         """Skutečné nastavení hodnoty po debounce zpoždění."""
         if self._is_processing:
+            unit_symbol = "°C" if self.native_unit_of_measurement == UnitOfTemperature.CELSIUS else "°F"
             _LOGGER.debug(
-                "Přeskočeno nastavení hodnoty %s °C — již probíhá zpracování",
+                "Přeskočeno nastavení hodnoty %s %s — již probíhá zpracování",
                 value,
+                unit_symbol,
             )
             return
 
         self._is_processing = True
         try:
             self._shared_data.pause_updates()
-            fahrenheit_temp = round(value * 9.0 / 5.0 + 32, 1)
+            
+            # Převést hodnotu na Fahrenheit podle aktuální jednotky
+            if self.native_unit_of_measurement == UnitOfTemperature.CELSIUS:
+                fahrenheit_temp = round(value * 9.0 / 5.0 + 32, 1)
+                unit_symbol = "°C"
+            else:
+                fahrenheit_temp = value
+                unit_symbol = "°F"
+                
             success = await self._shared_data._client.setTemp(fahrenheit_temp)
 
             if success:
                 self._state = value
-                _LOGGER.info("Nastavena cílová teplota na %s °C", value)
+                _LOGGER.info("Nastavena cílová teplota na %s %s", value, unit_symbol)
             else:
                 _LOGGER.error(
-                    "Failed to set target temperature to %s °C", value
+                    "Failed to set target temperature to %s %s", value, unit_symbol
                 )
 
             await self._shared_data.async_force_update()

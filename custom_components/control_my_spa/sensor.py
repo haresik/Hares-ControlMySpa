@@ -60,7 +60,7 @@ class SpaSensorBase(SensorEntity):
 class SpaTemperatureSensor(SpaSensorBase):
     def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
-        self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
+        self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS  # Výchozí hodnota
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._state = None
         self._attr_icon = "mdi:thermometer"
@@ -74,8 +74,15 @@ class SpaTemperatureSensor(SpaSensorBase):
         if data:
             fahrenheit_temp = data.get("currentTemp")
             if fahrenheit_temp is not None and fahrenheit_temp != 0:
-                self._state = round((fahrenheit_temp - 32) * 5.0 / 9.0, 1)  # Převod na Celsia
-                _LOGGER.debug("Updated current temperature (Celsius): %s", self._state)
+                # Nastavit jednotku podle data.get("celsius")
+                if data.get("celsius"):
+                    self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
+                    self._state = round((fahrenheit_temp - 32) * 5.0 / 9.0, 1)  # Převod na Celsia
+                    _LOGGER.debug("Updated current temperature (Celsius): %s", self._state)
+                else:
+                    self._attr_native_unit_of_measurement = UnitOfTemperature.FAHRENHEIT
+                    self._state = fahrenheit_temp  # Zachovat původní hodnotu ve Fahrenheit
+                    _LOGGER.debug("Updated current temperature (Fahrenheit): %s", self._state)
 
     @property
     def native_value(self):
@@ -84,7 +91,7 @@ class SpaTemperatureSensor(SpaSensorBase):
 class SpaDesiredTemperatureSensor(SpaSensorBase):
     def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
-        self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
+        self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS  # Výchozí hodnota
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._state = None
         self._high_range_value = None  # Poslední hodnota pro HIGH rozsah
@@ -102,18 +109,35 @@ class SpaDesiredTemperatureSensor(SpaSensorBase):
             temp_range = data.get("tempRange")
             
             if fahrenheit_temp is not None:
-                celsius_temp = round((fahrenheit_temp - 32) * 5.0 / 9.0, 1)  # Převod na Celsia
-                self._state = celsius_temp
-                
-                # Uložit hodnotu podle aktuálního rozsahu
-                if temp_range == "HIGH":
-                    self._high_range_value = celsius_temp
-                    _LOGGER.debug("Updated desired temperature (Celsius): %s (HIGH range)", self._state)
-                elif temp_range == "LOW":
-                    self._low_range_value = celsius_temp
-                    _LOGGER.debug("Updated desired temperature (Celsius): %s (LOW range)", self._state)
+                # Nastavit jednotku podle data.get("celsius")
+                if data.get("celsius"):
+                    self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
+                    celsius_temp = round((fahrenheit_temp - 32) * 5.0 / 9.0, 1)  # Převod na Celsia
+                    self._state = celsius_temp
+                    
+                    # Uložit hodnotu podle aktuálního rozsahu
+                    if temp_range == "HIGH":
+                        self._high_range_value = celsius_temp
+                        _LOGGER.debug("Updated desired temperature (Celsius): %s (HIGH range)", self._state)
+                    elif temp_range == "LOW":
+                        self._low_range_value = celsius_temp
+                        _LOGGER.debug("Updated desired temperature (Celsius): %s (LOW range)", self._state)
+                    else:
+                        _LOGGER.debug("Updated desired temperature (Celsius): %s (unknown range: %s)", self._state, temp_range)
                 else:
-                    _LOGGER.debug("Updated desired temperature (Celsius): %s (unknown range: %s)", self._state, temp_range)
+                    self._attr_native_unit_of_measurement = UnitOfTemperature.FAHRENHEIT
+                    # Zachovat původní hodnotu ve Fahrenheit
+                    self._state = fahrenheit_temp
+                    
+                    # Uložit hodnotu podle aktuálního rozsahu
+                    if temp_range == "HIGH":
+                        self._high_range_value = fahrenheit_temp
+                        _LOGGER.debug("Updated desired temperature (Fahrenheit): %s (HIGH range)", self._state)
+                    elif temp_range == "LOW":
+                        self._low_range_value = fahrenheit_temp
+                        _LOGGER.debug("Updated desired temperature (Fahrenheit): %s (LOW range)", self._state)
+                    else:
+                        _LOGGER.debug("Updated desired temperature (Fahrenheit): %s (unknown range: %s)", self._state, temp_range)
 
     @property
     def native_value(self):

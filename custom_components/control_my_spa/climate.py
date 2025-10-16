@@ -38,9 +38,10 @@ class SpaClimate(ClimateEntity):
         self._attr_unique_id = "climate.spa_thermostat"
         self.entity_id = self._attr_unique_id
         self._attr_translation_key = f"thermostat"
-        self._attr_supported_features = ClimateEntityFeature.TARGET_TEMPERATURE
-        self._attr_temperature_unit = UnitOfTemperature.CELSIUS
-        self._attr_min_temp = 10.0
+        self._attr_supported_features = ClimateEntityFeature.TARGET_TEMPERATURE 
+        # Na parametr není brán ohled, jednotka dle nastavení v systému HA !! (ale ponechám toto nastavení)
+        self._attr_temperature_unit = UnitOfTemperature.CELSIUS  # Výchozí hodnota
+        self._attr_min_temp = 10.0  # Výchozí hodnoty pro stupně
         self._attr_max_temp = 40.0
         self._attr_should_poll = False
         self._attr_target_temperature_step = 0.5
@@ -51,19 +52,46 @@ class SpaClimate(ClimateEntity):
     async def async_update(self):
         data = self._shared_data.data
         if data:
+            # Nastavit jednotku podle data.get("celsius")
+            if data.get("celsius"):
+                self._attr_temperature_unit = UnitOfTemperature.CELSIUS
+                self._attr_min_temp = 10.0
+                self._attr_max_temp = 40.0
+                unit_symbol = "°C"
+            else:
+                self._attr_temperature_unit = UnitOfTemperature.FAHRENHEIT
+                self._attr_min_temp = 50.0
+                self._attr_max_temp = 104.0
+                unit_symbol = "°F"
+            
             # Aktuální teplota
             current_f = data.get("currentTemp")
             if current_f is not None and current_f != 0:
-                self._current_temperature = round((current_f - 32) * 5.0 / 9.0, 1)
+                if data.get("celsius"):
+                    self._current_temperature = round((current_f - 32) * 5.0 / 9.0, 1)
+                else:
+                    self._current_temperature = current_f
+                    
             # Požadovaná teplota
             desired_f = data.get("desiredTemp")
             if desired_f is not None and desired_f != 0:
-                self._desired_temperature = round((desired_f - 32) * 5.0 / 9.0, 1)
+                if data.get("celsius"):
+                    self._desired_temperature = round((desired_f - 32) * 5.0 / 9.0, 1)
+                else:
+                    self._desired_temperature = desired_f
+                    
             # Cílená teplota (target)
             target_f = data.get("targetDesiredTemp")
             if target_f is not None and target_f != 0:
-                self._target_temperature = round((target_f - 32) * 5.0 / 9.0, 1)
-            _LOGGER.debug("Climate update: current=%s, desired=%s, target=%s", self._current_temperature, self._desired_temperature, self._target_temperature)
+                if data.get("celsius"):
+                    self._target_temperature = round((target_f - 32) * 5.0 / 9.0, 1)
+                else:
+                    self._target_temperature = target_f
+                    
+            _LOGGER.debug("Climate update (%s): current=%s, desired=%s, target=%s", unit_symbol, self._current_temperature, self._desired_temperature, self._target_temperature)
+            
+            # Informovat Home Assistant o změně stavu entity
+            self.async_write_ha_state()
 
     @property
     def current_temperature(self):
@@ -76,7 +104,7 @@ class SpaClimate(ClimateEntity):
 
     @property
     def temperature_unit(self):
-        return UnitOfTemperature.CELSIUS
+        return self._attr_temperature_unit
 
     @property
     def hvac_action(self):
@@ -104,22 +132,29 @@ class SpaClimate(ClimateEntity):
 
     @property
     def min_temp(self):
-        return 10.0
+        return self._attr_min_temp
 
     @property
     def max_temp(self):
-        return 40.0
+        return self._attr_max_temp
 
     async def async_set_temperature(self, **kwargs):
         value = kwargs.get("temperature")
         if value is not None and self.min_temp <= value <= self.max_temp:
-            fahrenheit_temp = round(value * 9.0 / 5.0 + 32, 1)
+            # Převést hodnotu na Fahrenheit podle aktuální jednotky
+            if self._attr_temperature_unit == UnitOfTemperature.CELSIUS:
+                fahrenheit_temp = round(value * 9.0 / 5.0 + 32, 1)
+                unit_symbol = "°C"
+            else:
+                fahrenheit_temp = value
+                unit_symbol = "°F"
+                
             success = await self._shared_data._client.setTemp(fahrenheit_temp)
             if success:
                 self._target_temperature = value
-                _LOGGER.info("Successfully set target temperature to %s °C", value)
+                _LOGGER.info("Successfully set target temperature to %s %s", value, unit_symbol)
             else:
-                _LOGGER.error("Failed to set target temperature to %s °C", value)
+                _LOGGER.error("Failed to set target temperature to %s %s", value, unit_symbol)
             await self._shared_data.async_force_update()
 
     @property

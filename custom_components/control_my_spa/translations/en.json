@@ -440,7 +440,7 @@
         }
       },
       "filter_2": {
-        "name": "Filter cycle 2",
+        "name": "Activate filter cycle 2",
         "state": {
           "on": "On",
           "off": "Off"

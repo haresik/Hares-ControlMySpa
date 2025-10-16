@@ -454,7 +454,7 @@
         }
       },
       "filter_2": {
-        "name": "Filtrační cyklus 2",
+        "name": "Aktivovat filtrační cyklus 2",
         "state": {
           "on": "Zapnuto",
           "off": "Vypnuto"

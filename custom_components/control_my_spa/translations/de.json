@@ -454,7 +454,7 @@
         }
       },
       "filter_2": {
-        "name": "Filterzyklus 2",
+        "name": "Filterzyklus 2 aktivieren",
         "state": {
           "on": "Ein",
           "off": "Aus"
