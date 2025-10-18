@@ -36,6 +36,20 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
         component for component in shared_data.data["components"]
         if component["componentType"] == "OZONE"
     ]
+    # Najít všechny HEATER komponenty
+    heaters = [
+        component for component in shared_data.data["components"]
+        if component["componentType"] == "HEATER"
+    ]
+    
+    # Pokud nejsou nalezeny žádné HEATER komponenty, vytvoř výchozí
+    if len(heaters) == 0:
+        heaters = [{
+            "name": "HEATER",
+            "componentType": "HEATER",
+            "value": "OFF",
+            "port": "0",
+        }]
     
     # Najít všechny TZL zones
     tzl_zones = shared_data.data.get("tzlZones", [])
@@ -46,6 +60,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     entities.append(SpaDesiredTemperatureSensor(shared_data, device_info))  # Požadovaná teplota
     entities += [SpaFilterSensor(shared_data, device_info, filter_data, len(filters)) for filter_data in filters]
     entities += [SpaOzoneSensor(shared_data, device_info, ozone_data, len(ozones)) for ozone_data in ozones]
+    entities += [SpaHeaterSensor(shared_data, device_info, heater_data, len(heaters)) for heater_data in heaters]
 
     async_add_entities(entities, True)
     _LOGGER.debug("START Śensor control_my_spa")
@@ -280,6 +295,53 @@ class SpaOzoneSensor(SpaSensorBase):
             if ozone_comp:
                 self._state = ozone_comp["value"]
                 _LOGGER.debug("Updated Ozone %s: %s", self._ozone_data["port"], self._state)
+
+    @property
+    def native_value(self):
+        return self._state
+
+class SpaHeaterSensor(SpaSensorBase):
+    def __init__(self, shared_data, device_info, heater_data, count_heater):
+        self._shared_data = shared_data
+        self._heater_data = heater_data
+        self._attr_native_unit_of_measurement = None  # Jednotka není potřeba
+        self._attr_should_poll = False  # Data jsou sdílena, posluchač
+        self._state = None
+        self._attr_device_info = device_info
+        self._attr_icon = "mdi:fire"
+        self._attr_unique_id = (
+            f"sensor.spa_heater"
+            if count_heater == 1 or heater_data['port'] is None
+            else f"sensor.spa_heater_{int(heater_data['port']) + 1}"
+        )
+        self._attr_translation_key = (
+            "heater"
+            if count_heater == 1 or heater_data['port'] is None
+            else f"heater_{int(heater_data['port']) + 1}"
+        )
+        self.entity_id = self._attr_unique_id
+
+    async def async_update(self):
+        data = self._shared_data.data
+        if data:
+            # Najít odpovídající HEATER podle portu
+            heater_comp = next(
+                (
+                    comp
+                    for comp in data["components"]
+                    if comp["componentType"] == "HEATER" and comp["port"] == self._heater_data["port"]
+                ),
+                None,
+            )
+            if heater_comp:
+                self._state = heater_comp["value"]
+                _LOGGER.debug("Updated Heater %s: %s", self._heater_data["port"], self._state)
+            else:
+                # Pokud není nalezena komponenta, nastav stav na OFF
+                self._state = "OFF"
+        else:
+            # Pokud nejsou dostupná data, nastav stav na OFF
+            self._state = "OFF"
 
     @property
     def native_value(self):

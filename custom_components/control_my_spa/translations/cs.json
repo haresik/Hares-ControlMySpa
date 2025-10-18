@@ -55,6 +55,15 @@
       "ozone": {
         "name": "Ozón"
       },
+      "heater": {
+        "name": "Topení"
+      },
+      "heater_1": {
+        "name": "Topení 1"
+      },
+      "heater_2": {
+        "name": "Topení 2"
+      },
       "tzl_zone": {
         "name": "TZL zóna"
       },

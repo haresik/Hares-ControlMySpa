@@ -55,6 +55,15 @@
       "ozone": {
         "name": "Ozone"
       },
+      "heater": {
+        "name": "Heater"
+      },
+      "heater_1": {
+        "name": "Heater 1"
+      },
+      "heater_2": {
+        "name": "Heater 2"
+      },
       "tzl_zone": {
         "name": "TZL zone"
       },
