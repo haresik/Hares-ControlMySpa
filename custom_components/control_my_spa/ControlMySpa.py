@@ -208,6 +208,9 @@ class ControlMySpa:
                 if resp.status == 200:
                     await asyncio.sleep(5)
                     return await self.getSpa()
+                else:
+                    textResponse = await resp.text()
+                    _LOGGER.error(f"Error in {endpoint}: {textResponse} Data: {payload}")
         except Exception as e:
             _LOGGER.error(f"Error in {endpoint}: {e}")
         return None
@@ -299,7 +302,7 @@ class ControlMySpa:
             "spaId": self.spaId,
             "via": "MOBILE",
             "state": zone_state,
-            "location": zone,
+            "location": int(zone),
             "locationType": "ZONE",
         })
     
@@ -309,7 +312,7 @@ class ControlMySpa:
             "spaId": self.spaId,
             "via": "MOBILE",
             "color": color_id,
-            "location": zone,
+            "location": int(zone),
             "locationType": "ZONE",
         })
 
@@ -319,7 +322,7 @@ class ControlMySpa:
             "spaId": self.spaId,
             "via": "MOBILE",
             "intensity": intensity,
-            "location": zone,
+            "location": int(zone),
             "locationType": "ZONE",
         })
 
@@ -329,7 +332,7 @@ class ControlMySpa:
             "spaId": self.spaId,
             "via": "MOBILE",
             "speed": speed,
-            "location": zone,
+            "location": int(zone),
             "locationType": "ZONE",
         })
 

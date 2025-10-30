@@ -1,4 +1,4 @@
-from homeassistant.components.light import LightEntity, ColorMode
+from homeassistant.components.light import LightEntity, ColorMode, LightEntityFeature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 from .const import DOMAIN
@@ -34,12 +34,12 @@ def async_set_favorite_colors(hass: HomeAssistant, entity_id: str, colors: list[
 
         er.async_get(hass).async_update_entity_options(entity_id, "light", options)
         _LOGGER.info("Set favorite colors for %s: %s", entity_id, colors)
-        _LOGGER.info("DEBUG: Entity options after update: %s", options)
+        _LOGGER.debug("Entity options after update: %s", options)
         
         # Debug: Zkontrolovat, zda se options skutečně nastavily
         updated_entity = er.async_get(hass).async_get(entity_id)
         if updated_entity:
-            _LOGGER.info("DEBUG: Updated entity options: %s", updated_entity.options.get("light", {}))
+            _LOGGER.debug("Updated entity options: %s", updated_entity.options.get("light", {}))
         
     except Exception as e:
         _LOGGER.error("Failed to set favorite colors for %s: %s", entity_id, e)
@@ -72,9 +72,9 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
 
 class SpaTzlZoneLight(LightEntity):
     _attr_has_entity_name = True
-    _attr_supported_color_modes = {ColorMode.RGB, ColorMode.BRIGHTNESS}  # RGB pro výběrové barvy + jas
+    _attr_supported_color_modes = {ColorMode.RGB}  # RGB pro výběrové barvy (jas je součástí RGB)
     _attr_color_mode = ColorMode.RGB
-    _attr_supported_features = 0  # Žádné speciální funkce
+    _attr_supported_features = LightEntityFeature(0)  # Žádné speciální funkce
 
     def __init__(self, shared_data, device_info, tzl_zone_data, count_tzl_zones):
         self._shared_data = shared_data
@@ -90,17 +90,17 @@ class SpaTzlZoneLight(LightEntity):
         self.hass = None  # Bude nastaveno později
         self.entity_id = None  # Bude nastaveno později
         # Inicializovat oblíbené barvy hned při vytvoření
-        _LOGGER.info("=== DEBUG: __init__ called for TZL Zone %s ===", tzl_zone_data["zoneId"])
-        _LOGGER.info("DEBUG: shared_data.data exists: %s", bool(shared_data.data))
-        _LOGGER.info("DEBUG: Initial _attr_supported_color_list: %s", self._attr_supported_color_list)
+        _LOGGER.info("=== __init__ called for TZL Zone %s ===", tzl_zone_data["zoneId"])
+        _LOGGER.debug("shared_data.data exists: %s", bool(shared_data.data))
+        _LOGGER.debug("Initial _attr_supported_color_list: %s", self._attr_supported_color_list)
         if shared_data.data:
-            _LOGGER.info("DEBUG: Calling _update_favorite_colors from __init__")
+            _LOGGER.debug("Calling _update_favorite_colors from __init__")
             self._update_favorite_colors(shared_data.data)
         else:
-            _LOGGER.warning("DEBUG: No shared_data.data available in __init__")
+            _LOGGER.warning("No shared_data.data available in __init__")
         
         # Debug: Zkontrolovat, zda se atribut nastavil
-        _LOGGER.info("DEBUG: After init, _attr_supported_color_list: %s", self._attr_supported_color_list)
+        _LOGGER.debug("After init, _attr_supported_color_list: %s", self._attr_supported_color_list)
         self._attr_unique_id = (
             f"light.spa_tzl_zone"
             if count_tzl_zones == 1
@@ -112,20 +112,20 @@ class SpaTzlZoneLight(LightEntity):
             else f"tzl_zone_light_{tzl_zone_data['zoneId']}"
         )
         self.entity_id = self._attr_unique_id
-        _LOGGER.info("DEBUG: Set entity_id in __init__: %s", self.entity_id)
+        _LOGGER.debug("Set entity_id in __init__: %s", self.entity_id)
 
     async def async_added_to_hass(self):
         """Called when entity is added to Home Assistant."""
-        _LOGGER.info("DEBUG: Entity added to hass: %s", self.entity_id)
+        _LOGGER.debug("Entity added to hass: %s", self.entity_id)
         
         # Nastavit oblíbené barvy po přidání do hass
         if self._attr_supported_color_list and self.entity_id is not None:
-            _LOGGER.info("DEBUG: Setting favorite colors in async_added_to_hass: %s", self._attr_supported_color_list)
+            _LOGGER.debug("Setting favorite colors in async_added_to_hass: %s", self._attr_supported_color_list)
             async_set_favorite_colors(self.hass, self.entity_id, self._attr_supported_color_list)
         elif self._attr_supported_color_list and self.entity_id is None:
-            _LOGGER.warning("DEBUG: Cannot set favorite colors - entity_id is None")
+            _LOGGER.warning("Cannot set favorite colors - entity_id is None")
         else:
-            _LOGGER.warning("DEBUG: No favorite colors to set in async_added_to_hass")
+            _LOGGER.warning("No favorite colors to set in async_added_to_hass")
 
     async def async_update(self):
         data = self._shared_data.data
@@ -161,7 +161,7 @@ class SpaTzlZoneLight(LightEntity):
                     self._attr_brightness = 0
                 
                 # Aktualizovat oblíbené barvy z tzlColors
-                _LOGGER.info("DEBUG: Calling _update_favorite_colors from async_update")
+                _LOGGER.debug("Calling _update_favorite_colors from async_update")
                 self._update_favorite_colors(data)
                 
                 _LOGGER.debug("Updated TZL Zone Light %s: ON=%s, RGB=(%s,%s,%s), Brightness=%s", 
@@ -182,19 +182,19 @@ class SpaTzlZoneLight(LightEntity):
     @property
     def supported_color_modes(self):
         """Vrátí podporované barevné módy - RGB pro výběrové barvy + jas."""
-        return {ColorMode.RGB, ColorMode.BRIGHTNESS}
+        return {ColorMode.RGB}
 
     @property
     def supported_features(self):
         """Vrátí podporované funkce."""
-        return 0  # Žádné speciální funkce
+        return LightEntityFeature(0)
 
     # Odstraněna property metoda - Home Assistant čte přímo _attr_supported_color_list
     
     @property
     def favorite_colors(self):
         """Vrátí seznam oblíbených barev z tzlColors."""
-        _LOGGER.info("DEBUG: favorite_colors property called, returning: %s", self._attr_favorite_colors)
+        _LOGGER.debug("favorite_colors property called, returning: %s", self._attr_favorite_colors)
         return self._attr_favorite_colors
 
     @property
@@ -236,17 +236,17 @@ class SpaTzlZoneLight(LightEntity):
 
     def _update_favorite_colors(self, data):
         """Aktualizuje seznam oblíbených barev z tzlColors."""
-        _LOGGER.info("=== DEBUG: _update_favorite_colors called ===")
-        _LOGGER.info("DEBUG: Full data keys: %s", list(data.keys()) if data else "No data")
+        _LOGGER.info("=== _update_favorite_colors called ===")
+        _LOGGER.debug("Full data keys: %s", list(data.keys()) if data else "No data")
         
         tzl_colors = data.get("tzlColors", [])
-        _LOGGER.info("DEBUG: tzlColors found: %s items", len(tzl_colors))
-        _LOGGER.info("DEBUG: tzlColors content: %s", tzl_colors)
+        _LOGGER.debug("tzlColors found: %s items", len(tzl_colors))
+        _LOGGER.debug("tzlColors content: %s", tzl_colors)
         
         favorite_colors = []
         
         for i, color in enumerate(tzl_colors):
-            _LOGGER.info("DEBUG: Processing color %s: %s", i, color)
+            _LOGGER.debug("Processing color %s: %s", i, color)
             # Přidat RGB barvu do oblíbených (maximálně 8 barev)
             if len(favorite_colors) < 8:
                 # Načíst skutečné barvy z tzlColors
@@ -258,41 +258,33 @@ class SpaTzlZoneLight(LightEntity):
                 rgb_color_dict = {"rgb_color": [red, green, blue]}
                 
                 # Použít dict formát (jako v ukázkovém kódu)
-                favorite_colors.append(rgb_color_dict)
-                _LOGGER.info("DEBUG: Added color %s: RGB(%s, %s, %s) -> dict: %s", 
-                           i, red, green, blue, rgb_color_dict)
-                
-                # Debug: Zkontrolovat, zda jsou hodnoty správné
-                if red == 0 and green == 0 and blue == 0:
-                    _LOGGER.warning("DEBUG: Color %s is black (0,0,0) - possible data issue", i)
-                elif red == 255 and green == 255 and blue == 255:
-                    _LOGGER.warning("DEBUG: Color %s is white (255,255,255) - possible data issue", i)
+                favorite_colors.append(rgb_color_dict)           
         
         self._attr_supported_color_list = favorite_colors
         self._attr_favorite_colors = favorite_colors  # Alternativní atribut
         
         # Nastavit oblíbené barvy pomocí entity registry (jako Scenery)
         if hasattr(self, 'hass') and hasattr(self, 'entity_id') and self.entity_id is not None:
-            _LOGGER.info("DEBUG: Calling async_set_favorite_colors from _update_favorite_colors")
+            _LOGGER.debug("Calling async_set_favorite_colors from _update_favorite_colors")
             async_set_favorite_colors(self.hass, self.entity_id, favorite_colors)
         else:
-            _LOGGER.warning("DEBUG: Cannot set favorite colors - hass: %s, entity_id: %s", 
+            _LOGGER.warning("Cannot set favorite colors - hass: %s, entity_id: %s", 
                           hasattr(self, 'hass'), getattr(self, 'entity_id', 'NOT_SET'))
         
-        _LOGGER.info("DEBUG: Final favorite colors for TZL Zone %s: %s", 
+        _LOGGER.debug("Final favorite colors for TZL Zone %s: %s", 
                      self._tzl_zone_data["zoneId"], favorite_colors)
-        _LOGGER.info("DEBUG: Current _attr_supported_color_list: %s", self._attr_supported_color_list)
-        _LOGGER.info("DEBUG: Current _attr_favorite_colors: %s", self._attr_favorite_colors)
+        _LOGGER.debug("Current _attr_supported_color_list: %s", self._attr_supported_color_list)
+        _LOGGER.debug("Current _attr_favorite_colors: %s", self._attr_favorite_colors)
         
         # Zkusit také nastavit jako dict pro Home Assistant
         if hasattr(self, '_attr_supported_color_list'):
-            _LOGGER.info("DEBUG: _attr_supported_color_list exists and has value: %s", 
+            _LOGGER.debug("_attr_supported_color_list exists and has value: %s", 
                         getattr(self, '_attr_supported_color_list', 'NOT_FOUND'))
         
         # Zkusit také přidat do extra_state_attributes pro debugging
         if not hasattr(self, '_debug_colors_set'):
             self._debug_colors_set = True
-            _LOGGER.info("DEBUG: Setting debug flag for colors")
+            _LOGGER.debug("Setting debug flag for colors")
 
     async def async_turn_on(self, **kwargs):
         """Zapnout světlo s možnými parametry jasu a výběrových barev."""
