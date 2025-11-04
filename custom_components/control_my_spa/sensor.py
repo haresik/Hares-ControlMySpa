@@ -1,5 +1,5 @@
 from datetime import timedelta
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import SensorEntity, SensorDeviceClass, SensorStateClass
 from homeassistant.const import UnitOfTemperature
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.core import HomeAssistant
@@ -76,6 +76,8 @@ class SpaTemperatureSensor(SpaSensorBase):
     def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS  # Výchozí hodnota
+        self._attr_device_class = SensorDeviceClass.TEMPERATURE
+        self._attr_state_class = SensorStateClass.MEASUREMENT
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._state = None
         self._attr_icon = "mdi:thermometer"
@@ -107,6 +109,8 @@ class SpaDesiredTemperatureSensor(SpaSensorBase):
     def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
         self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS  # Výchozí hodnota
+        self._attr_device_class = SensorDeviceClass.TEMPERATURE
+        self._attr_state_class = SensorStateClass.MEASUREMENT
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._state = None
         self._high_range_value = None  # Poslední hodnota pro HIGH rozsah
