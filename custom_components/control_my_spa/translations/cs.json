@@ -32,6 +32,28 @@
       }
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "pump_1_power_watts": "Příkon čerpadla 1 (W)",
+          "pump_2_power_watts": "Příkon čerpadla 2 (W)",
+          "pump_3_power_watts": "Příkon čerpadla 3 (W)",
+          "heater_1_power_watts": "Příkon topení 1 (W)",
+          "heater_2_power_watts": "Příkon topení 2 (W)",
+          "heater_3_power_watts": "Příkon topení 3 (W)",
+          "blower_1_power_watts": "Příkon Blower 1 (W)",
+          "blower_2_power_watts": "Příkon Blower 2 (W)",
+          "blower_3_power_watts": "Příkon Blower 3 (W)",
+          "circulation_pump_1_power_watts": "Příkon cirkulačního čerpadla 1 (W)",
+          "circulation_pump_2_power_watts": "Příkon cirkulačního čerpadla 2 (W)",
+          "circulation_pump_3_power_watts": "Příkon cirkulačního čerpadla 3 (W)"
+        },
+        "description": "Nastavte příkon čerpadel, topení a cenu elektřiny pro výpočet spotřeby a nákladů.",
+        "title": "Nastavení spotřeby"
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "current_temperature": {
@@ -42,6 +64,18 @@
       },
       "circulation_pump": {
         "name": "Cirkulační čerpadlo"
+      },
+      "circulation_pump_energy": {
+        "name": "Energie cirkulačního čerpadla"
+      },
+      "circulation_pump_energy_1": {
+        "name": "Energie cirkulačního čerpadla 1"
+      },
+      "circulation_pump_energy_2": {
+        "name": "Energie cirkulačního čerpadla 2"
+      },
+      "circulation_pump_energy_3": {
+        "name": "Energie cirkulačního čerpadla 3"
       },
       "filter": {
         "name": "Filtrační cyklus"
@@ -63,6 +97,15 @@
       },
       "heater_2": {
         "name": "Topení 2"
+      },
+      "heater_energy": {
+        "name": "Energie topení"
+      },
+      "heater_energy_1": {
+        "name": "Energie topení 1"
+      },
+      "heater_energy_2": {
+        "name": "Energie topení 2"
       },
       "tzl_zone": {
         "name": "TZL zóna"
@@ -87,6 +130,30 @@
       },
       "tzl_rgb_3": {
         "name": "TZL RGB C"
+      },
+      "pump_energy": {
+        "name": "Energie čerpadla"
+      },
+      "pump_energy_1": {
+        "name": "Energie čerpadla 1"
+      },
+      "pump_energy_2": {
+        "name": "Energie čerpadla 2"
+      },
+      "pump_energy_3": {
+        "name": "Energie čerpadla 3"
+      },
+      "blower_energy": {
+        "name": "Energie Blower"
+      },
+      "blower_energy_1": {
+        "name": "Energie Blower 1"
+      },
+      "blower_energy_2": {
+        "name": "Energie Blower 2"
+      },
+      "blower_energy_3": {
+        "name": "Energie Blower 3"
       }
     },
     "select": {

@@ -3,6 +3,7 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 from .ControlMySpa import ControlMySpa
 from .const import DOMAIN
+from .options_flow import ControlMySpaOptionsFlowHandler
 
 class ControlMySpaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
@@ -79,3 +80,12 @@ class ControlMySpaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required("spa_id"): vol.In(available_spas)
             })
         )
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        config_entry: config_entries.ConfigEntry,
+    ) -> ControlMySpaOptionsFlowHandler:
+        """Get the options flow for this handler."""
+        return ControlMySpaOptionsFlowHandler(config_entry)
+

@@ -32,6 +32,28 @@
       }
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "pump_1_power_watts": "Pump 1 power consumption (W)",
+          "pump_2_power_watts": "Pump 2 power consumption (W)",
+          "pump_3_power_watts": "Pump 3 power consumption (W)",
+          "heater_1_power_watts": "Heater 1 power consumption (W)",
+          "heater_2_power_watts": "Heater 2 power consumption (W)",
+          "heater_3_power_watts": "Heater 3 power consumption (W)",
+          "blower_1_power_watts": "Blower 1 power consumption (W)",
+          "blower_2_power_watts": "Blower 2 power consumption (W)",
+          "blower_3_power_watts": "Blower 3 power consumption (W)",
+          "circulation_pump_1_power_watts": "Circulation pump 1 power consumption (W)",
+          "circulation_pump_2_power_watts": "Circulation pump 2 power consumption (W)",
+          "circulation_pump_3_power_watts": "Circulation pump 3 power consumption (W)"
+        },
+        "description": "Configure pump and heater power consumption and energy price for cost calculation.",
+        "title": "Power consumption settings"
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "current_temperature": {
@@ -42,6 +64,18 @@
       },
       "circulation_pump": {
         "name": "Circulation pump"
+      },
+      "circulation_pump_energy": {
+        "name": "Circulation pump energy consumption"
+      },
+      "circulation_pump_energy_1": {
+        "name": "Circulation pump energy consumption 1"
+      },
+      "circulation_pump_energy_2": {
+        "name": "Circulation pump energy consumption 2"
+      },
+      "circulation_pump_energy_3": {
+        "name": "Circulation pump energy consumption 3"
       },
       "filter": {
         "name": "Filter cycle"
@@ -63,6 +97,15 @@
       },
       "heater_2": {
         "name": "Heater 2"
+      },
+      "heater_energy": {
+        "name": "Heater energy consumption"
+      },
+      "heater_energy_1": {
+        "name": "Heater energy consumption 1"
+      },
+      "heater_energy_2": {
+        "name": "Heater energy consumption 2"
       },
       "tzl_zone": {
         "name": "TZL zone"
@@ -87,6 +130,30 @@
       },
       "tzl_rgb_3": {
         "name": "TZL RGB C"
+      },
+      "pump_energy": {
+        "name": "Pump energy consumption"
+      },
+      "pump_energy_1": {
+        "name": "Pump energy consumption 1"
+      },
+      "pump_energy_2": {
+        "name": "Pump energy consumption 2"
+      },
+      "pump_energy_3": {
+        "name": "Pump energy consumption 3"
+      },
+      "blower_energy": {
+        "name": "Blower energy consumption"
+      },
+      "blower_energy_1": {
+        "name": "Blower energy consumption 1"
+      },
+      "blower_energy_2": {
+        "name": "Blower energy consumption 2"
+      },
+      "blower_energy_3": {
+        "name": "Blower energy consumption 3"
       }
     },
     "light": {

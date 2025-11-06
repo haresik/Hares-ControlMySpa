@@ -32,6 +32,28 @@
       }
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "pump_1_power_watts": "Pumpenleistungsaufnahme 1 (W)",
+          "pump_2_power_watts": "Pumpenleistungsaufnahme 2 (W)",
+          "pump_3_power_watts": "Pumpenleistungsaufnahme 3 (W)",
+          "heater_1_power_watts": "Heizleistungsaufnahme 1 (W)",
+          "heater_2_power_watts": "Heizleistungsaufnahme 2 (W)",
+          "heater_3_power_watts": "Heizleistungsaufnahme 3 (W)",
+          "blower_1_power_watts": "Gebläseleistungsaufnahme 1 (W)",
+          "blower_2_power_watts": "Gebläseleistungsaufnahme 2 (W)",
+          "blower_3_power_watts": "Gebläseleistungsaufnahme 3 (W)",
+          "circulation_pump_1_power_watts": "Umwälzpumpenleistungsaufnahme 1 (W)",
+          "circulation_pump_2_power_watts": "Umwälzpumpenleistungsaufnahme 2 (W)",
+          "circulation_pump_3_power_watts": "Umwälzpumpenleistungsaufnahme 3 (W)"
+        },
+        "description": "Konfigurieren Sie die Pumpenleistungsaufnahme und den Energiepreis für die Kostenberechnung.",
+        "title": "Einstellungen für Pumpenleistungsaufnahme"
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "current_temperature": {
@@ -42,6 +64,18 @@
       },
       "circulation_pump": {
         "name": "Umwälzpumpe"
+      },
+      "circulation_pump_energy": {
+        "name": "Umwälzpumpe Energieverbrauch"
+      },
+      "circulation_pump_energy_1": {
+        "name": "Umwälzpumpe Energieverbrauch 1"
+      },
+      "circulation_pump_energy_2": {
+        "name": "Umwälzpumpe Energieverbrauch 2"
+      },
+      "circulation_pump_energy_3": {
+        "name": "Umwälzpumpe Energieverbrauch 3"
       },
       "filter": {
         "name": "Filterzyklus"
@@ -78,6 +112,30 @@
       },
       "tzl_rgb_3": {
         "name": "TZL RGB C"
+      },
+      "pump_energy": {
+        "name": "Pumpenenergieverbrauch"
+      },
+      "pump_energy_1": {
+        "name": "Pumpenenergieverbrauch 1"
+      },
+      "pump_energy_2": {
+        "name": "Pumpenenergieverbrauch 2"
+      },
+      "pump_energy_3": {
+        "name": "Pumpenenergieverbrauch 3"
+      },
+      "blower_energy": {
+        "name": "Gebläseenergieverbrauch"
+      },
+      "blower_energy_1": {
+        "name": "Gebläseenergieverbrauch 1"
+      },
+      "blower_energy_2": {
+        "name": "Gebläseenergieverbrauch 2"
+      },
+      "blower_energy_3": {
+        "name": "Gebläseenergieverbrauch 3"
       }
     },
     "select": {

@@ -3,7 +3,7 @@
   "data": {
     "serialNumber": "12345667890",
     "hasCurrentState": true,
-    "currentTemp": "0.00",
+    "currentTemp": "56.00",
     "desiredTemp": "51.00",
     "c8zCurrentState": {
       "c8zHeaterState": "OFF",
@@ -18,6 +18,12 @@
     "isOnHold": false,
     "currentFaultMessage": null,
     "components": [
+      {
+        "name": "HEATER",
+        "componentType": "HEATER",
+        "value": "ON",
+        "port": "0"
+      },
       {
         "componentId": null,
         "serialNumber": "12345667890",
@@ -170,6 +176,44 @@
         "durationMinutes": null
       },
       {
+          "componentId": null,
+          "serialNumber": "12345667890",
+          "alertState": null,
+          "materialType": null,
+          "targetValue": null,
+          "name": "BLOWER",
+          "componentType": "BLOWER",
+          "value": "HIGH",
+          "availableValues": [
+              "OFF",
+              "HIGH"
+          ],
+          "registeredTimestamp": "2025-10-04T17:21:06.941Z",
+          "port": "0",
+          "hour": null,
+          "minute": null,
+          "durationMinutes": null
+      },
+      {
+          "componentId": null,
+          "serialNumber": "12345667890",
+          "alertState": null,
+          "materialType": null,
+          "targetValue": null,
+          "name": "CIRCULATION_PUMP",
+          "componentType": "CIRCULATION_PUMP",
+          "value": "HIGH",
+          "availableValues": [
+              "OFF",
+              "HIGH"
+          ],
+          "registeredTimestamp": "2025-10-04T17:21:06.941Z",
+          "port": null,
+          "hour": null,
+          "minute": null,
+          "durationMinutes": null
+      },
+      {
         "componentId": null,
         "serialNumber": "12345667890",
         "alertState": null,
@@ -198,11 +242,11 @@
           {
             "zoneId": "1",
             "zoneName": "A",
-            "state": "OFF",
-            "intensity": 0,
-            "speed": 0,
+            "state": "NORMAL",
+            "intensity": 4,
+            "speed": 2,
             "red": 0,
-            "green": 0,
+            "green": 255,
             "blue": 0
           },
           {
