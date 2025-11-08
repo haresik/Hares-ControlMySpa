@@ -2,6 +2,14 @@
 
 This component allows integration and control of hot tubs through the Home Assistant platform. It provides features not available in standard integrations and is intended for users with specific needs or those who want to test new functionalities.
 
+## How It Works
+
+When you change a state in Home Assistant, the request is sent to the cloud service. The system waits approximately 2 seconds for a response (or up to 4 seconds, as the request is sent twice for reliability). If the change was successful, it will be reflected in Home Assistant.
+
+In detail: The request is sent to the cloud, which forwards it to your spa. The spa responds with confirmation of the change, and the cloud then responds back to Home Assistant with the updated state. The request path is long because it's not a local transmission - it goes through the cloud infrastructure.
+
+This function simulates the mobile application, where changes also take time to process. Please be patient when making changes, as the communication path involves multiple steps through the cloud service.
+
 ## What This Component Contains
 
 This integration provides comprehensive monitoring and control of your hot tub through Home Assistant. It creates various entities including sensors, switches, climate controls, and light entities that allow you to monitor and control all aspects of your spa.
@@ -43,7 +51,7 @@ This component includes comprehensive energy monitoring capabilities that integr
 - **Blower Energy Sensors**: Track energy consumption of air blowers (kWh)
 - **Circulation Pump Energy Sensors**: Monitor circulation pump energy usage (kWh)
 
-<img src="img/energyentity.png" alt="Energy Dashboard" width="300">
+![Energy Dashboard](img/energyentity.png)
 
 ### How It Works:
 
@@ -129,6 +137,14 @@ After adding the repository, the component will appear in the standard list of i
 
 Tato komponenta umožňuje integraci a ovládání vířivek prostřednictvím platformy Home Assistant. Poskytuje funkce, které nejsou dostupné ve standardních integracích, a je určena pro uživatele s konkrétními potřebami nebo pro ty, kteří chtějí testovat nové funkce.
 
+## Jak to funguje
+
+Při změně stavu v Home Assistantu se požadavek odešle do cloudové služby. Systém počká přibližně 2 sekundy na odpověď (nebo až 4 sekundy, protože se požadavek pro spolehlivost posílá dvakrát). Pokud změna proběhla úspěšně, projeví se v Home Assistantu.
+
+Podrobněji: Požadavek se odešle do cloudu, který jej přepošle do vaší vířivky. Vířivka odpoví potvrzením změny a cloud pak odpoví zpět do Home Assistantu se změněným stavem. Cesta přenosu požadavku je dlouhá, protože nejde o lokální přenos - prochází cloudovou infrastrukturou.
+
+Tato funkce simuluje mobilní aplikaci, kde také probíhají změny zdlouhavě. Při provádění změn buďte prosím trpěliví, protože komunikační cesta zahrnuje několik kroků přes cloudovou službu.
+
 ## Co tato komponenta obsahuje
 
 Tato integrace poskytuje komplexní monitorování a ovládání vaší vířivky prostřednictvím Home Assistantu. Vytváří různé entity včetně senzorů, přepínačů, klimatických ovládání a světelných entit, které vám umožňují monitorovat a ovládat všechny aspekty vaší vířivky.
@@ -170,7 +186,7 @@ Tato komponenta zahrnuje komplexní možnosti sledování energie, které se bez
 - **Senzory energie blowrů**: Sledují spotřebu energie vzduchových blowrů (kWh)
 - **Senzory energie cirkulačních čerpadel**: Monitorují spotřebu energie cirkulačních čerpadel (kWh)
 
-<img src="img/energyentity.png" alt="Energy Dashboard" width="300">
+![Energy Dashboard](img/energyentity.png)
 
 ### Jak to funguje:
 
