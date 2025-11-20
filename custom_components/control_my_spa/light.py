@@ -320,17 +320,20 @@ class SpaTzlZoneLight(LightEntity):
             
             # Zapnout zónu na režim NORMAL pouze pokud je aktuálně OFF
             if current_state == "OFF":
-                _LOGGER.info("Zone is OFF, switching to NORMAL mode")
-                response_data = await self._shared_data._client.setChromazoneFunction(
-                    "NORMAL", 
+                _LOGGER.info("Zone is OFF, switching to NORMAL mode using setChromazoneColor with color_id=0")
+                response_data = await self._shared_data._client.setChromazoneColor(
+                    0, 
                     self._tzl_zone_data["zoneId"]
                 )
                 
                 if response_data is None:
-                    _LOGGER.warning("Function setChromazoneFunction (NORMAL), parameter is not supported")
+                    _LOGGER.warning("Function setChromazoneColor, parameter 0 is not supported")
                     return
+                
+                # Ukončit nastavení po zapnutí zóny
+                return
             else:
-                _LOGGER.info("Zone is already ON (state: %s), skipping setChromazoneFunction", current_state)
+                _LOGGER.info("Zone is already ON (state: %s), skipping setChromazoneColor", current_state)
             
             # Zpracovat jas - převést z Home Assistant brightness (0-255) na TZL intensity (0-8)
             if "brightness" in kwargs:
