@@ -63,15 +63,26 @@ class SpaTzlZoneModeSelect(SpaSelectBase):
         self.async_write_ha_state()
         
         try:
-            # Volání API pro nastavení stavu TZL zóny
-            response_data = await self._shared_data._client.setChromazoneFunction(
-                target_state, 
-                self._tzl_zone_data["zoneId"]
-            )
-            
-            if response_data is None:
-                _LOGGER.warning("Function setChromazoneFunction, parameter %s is not supported", target_state)
-                return False
+            # Pro NORMAL se volá setChromazoneColor s color_id=0
+            if target_state == "NORMAL":
+                response_data = await self._shared_data._client.setChromazoneColor(
+                    0, 
+                    self._tzl_zone_data["zoneId"]
+                )
+                
+                if response_data is None:
+                    _LOGGER.warning("Function setChromazoneColor, parameter 0 is not supported")
+                    return False
+            else:
+                # Pro ostatní stavy se volá setChromazoneFunction
+                response_data = await self._shared_data._client.setChromazoneFunction(
+                    target_state, 
+                    self._tzl_zone_data["zoneId"]
+                )
+                
+                if response_data is None:
+                    _LOGGER.warning("Function setChromazoneFunction, parameter %s is not supported", target_state)
+                    return False
             
             if response_data:
                 # Najít odpovídající TZL zone v odpovědi
