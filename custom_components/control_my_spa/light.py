@@ -370,7 +370,7 @@ class SpaTzlZoneLight(LightEntity):
                     
                     # Nastavit barvu
                     color_response = await self._shared_data._client.setChromazoneColor(
-                        color_id, 
+                        color_id - 1, 
                         self._tzl_zone_data["zoneId"]
                     )
                     
@@ -394,7 +394,7 @@ class SpaTzlZoneLight(LightEntity):
                     
                     if color_id is not None:
                         color_response = await self._shared_data._client.setChromazoneColor(
-                            color_id, 
+                            color_id - 1, 
                             self._tzl_zone_data["zoneId"]
                         )
                         if color_response:

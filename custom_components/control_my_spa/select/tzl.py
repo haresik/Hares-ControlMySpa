@@ -526,7 +526,7 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
         """Pokus o nastavení barvy TZL zóny s možností opakování."""
         try:
             response_data = await self._shared_data._client.setChromazoneColor(
-                color_id, 
+                color_id - 1, 
                 self._tzl_zone_data["zoneId"]
             )
             
