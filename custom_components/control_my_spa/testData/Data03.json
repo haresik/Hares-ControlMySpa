@@ -1,0 +1,244 @@
+{
+  "statusCode": 200,
+  "data": {
+    "serialNumber": "98765-432109876543",
+    "hasCurrentState": true,
+    "currentTemp": "99.00",
+    "desiredTemp": "99.00",
+    "c8zCurrentState": {
+      "c8zHeaterState": "OFF",
+      "c8zStatus": "C8Z_STATUS_NOT_PRESENT"
+    },
+    "time": "17:47",
+    "isMilitaryTime": true,
+    "isPanelLocked": false,
+    "heaterMode": "READY",
+    "tempRange": "LOW",
+    "isCelsius": true,
+    "isOnHold": false,
+    "currentFaultMessage": null,
+    "components": [
+      {
+        "componentId": null,
+        "serialNumber": "98765-432109876543",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "GATEWAY",
+        "componentType": "GATEWAY",
+        "value": null,
+        "availableValues": [],
+        "registeredTimestamp": "2025-11-24T16:47:45.779Z",
+        "port": null,
+        "hour": null,
+        "minute": null,
+        "durationMinutes": null
+      },
+      {
+        "componentId": null,
+        "serialNumber": "98765-432109876543",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "CONTROLLER",
+        "componentType": "CONTROLLER",
+        "value": null,
+        "availableValues": [],
+        "registeredTimestamp": "2025-11-24T16:47:45.779Z",
+        "port": null,
+        "hour": null,
+        "minute": null,
+        "durationMinutes": null
+      },
+      {
+        "componentId": null,
+        "serialNumber": "98765-432109876543",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "FILTER",
+        "componentType": "FILTER",
+        "value": "OFF",
+        "availableValues": [
+          "OFF",
+          "ON",
+          "DISABLED"
+        ],
+        "registeredTimestamp": "2025-11-24T16:47:45.780Z",
+        "port": "0",
+        "hour": 1,
+        "minute": 0,
+        "durationMinutes": 180
+      },
+      {
+        "componentId": null,
+        "serialNumber": "98765-432109876543",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "FILTER",
+        "componentType": "FILTER",
+        "value": "OFF",
+        "availableValues": [
+          "OFF",
+          "ON",
+          "DISABLED"
+        ],
+        "registeredTimestamp": "2025-11-24T16:47:45.780Z",
+        "port": "1",
+        "hour": 13,
+        "minute": 30,
+        "durationMinutes": 120
+      },
+      {
+        "componentId": null,
+        "serialNumber": "98765-432109876543",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "PUMP",
+        "componentType": "PUMP",
+        "value": "OFF",
+        "availableValues": [
+          "LOW",
+          "HIGH"
+        ],
+        "registeredTimestamp": "2025-11-24T16:47:45.780Z",
+        "port": "0",
+        "hour": null,
+        "minute": null,
+        "durationMinutes": null
+      },
+      {
+        "componentId": null,
+        "serialNumber": "98765-432109876543",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "PUMP",
+        "componentType": "PUMP",
+        "value": "OFF",
+        "availableValues": [
+          "OFF",
+          "LOW",
+          "HIGH"
+        ],
+        "registeredTimestamp": "2025-11-24T16:47:45.780Z",
+        "port": "1",
+        "hour": null,
+        "minute": null,
+        "durationMinutes": null
+      },
+      {
+        "componentId": null,
+        "serialNumber": "98765-432109876543",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "CIRCULATION_PUMP",
+        "componentType": "CIRCULATION_PUMP",
+        "value": "OFF",
+        "availableValues": [
+          "OFF",
+          "LOW",
+          "HIGH"
+        ],
+        "registeredTimestamp": "2025-11-24T16:47:45.780Z",
+        "port": null,
+        "hour": null,
+        "minute": null,
+        "durationMinutes": null
+      },
+      {
+        "componentId": null,
+        "serialNumber": "98765-432109876543",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "BLOWER",
+        "componentType": "BLOWER",
+        "value": "OFF",
+        "availableValues": [
+          "OFF",
+          "LOW",
+          "MED",
+          "HIGH"
+        ],
+        "registeredTimestamp": "2025-11-24T16:47:45.780Z",
+        "port": "0",
+        "hour": null,
+        "minute": null,
+        "durationMinutes": null
+      },
+      {
+        "componentId": null,
+        "serialNumber": "98765-432109876543",
+        "alertState": null,
+        "materialType": null,
+        "targetValue": null,
+        "name": "LIGHT",
+        "componentType": "LIGHT",
+        "value": "OFF",
+        "availableValues": [
+          "OFF",
+          "HIGH"
+        ],
+        "registeredTimestamp": "2025-11-24T16:47:45.780Z",
+        "port": "0",
+        "hour": null,
+        "minute": null,
+        "durationMinutes": null
+      }
+    ],
+    "primaryTZLStatus": "TZL_CONNECTED",
+    "secondaryTZLStatus": "TZL_NOT_PRESENT",
+    "tzlState": {
+      "updateTimestamp": "2025-10-02T07:02:41.267Z",
+      "tzlLightStatus": {
+        "tzlZones": []
+      },
+      "tzlColorSettings": {
+        "tzlColors": []
+      }
+    },
+    "hasChromazone": false,
+    "rangeLimits": {
+      "highRangeHigh": 104,
+      "highRangeLow": 80,
+      "lowRangeHigh": 99,
+      "lowRangeLow": 50
+    },
+    "systemInfo": {
+      "registrationServerDate": "2025-05-05T18:16:11.839Z",
+      "assignedDate": "2024-06-17T09:14:09.899Z",
+      "rs485Address": 18,
+      "isRs485ConnectionActive": true,
+      "isDrainMode": false,
+      "pingTime": "2025-10-04T17:21:06.934Z",
+      "controllerSoftwareVersion": "M100_225 V65.0",
+      "currentSetup": 17,
+      "dipSwitches": [
+        {
+          "slotNumber": 1,
+          "on": false
+        },
+        {
+          "slotNumber": 2,
+          "on": false
+        },
+        {
+          "slotNumber": 3,
+          "on": true
+        }
+      ],
+      "buildNumber": "1129/129"
+    },
+    "dealer": {
+      "_id": "1234567890"
+    },
+    "isOnline": true,
+    "isPrimingMode": false,
+    "totalAlerts": 3
+  },
+  "message": "Spa's dashboard retrieved successfully."
+}
