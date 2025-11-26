@@ -40,11 +40,12 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         len(component.get("availableValues", [])) > 2
     ]
     # Najít všechny BLOWER komponenty s více než dvěma hodnotami
-    blowers = [
-        component for component in shared_data.data["components"]
-        if component["componentType"] == "BLOWER" and 
-        len(component.get("availableValues", [])) > 2
-    ]
+    # blowers = [
+    #     component for component in shared_data.data["components"]
+    #     if component["componentType"] == "BLOWER" and 
+    #     len(component.get("availableValues", [])) > 2
+    # ]
+    blowers = []  # Zakomentováno - blowers se negenerují
     # Najít všechny LIGHT komponenty s více než dvěma hodnotami
     lights = [
         component for component in shared_data.data["components"]
@@ -72,7 +73,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     entities = []
     entities = [SpaPumpSelect(shared_data, device_info, pump, len(pumps)) for pump in pumps]
-    entities += [SpaBlowerSelect(shared_data, device_info, blower, len(blowers)) for blower in blowers]
+    # entities += [SpaBlowerSelect(shared_data, device_info, blower, len(blowers)) for blower in blowers]  # Zakomentováno - blowers se negenerují
     entities += [SpaLightSelect(shared_data, device_info, light, len(lights)) for light in lights]
     entities += [SpaFilterTimeSelect(shared_data, device_info, filter_data, len(filters)) for filter_data in filters]
     entities += [SpaFilterDurationSelect(shared_data, device_info, filter_data, len(filters)) for filter_data in filters]

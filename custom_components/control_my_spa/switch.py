@@ -29,11 +29,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         if component["componentType"] == "PUMP" and 
         len(component.get("availableValues", ["OFF", "HIGH"])) == 2
     ]
-    # Najít všechny BLOWER komponenty s přesně dvěma hodnotami
+    # Najít všechny BLOWER komponenty
     blowers = [
         component for component in shared_data.data["components"]
-        if component["componentType"] == "BLOWER" and 
-        len(component.get("availableValues", ["OFF", "HIGH"])) == 2
+        if component["componentType"] == "BLOWER"
     ]
     # Najít všechny FILTER komponenty
     filters = [
@@ -358,8 +357,8 @@ class SpaBlowerSwitch(SpaSwitchBase):
         self.entity_id = self._attr_unique_id
         # Získání dostupných hodnot pro blower, výchozí hodnoty jsou OFF a HIGH
         self._available_values = blower_data.get("availableValues", ["OFF", "HIGH"])
-        self._off_value = self._available_values[0]  # První hodnota pro vypnuto
-        self._on_value = self._available_values[-1]  # Poslední hodnota pro zapnuto
+        self._off_value = "OFF"  # Pevná hodnota pro vypnuto
+        self._on_value = "HIGH"  # Pevná hodnota pro zapnuto
         self._is_processing = False  # Příznak zpracování
 
     @property
@@ -374,6 +373,32 @@ class SpaBlowerSwitch(SpaSwitchBase):
         else:
             return "mdi:weather-dust"
 
+    def _calculate_is_on_state(self, value: str) -> bool:
+        """Vypočítá stav is_on na základě hodnoty podle pravidel."""
+        if not value:
+            return False
+        # Pokud je hodnota 'LOW'
+        if value == "LOW":
+            # Pokud mezi dostupnými není MED ani HIGH ani HI → nastav OFF
+            if "MED" not in self._available_values and "HIGH" not in self._available_values and "HI" not in self._available_values:
+                return False
+            # Pokud není MED, ale je HIGH → nastav HIGH
+            elif "MED" not in self._available_values and ("HIGH" in self._available_values or "HI" in self._available_values):
+                return True
+            # Pokud je MED → nastav MED
+            elif "MED" in self._available_values:
+                return True
+            else:
+                return False
+        # Pokud je hodnota 'MED', ověřit zda je HIGH v availableValues
+        elif value == "MED":
+            if "HIGH" in self._available_values:
+                return True
+            else:
+                return False
+        else:
+            return value == self._on_value
+
     async def async_update(self):
         data = self._shared_data.data
         if data:
@@ -383,7 +408,7 @@ class SpaBlowerSwitch(SpaSwitchBase):
             )
             _LOGGER.debug("Updated Blower %s: %s", self._blower_data["port"], blower["value"])
             if blower:
-                self._attr_is_on = blower["value"] == self._on_value
+                self._attr_is_on = self._calculate_is_on_state(blower["value"])
             else:
                 self._attr_is_on = False
 
@@ -403,22 +428,28 @@ class SpaBlowerSwitch(SpaSwitchBase):
             )
             new_state = blower["value"] if blower else None
             
-            if new_state == target_state:
-                self._attr_is_on = (target_state == self._on_value)
+            # Převést stavy na boolean hodnoty
+            expected_is_on = self._calculate_is_on_state(target_state)
+            actual_is_on = self._calculate_is_on_state(new_state) if new_state else False
+            
+            if expected_is_on == actual_is_on:
+                self._attr_is_on = actual_is_on
                 _LOGGER.info(
                     "Úspěšně %s vzduchovač %s%s",
-                    "zapnut" if target_state == self._on_value else "vypnut",
+                    "zapnut" if expected_is_on else "vypnut",
                     self._blower_data["port"],
                     " (2. pokus)" if is_retry else ""
                 )
                 return True
             else:
                 _LOGGER.warning(
-                    "Blower %s was not %s. Expected state: %s, Current state: %s%s",
+                    "Blower %s was not %s. Expected state: %s (%s), Current state: %s (%s)%s",
                     self._blower_data["port"],
-                    "zapnut" if target_state == self._on_value else "vypnut",
+                    "zapnut" if expected_is_on else "vypnut",
                     target_state,
+                    expected_is_on,
                     new_state,
+                    actual_is_on,
                     " (2. pokus)" if is_retry else ""
                 )
                 return False
