@@ -26,8 +26,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     # Najít všechny PUMP komponenty s přesně dvěma hodnotami
     pumps = [
         component for component in shared_data.data["components"]
-        if component["componentType"] == "PUMP" and 
-        len(component.get("availableValues", ["OFF", "HIGH"])) == 2
+        if component["componentType"] == "PUMP"
     ]
     # Najít všechny BLOWER komponenty
     blowers = [
@@ -225,8 +224,8 @@ class SpaPumpSwitch(SpaSwitchBase):
         self.entity_id = self._attr_unique_id
         # Získání dostupných hodnot pro pump, výchozí hodnoty jsou OFF a HIGH
         self._available_values = pump_data.get("availableValues", ["OFF", "HIGH"])
-        self._off_value = self._available_values[0]  # První hodnota pro vypnuto
-        self._on_value = self._available_values[-1]  # Poslední hodnota pro zapnuto
+        self._off_value = "OFF"  # Pevná hodnota pro vypnuto
+        self._on_value = "HIGH"  # Pevná hodnota pro zapnuto
         self._is_processing = False  # Příznak zpracování
 
     @property
@@ -241,6 +240,32 @@ class SpaPumpSwitch(SpaSwitchBase):
         else:
             return "mdi:weather-windy"
 
+    def _calculate_is_on_state(self, value: str) -> bool:
+        """Vypočítá stav is_on na základě hodnoty podle pravidel."""
+        if not value:
+            return False
+        # Pokud je hodnota 'LOW'
+        if value == "LOW":
+            # Pokud mezi dostupnými není MED ani HIGH ani HI → nastav OFF
+            if "MED" not in self._available_values and "HIGH" not in self._available_values and "HI" not in self._available_values:
+                return False
+            # Pokud není MED, ale je HIGH → nastav HIGH
+            elif "MED" not in self._available_values and ("HIGH" in self._available_values or "HI" in self._available_values):
+                return True
+            # Pokud je MED → nastav MED
+            elif "MED" in self._available_values:
+                return True
+            else:
+                return False
+        # Pokud je hodnota 'MED', ověřit zda je HIGH v availableValues
+        elif value == "MED":
+            if "HIGH" in self._available_values:
+                return True
+            else:
+                return False
+        else:
+            return value == self._on_value
+
     async def async_update(self):
         data = self._shared_data.data
         if data:
@@ -250,7 +275,7 @@ class SpaPumpSwitch(SpaSwitchBase):
             )
             _LOGGER.debug("Updated Pump %s: %s", self._pump_data["port"], pump["value"])
             if pump:
-                self._attr_is_on = pump["value"] == self._on_value
+                self._attr_is_on = self._calculate_is_on_state(pump["value"])
             else:
                 self._attr_is_on = False
 
@@ -270,22 +295,28 @@ class SpaPumpSwitch(SpaSwitchBase):
             )
             new_state = pump["value"] if pump else None
             
-            if new_state == target_state:
-                self._attr_is_on = (target_state == self._on_value)
+            # Převést stavy na boolean hodnoty
+            expected_is_on = self._calculate_is_on_state(target_state)
+            actual_is_on = self._calculate_is_on_state(new_state) if new_state else False
+            
+            if expected_is_on == actual_is_on:
+                self._attr_is_on = actual_is_on
                 _LOGGER.info(
                     "Úspěšně %s čerpadlo %s%s",
-                    "zapnuto" if target_state == self._on_value else "vypnuto",
+                    "zapnuto" if expected_is_on else "vypnuto",
                     self._pump_data["port"],
                     " (2. pokus)" if is_retry else ""
                 )
                 return True
             else:
                 _LOGGER.warning(
-                    "Pump %s was not %s. Expected state: %s, Current state: %s%s",
+                    "Pump %s was not %s. Expected state: %s (%s), Current state: %s (%s)%s",
                     self._pump_data["port"],
-                    "zapnuto" if target_state == self._on_value else "vypnuto",
+                    "zapnuto" if expected_is_on else "vypnuto",
                     target_state,
+                    expected_is_on,
                     new_state,
+                    actual_is_on,
                     " (2. pokus)" if is_retry else ""
                 )
                 return False
