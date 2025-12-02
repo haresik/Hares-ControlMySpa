@@ -373,7 +373,7 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
         elif red < 50 and green < 50 and blue < 50:
             return self._get_localized_color("dark_gray", language)
         elif red > 200 and green < 100 and blue < 100:
-            return self._get_localized_color("light_red", language)
+            return self._get_localized_color("pink", language)
         elif red < 100 and green > 200 and blue < 100:
             return self._get_localized_color("light_green", language)
         elif red < 100 and green < 100 and blue > 200:
@@ -393,7 +393,7 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
         elif red < 100 and green > 150 and blue > 100:
             return self._get_localized_color("mint", language)
         elif red > 100 and green < 100 and blue > 150:
-            return self._get_localized_color("pink", language)
+            return self._get_localized_color("purple", language)
         elif red > 150 and green < 100 and blue > 100:
             return self._get_localized_color("magenta", language)
         
@@ -401,7 +401,7 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
         elif red == 177 and green == 0 and blue == 255:
             return self._get_localized_color("dark_pink", language)
         elif red == 255 and green == 0 and blue == 92:
-            return self._get_localized_color("pink", language)
+            return self._get_localized_color("purple", language)
         elif red == 83 and green == 106 and blue == 255:
             return self._get_localized_color("light_blue", language)
         
