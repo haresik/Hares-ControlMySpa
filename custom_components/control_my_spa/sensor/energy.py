@@ -38,9 +38,9 @@ class SpaHeaterEnergySensor(SpaSensorBase, RestoreEntity):
         self._heater_power_watts = config_options.get(config_key, 2800)
         
         self._attr_unique_id = (
-            f"sensor.spa_heater_energy"
+            f"sensor.{self._attr_device_info['serial_number']}_spa_heater_energy"
             if count_heater == 1 or heater_data['port'] is None
-            else f"sensor.spa_heater_energy_{int(heater_data['port']) + 1}"
+            else f"sensor.{self._attr_device_info['serial_number']}_spa_heater_energy_{int(heater_data['port']) + 1}"
         )
         self._attr_translation_key = (
             "heater_energy"
@@ -163,9 +163,9 @@ class SpaPumpEnergySensor(SpaSensorBase, RestoreEntity):
         self._pump_power_watts = config_options.get(config_key, 2200)
         
         self._attr_unique_id = (
-            f"sensor.spa_pump_energy"
+            f"sensor.{self._attr_device_info['serial_number']}_spa_pump_energy"
             if count_pump == 1 or pump_data['port'] is None
-            else f"sensor.spa_pump_energy_{int(pump_data['port']) + 1}"
+            else f"sensor.{self._attr_device_info['serial_number']}_spa_pump_energy_{int(pump_data['port']) + 1}"
         )
         self._attr_translation_key = (
             "pump_energy"
@@ -287,9 +287,9 @@ class SpaBlowerEnergySensor(SpaSensorBase, RestoreEntity):
         self._blower_power_watts = config_options.get(config_key, 900)
         
         self._attr_unique_id = (
-            f"sensor.spa_blower_energy"
+            f"sensor.{self._attr_device_info['serial_number']}_spa_blower_energy"
             if count_blower == 1 or blower_data['port'] is None
-            else f"sensor.spa_blower_energy_{int(blower_data['port']) + 1}"
+            else f"sensor.{self._attr_device_info['serial_number']}_spa_blower_energy_{int(blower_data['port']) + 1}"
         )
         self._attr_translation_key = (
             "blower_energy"
@@ -411,9 +411,9 @@ class SpaCirculationPumpEnergySensor(SpaSensorBase, RestoreEntity):
         self._circulation_pump_power_watts = config_options.get(config_key, 400)
         
         self._attr_unique_id = (
-            f"sensor.spa_circulation_pump_energy"
+            f"sensor.{self._attr_device_info['serial_number']}_spa_circulation_pump_energy"
             if count_pump == 1 or pump_data['port'] is None
-            else f"sensor.spa_circulation_pump_energy_{int(pump_data['port']) + 1}"
+            else f"sensor.{self._attr_device_info['serial_number']}_spa_circulation_pump_energy_{int(pump_data['port']) + 1}"
         )
         self._attr_translation_key = (
             "circulation_pump_energy"

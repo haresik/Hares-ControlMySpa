@@ -17,7 +17,11 @@ class SpaPumpSelect(SpaSelectBase):
         self._attr_current_option = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:weather-windy"
-        self._attr_unique_id = f"select.spa_pump" if pump_count == 1 or pump_data['port'] == None else f"select.spa_pump_{int(pump_data['port']) + 1}"
+        self._attr_unique_id = (
+            f"select.{self._attr_device_info['serial_number']}_spa_pump"
+            if pump_count == 1 or pump_data['port'] == None
+            else f"select.{self._attr_device_info['serial_number']}_spa_pump_{int(pump_data['port']) + 1}"
+        )
         self._attr_translation_key = f"pump" if pump_count == 1 or pump_data['port'] == None else f"pump_{int(pump_data['port']) + 1}"
         self.entity_id = self._attr_unique_id 
         self._is_processing = False  # Příznak zpracování
@@ -120,7 +124,11 @@ class SpaLightSelect(SpaSelectBase):
         self._attr_current_option = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:lightbulb"
-        self._attr_unique_id = f"select.spa_light" if light_count == 1 or light_data['port'] == None else f"select.spa_light_{int(light_data['port']) + 1}"
+        self._attr_unique_id = (
+            f"select.{self._attr_device_info['serial_number']}_spa_light"
+            if light_count == 1 or light_data['port'] == None
+            else f"select.{self._attr_device_info['serial_number']}_spa_light_{int(light_data['port']) + 1}"
+        )
         self._attr_translation_key = f"light" if light_count == 1 or light_data['port'] == None else f"light_{int(light_data['port']) + 1}"
         self.entity_id = self._attr_unique_id 
         self._is_processing = False  # Příznak zpracování
@@ -223,7 +231,11 @@ class SpaBlowerSelect(SpaSelectBase):
         self._attr_current_option = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:weather-dust"
-        self._attr_unique_id = f"select.spa_blower" if blower_count == 1 or blower_data['port'] == None else f"select.spa_blower_{int(blower_data['port']) + 1}"
+        self._attr_unique_id = (
+            f"select.{self._attr_device_info['serial_number']}_spa_blower"
+            if blower_count == 1 or blower_data['port'] == None
+            else f"select.{self._attr_device_info['serial_number']}_spa_blower_{int(blower_data['port']) + 1}"
+        )
         self._attr_translation_key = f"blower" if blower_count == 1 or blower_data['port'] == None else f"blower_{int(blower_data['port']) + 1}"
         self.entity_id = self._attr_unique_id 
         self._is_processing = False  # Příznak zpracování

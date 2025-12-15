@@ -15,7 +15,11 @@ class SpaCirculationPumpSensor(SpaSensorBase):
         self._state = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:weather-tornado"
-        self._attr_unique_id = f"sensor.spa_circulation_pump" if count_pump == 1 or pump_data['port'] == None else f"sensor.spa_circulation_pump_{pump_data['port']}"
+        self._attr_unique_id = (
+            f"sensor.{self._attr_device_info['serial_number']}_spa_circulation_pump"
+            if count_pump == 1 or pump_data['port'] == None
+            else f"sensor.{self._attr_device_info['serial_number']}_spa_circulation_pump_{pump_data['port']}"
+        )
         self._attr_translation_key = f"circulation_pump" if count_pump == 1 or pump_data['port'] == None else f"spa_circulation_pump_{pump_data['port']}"
         self.entity_id = self._attr_unique_id
 
@@ -47,9 +51,9 @@ class SpaFilterSensor(SpaSensorBase):
         self._attr_device_info = device_info
         self._attr_icon = "mdi:water-sync"
         self._attr_unique_id = (
-            f"sensor.spa_filter"
+            f"sensor.{self._attr_device_info['serial_number']}_spa_filter"
             if count_filter == 1 or filter_data['port'] is None
-            else f"sensor.spa_filter_{int(filter_data['port']) + 1}"
+            else f"sensor.{self._attr_device_info['serial_number']}_spa_filter_{int(filter_data['port']) + 1}"
         )
         self._attr_translation_key = (
             "filter"
@@ -109,9 +113,9 @@ class SpaOzoneSensor(SpaSensorBase):
         self._attr_device_info = device_info
         self._attr_icon = "mdi:weather-hazy"
         self._attr_unique_id = (
-            f"sensor.spa_ozone"
+            f"sensor.{self._attr_device_info['serial_number']}_spa_ozone"
             if count_ozone == 1 or ozone_data['port'] is None
-            else f"sensor.spa_ozone_{int(ozone_data['port']) + 1}"
+            else f"sensor.{self._attr_device_info['serial_number']}_spa_ozone_{int(ozone_data['port']) + 1}"
         )
         self._attr_translation_key = (
             "ozone"
@@ -151,9 +155,9 @@ class SpaHeaterSensor(SpaSensorBase):
         self._attr_device_info = device_info
         self._attr_icon = "mdi:fire"
         self._attr_unique_id = (
-            f"sensor.spa_heater"
+            f"sensor.{self._attr_device_info['serial_number']}_spa_heater"
             if count_heater == 1 or heater_data['port'] is None
-            else f"sensor.spa_heater_{int(heater_data['port']) + 1}"
+            else f"sensor.{self._attr_device_info['serial_number']}_spa_heater_{int(heater_data['port']) + 1}"
         )
         self._attr_translation_key = (
             "heater"

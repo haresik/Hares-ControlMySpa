@@ -47,7 +47,7 @@ class SpaTargetDesiredTempNumber(NumberEntity):
     def __init__(self, shared_data, device_info):
         self._shared_data = shared_data
         self._attr_device_info = device_info
-        self._attr_unique_id = "spa_target_desired_temperature"
+        self._attr_unique_id = f"number.{self._attr_device_info['serial_number']}_spa_target_desired_temperature"
         self._state = None
 
         # debounce mechanismus

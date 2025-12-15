@@ -102,9 +102,9 @@ class SpaTzlZoneLight(LightEntity):
         # Debug: Zkontrolovat, zda se atribut nastavil
         _LOGGER.debug("After init, _attr_supported_color_list: %s", self._attr_supported_color_list)
         self._attr_unique_id = (
-            f"light.spa_tzl_zone"
+            f"light.{self._attr_device_info['serial_number']}_spa_tzl_zone"
             if count_tzl_zones == 1
-            else f"light.spa_tzl_zone_{tzl_zone_data['zoneId']}"
+            else f"light.{self._attr_device_info['serial_number']}_spa_tzl_zone_{tzl_zone_data['zoneId']}"
         )
         self._attr_translation_key = (
             "tzl_zone_light"
