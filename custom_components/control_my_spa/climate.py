@@ -35,7 +35,7 @@ class SpaClimate(ClimateEntity):
         self._shared_data = shared_data
         self._attr_device_info = device_info
         self._attr_icon = "mdi:hot-tub"
-        self._attr_unique_id = "climate.spa_thermostat"
+        self._attr_unique_id = f"climate.{self._attr_device_info['serial_number']}_spa_thermostat"
         self.entity_id = self._attr_unique_id
         self._attr_translation_key = f"thermostat"
         self._attr_supported_features = ClimateEntityFeature.TARGET_TEMPERATURE 

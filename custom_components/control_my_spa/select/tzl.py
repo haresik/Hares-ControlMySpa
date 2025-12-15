@@ -18,9 +18,9 @@ class SpaTzlZoneModeSelect(SpaSelectBase):
         self._attr_device_info = device_info
         self._attr_icon = "mdi:lightbulb"
         self._attr_unique_id = (
-            f"select.spa_tzl_zone_mode"
+            f"select.{self._attr_device_info['serial_number']}_spa_tzl_zone_mode"
             if count_tzl_zones == 1
-            else f"select.spa_tzl_zone_mode_{tzl_zone_data['zoneId']}"
+            else f"select.{self._attr_device_info['serial_number']}_spa_tzl_zone_mode_{tzl_zone_data['zoneId']}"
         )
         self._attr_translation_key = (
             "tzl_zone_mode"
@@ -188,9 +188,9 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
         self._current_option = None
         self._attr_icon = "mdi:palette"
         self._attr_unique_id = (
-            f"select.spa_tzl_color_select"
+            f"select.{self._attr_device_info['serial_number']}_spa_tzl_color_select"
             if count_tzl_zones == 1
-            else f"select.spa_tzl_color_select_{tzl_zone_data['zoneId']}"
+            else f"select.{self._attr_device_info['serial_number']}_spa_tzl_color_select_{tzl_zone_data['zoneId']}"
         )
         self._attr_translation_key = (
             "tzl_color_select"
@@ -682,9 +682,9 @@ class SpaTzlZoneIntensitySelect(SpaSelectBase):
         self._attr_device_info = device_info
         self._attr_icon = "mdi:brightness-6"
         self._attr_unique_id = (
-            f"select.spa_tzl_zone_intensity"
+            f"select.{self._attr_device_info['serial_number']}_spa_tzl_zone_intensity"
             if count_tzl_zones == 1
-            else f"select.spa_tzl_zone_intensity_{tzl_zone_data['zoneId']}"
+            else f"select.{self._attr_device_info['serial_number']}_spa_tzl_zone_intensity_{tzl_zone_data['zoneId']}"
         )
         self._attr_translation_key = (
             "tzl_zone_intensity"
@@ -843,9 +843,9 @@ class SpaTzlZoneSpeedSelect(SpaSelectBase):
         self._attr_device_info = device_info
         self._attr_icon = "mdi:speedometer"
         self._attr_unique_id = (
-            f"select.spa_tzl_zone_speed"
+            f"select.{self._attr_device_info['serial_number']}_spa_tzl_zone_speed"
             if count_tzl_zones == 1
-            else f"select.spa_tzl_zone_speed_{tzl_zone_data['zoneId']}"
+            else f"select.{self._attr_device_info['serial_number']}_spa_tzl_zone_speed_{tzl_zone_data['zoneId']}"
         )
         self._attr_translation_key = (
             "tzl_zone_speed"

@@ -18,9 +18,9 @@ class SpaFilterTimeSelect(SpaSelectBase):
         self._attr_device_info = device_info
         self._attr_icon = "mdi:clock-outline"
         self._attr_unique_id = (
-            f"select.spa_filter_time"
+            f"select.{self._attr_device_info['serial_number']}_spa_filter_time"
             if count_filter == 1 or filter_data['port'] is None
-            else f"select.spa_filter_time_{int(filter_data['port']) + 1}"
+            else f"select.{self._attr_device_info['serial_number']}_spa_filter_time_{int(filter_data['port']) + 1}"
         )
         self._attr_translation_key = (
             "filter_time"
@@ -193,9 +193,9 @@ class SpaFilterDurationSelect(SpaSelectBase):
         self._attr_device_info = device_info
         self._attr_icon = "mdi:timer-outline"
         self._attr_unique_id = (
-            f"select.spa_filter_duration"
+            f"select.{self._attr_device_info['serial_number']}_spa_filter_duration"
             if count_filter == 1 or filter_data['port'] is None
-            else f"select.spa_filter_duration_{int(filter_data['port']) + 1}"
+            else f"select.{self._attr_device_info['serial_number']}_spa_filter_duration_{int(filter_data['port']) + 1}"
         )
         self._attr_translation_key = (
             "filter_duration"

@@ -38,7 +38,7 @@ class SpaUpdateTimeButton(ButtonEntity):
         """Inicializace tlačítka."""
         self.hass = hass
         self._attr_device_info = device_info
-        self._attr_unique_id = "button.spa_update_time"
+        self._attr_unique_id = f"button.{self._attr_device_info['serial_number']}_spa_update_time"
         self._attr_translation_key = "update_time"
         self._attr_icon = "mdi:clock-outline"
         self.entity_id = self._attr_unique_id
@@ -65,7 +65,7 @@ class SpaTzlLightOffButton(ButtonEntity):
         """Inicializace tlačítka."""
         self.hass = hass
         self._attr_device_info = device_info
-        self._attr_unique_id = "button.spa_tzl_light_off"
+        self._attr_unique_id = f"button.{self._attr_device_info['serial_number']}_spa_tzl_light_off"
         self._attr_translation_key = "tzl_light_off"
         self._attr_icon = "mdi:lightbulb-off"
         self.entity_id = self._attr_unique_id

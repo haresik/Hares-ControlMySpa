@@ -18,7 +18,7 @@ class SpaTempRangeSelect(SpaSelectBase):
         self._attr_current_option = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:pool-thermometer"
-        self._attr_unique_id = f"select.spa_temperature_range"
+        self._attr_unique_id = f"select.{self._attr_device_info['serial_number']}_spa_temperature_range"
         self._attr_translation_key = f"temperature_range"
         self.entity_id = self._attr_unique_id
         self._is_processing = False  # Příznak zpracování
@@ -152,7 +152,7 @@ class SpaHeaterModeSelect(SpaSelectBase):
         self._attr_current_option = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:radiator"
-        self._attr_unique_id = f"select.spa_heater_mode"
+        self._attr_unique_id = f"select.{self._attr_device_info['serial_number']}_spa_heater_mode"
         self._attr_translation_key = f"heater_mode"
         self.entity_id = self._attr_unique_id
         self._is_processing = False  # Příznak zpracování

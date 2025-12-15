@@ -18,7 +18,7 @@ class SpaTemperatureSensor(SpaSensorBase):
         self._state = None
         self._attr_icon = "mdi:thermometer"
         self._attr_device_info = device_info
-        self._attr_unique_id = f"sensor.spa_current_temperature"
+        self._attr_unique_id = f"sensor.{self._attr_device_info['serial_number']}_spa_current_temperature"
         self._attr_translation_key = f"current_temperature"
         self.entity_id = self._attr_unique_id
 
@@ -54,7 +54,7 @@ class SpaDesiredTemperatureSensor(SpaSensorBase):
         self._low_range_value = None   # Poslední hodnota pro LOW rozsah
         self._attr_icon = "mdi:thermometer"
         self._attr_device_info = device_info
-        self._attr_unique_id = f"sensor.spa_desired_temperature"
+        self._attr_unique_id = f"sensor.{self._attr_device_info['serial_number']}_spa_desired_temperature"
         self._attr_translation_key = f"desired_temperature"
         self.entity_id = self._attr_unique_id
 
