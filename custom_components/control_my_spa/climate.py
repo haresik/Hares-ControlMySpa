@@ -13,6 +13,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     data = hass.data[DOMAIN][config_entry.entry_id]
     shared_data = data["data"]
     device_info = data["device_info"]
+    unique_id_suffix = data["unique_id_suffix"]
     client = data["client"]
 
     if not client.userInfo:
@@ -21,7 +22,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     if not shared_data.data:
         return False
 
-    entities = [SpaClimate(shared_data, device_info)]
+    entities = [SpaClimate(shared_data, device_info, unique_id_suffix)]
     async_add_entities(entities, True)
     _LOGGER.debug("START Climate control_my_spa")
 
@@ -31,11 +32,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class SpaClimate(ClimateEntity):
     _attr_has_entity_name = True
 
-    def __init__(self, shared_data, device_info):
+    def __init__(self, shared_data, device_info, unique_id_suffix):
         self._shared_data = shared_data
         self._attr_device_info = device_info
         self._attr_icon = "mdi:hot-tub"
-        self._attr_unique_id = "climate.spa_thermostat"
+        self._attr_unique_id = f"climate.spa_thermostat{unique_id_suffix}"
         self.entity_id = self._attr_unique_id
         self._attr_translation_key = f"thermostat"
         self._attr_supported_features = ClimateEntityFeature.TARGET_TEMPERATURE 

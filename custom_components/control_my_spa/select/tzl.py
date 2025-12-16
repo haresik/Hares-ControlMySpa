@@ -9,7 +9,7 @@ _LOGGER = logging.getLogger(__name__)
 class SpaTzlZoneModeSelect(SpaSelectBase):
     """Select entity for TZL zone mode."""
     
-    def __init__(self, shared_data, device_info, tzl_zone_data, count_tzl_zones):
+    def __init__(self, shared_data, device_info, unique_id_suffix, tzl_zone_data, count_tzl_zones):
         self._shared_data = shared_data
         self._tzl_zone_data = tzl_zone_data
         self._attr_options = ["OFF", "PARTY", "RELAX", "WHEEL", "NORMAL"]  # Pevné možnosti
@@ -17,11 +17,12 @@ class SpaTzlZoneModeSelect(SpaSelectBase):
         self._attr_current_option = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:lightbulb"
-        self._attr_unique_id = (
+        base_id = (
             f"select.spa_tzl_zone_mode"
             if count_tzl_zones == 1
             else f"select.spa_tzl_zone_mode_{tzl_zone_data['zoneId']}"
         )
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = (
             "tzl_zone_mode"
             if count_tzl_zones == 1
@@ -178,7 +179,7 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
     
     _attr_has_entity_name = True
 
-    def __init__(self, shared_data, device_info, tzl_zone_data, tzl_colors, count_tzl_zones, hass):
+    def __init__(self, shared_data, device_info, unique_id_suffix, tzl_zone_data, tzl_colors, count_tzl_zones, hass):
         self._shared_data = shared_data
         self._tzl_zone_data = tzl_zone_data
         self._tzl_colors = tzl_colors
@@ -187,11 +188,12 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
         self._attr_should_poll = False
         self._current_option = None
         self._attr_icon = "mdi:palette"
-        self._attr_unique_id = (
+        base_id = (
             f"select.spa_tzl_color_select"
             if count_tzl_zones == 1
             else f"select.spa_tzl_color_select_{tzl_zone_data['zoneId']}"
         )
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = (
             "tzl_color_select"
             if count_tzl_zones == 1
@@ -673,7 +675,7 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
 class SpaTzlZoneIntensitySelect(SpaSelectBase):
     """Select entity for TZL zone intensity."""
     
-    def __init__(self, shared_data, device_info, tzl_zone_data, count_tzl_zones):
+    def __init__(self, shared_data, device_info, unique_id_suffix, tzl_zone_data, count_tzl_zones):
         self._shared_data = shared_data
         self._tzl_zone_data = tzl_zone_data
         self._attr_options = ["0", "1", "2", "3", "4", "5", "6", "7", "8"]  # Intenzita 0-8
@@ -681,11 +683,12 @@ class SpaTzlZoneIntensitySelect(SpaSelectBase):
         self._attr_current_option = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:brightness-6"
-        self._attr_unique_id = (
+        base_id = (
             f"select.spa_tzl_zone_intensity"
             if count_tzl_zones == 1
             else f"select.spa_tzl_zone_intensity_{tzl_zone_data['zoneId']}"
         )
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = (
             "tzl_zone_intensity"
             if count_tzl_zones == 1
@@ -834,7 +837,7 @@ class SpaTzlZoneIntensitySelect(SpaSelectBase):
 class SpaTzlZoneSpeedSelect(SpaSelectBase):
     """Select entity for TZL zone speed."""
     
-    def __init__(self, shared_data, device_info, tzl_zone_data, count_tzl_zones):
+    def __init__(self, shared_data, device_info, unique_id_suffix, tzl_zone_data, count_tzl_zones):
         self._shared_data = shared_data
         self._tzl_zone_data = tzl_zone_data
         self._attr_options = ["0", "1", "2", "3", "4", "5"]  # Rychlost 0-5
@@ -842,11 +845,12 @@ class SpaTzlZoneSpeedSelect(SpaSelectBase):
         self._attr_current_option = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:speedometer"
-        self._attr_unique_id = (
+        base_id = (
             f"select.spa_tzl_zone_speed"
             if count_tzl_zones == 1
             else f"select.spa_tzl_zone_speed_{tzl_zone_data['zoneId']}"
         )
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = (
             "tzl_zone_speed"
             if count_tzl_zones == 1

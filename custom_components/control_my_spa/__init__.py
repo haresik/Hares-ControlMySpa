@@ -1,7 +1,7 @@
 import logging
 import voluptuous as vol
 from datetime import timedelta
-from .const import DOMAIN
+from .const import DOMAIN, TEST_SPAOWNER
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.service import async_register_admin_service
@@ -9,6 +9,7 @@ from .ControlMySpa import ControlMySpa
 from .SpaData import SpaData  
 from homeassistant.const import Platform
 from .services import async_setup_services, async_unload_services
+from .helpers import get_unique_id_suffix
 
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [
@@ -33,6 +34,11 @@ async def options_update_listener(hass: HomeAssistant, config_entry: ConfigEntry
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     # Nastavení služeb
     await async_setup_services(hass)
+    
+    # Registrace options update listener
+    config_entry.async_on_unload(
+        config_entry.add_update_listener(options_update_listener)
+    )
 
     username = config_entry.data["username"]
     password = config_entry.data["password"]
@@ -64,8 +70,9 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
         _LOGGER.error("Failed to initialize ControlMySpa client, no data")
         return False
 
-    serial_number = balboa_data.data.get("serialNumber") if balboa_data and balboa_data.data else "unknown"
+    serial_number = spa_id if TEST_SPAOWNER else (balboa_data.data.get("serialNumber") if balboa_data and balboa_data.data else "unknown")
     sw_version = balboa_data.data.get("controllerSoftwareVersion") if balboa_data and balboa_data.data else "unknown"
+    unique_id_suffix = await get_unique_id_suffix(hass, config_entry, serial_number)
 
     device_info = {
         "identifiers": {(DOMAIN, serial_number)},  # Unikátní identifikátor zařízení
@@ -73,14 +80,17 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
         "manufacturer": "Balboa",
         "model": "Spa Model Unknown",
         "sw_version": sw_version,
-        "serial_number": serial_number
+        "serial_number": serial_number,
     }
 
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][config_entry.entry_id] = {
         "client": spa_client,
         "data": balboa_data,
-        "device_info": device_info
+        "device_info": device_info,
+        "serial_number": serial_number,
+        "unique_id_suffix": unique_id_suffix,
+        "config_entry": config_entry
     }
 
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)

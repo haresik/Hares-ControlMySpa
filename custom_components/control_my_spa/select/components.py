@@ -9,7 +9,7 @@ _LOGGER = logging.getLogger(__name__)
 class SpaPumpSelect(SpaSelectBase):
     """Select entity for spa pump."""
     
-    def __init__(self, shared_data, device_info, pump_data, pump_count):
+    def __init__(self, shared_data, device_info, unique_id_suffix, pump_data, pump_count):
         self._shared_data = shared_data
         self._pump_data = pump_data
         self._attr_options = pump_data["availableValues"]  # Možnosti výběru
@@ -17,7 +17,8 @@ class SpaPumpSelect(SpaSelectBase):
         self._attr_current_option = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:weather-windy"
-        self._attr_unique_id = f"select.spa_pump" if pump_count == 1 or pump_data['port'] == None else f"select.spa_pump_{int(pump_data['port']) + 1}"
+        base_id = f"select.spa_pump" if pump_count == 1 or pump_data['port'] == None else f"select.spa_pump_{int(pump_data['port']) + 1}"
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = f"pump" if pump_count == 1 or pump_data['port'] == None else f"pump_{int(pump_data['port']) + 1}"
         self.entity_id = self._attr_unique_id 
         self._is_processing = False  # Příznak zpracování
@@ -42,7 +43,28 @@ class SpaPumpSelect(SpaSelectBase):
                 None
             )
             if pump:
-                self._attr_current_option = pump["value"]
+                pump_value = pump["value"]
+                # Pokud je hodnota 'LOW'
+                if pump_value == "LOW":
+                    # Pokud mezi dostupnými není MED ani HIGH ani HI → nastav OFF
+                    if "MED" not in self._attr_options and "HIGH" not in self._attr_options and "HI" not in self._attr_options:
+                        self._attr_current_option = "OFF"
+                    # Pokud není MED, ale je HIGH → nastav HIGH
+                    elif "MED" not in self._attr_options and ("HIGH" in self._attr_options or "HI" in self._attr_options):
+                        self._attr_current_option = "HIGH" if "HIGH" in self._attr_options else "HI"
+                    # Pokud je MED → nastav MED
+                    elif "MED" in self._attr_options:
+                        self._attr_current_option = "MED"
+                    else:
+                        self._attr_current_option = pump_value
+                # Pokud je hodnota 'MED', ověřit zda je HIGH v availableValues
+                elif pump_value == "MED":
+                    if "HIGH" in self._attr_options:
+                        self._attr_current_option = "HIGH"
+                    else:
+                        self._attr_current_option = "OFF"
+                else:
+                    self._attr_current_option = pump_value
                 _LOGGER.debug("Updated Pump %s: %s", self._pump_data["port"], self._attr_current_option)
 
     async def _try_set_pump_state(self, device_number: int, target_state: str, is_retry: bool = False) -> bool:
@@ -112,7 +134,7 @@ class SpaPumpSelect(SpaSelectBase):
 class SpaLightSelect(SpaSelectBase):
     """Select entity for spa light."""
     
-    def __init__(self, shared_data, device_info, light_data, light_count):
+    def __init__(self, shared_data, device_info, unique_id_suffix, light_data, light_count):
         self._shared_data = shared_data
         self._light_data = light_data
         self._attr_options = light_data["availableValues"]  # Možnosti výběru
@@ -120,7 +142,8 @@ class SpaLightSelect(SpaSelectBase):
         self._attr_current_option = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:lightbulb"
-        self._attr_unique_id = f"select.spa_light" if light_count == 1 or light_data['port'] == None else f"select.spa_light_{int(light_data['port']) + 1}"
+        base_id = f"select.spa_light" if light_count == 1 or light_data['port'] == None else f"select.spa_light_{int(light_data['port']) + 1}"
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = f"light" if light_count == 1 or light_data['port'] == None else f"light_{int(light_data['port']) + 1}"
         self.entity_id = self._attr_unique_id 
         self._is_processing = False  # Příznak zpracování
@@ -215,7 +238,7 @@ class SpaLightSelect(SpaSelectBase):
 class SpaBlowerSelect(SpaSelectBase):
     """Select entity for spa blower."""
     
-    def __init__(self, shared_data, device_info, blower_data, blower_count):
+    def __init__(self, shared_data, device_info, unique_id_suffix, blower_data, blower_count):
         self._shared_data = shared_data
         self._blower_data = blower_data
         self._attr_options = blower_data["availableValues"]  # Možnosti výběru
@@ -223,7 +246,8 @@ class SpaBlowerSelect(SpaSelectBase):
         self._attr_current_option = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:weather-dust"
-        self._attr_unique_id = f"select.spa_blower" if blower_count == 1 or blower_data['port'] == None else f"select.spa_blower_{int(blower_data['port']) + 1}"
+        base_id = f"select.spa_blower" if blower_count == 1 or blower_data['port'] == None else f"select.spa_blower_{int(blower_data['port']) + 1}"
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = f"blower" if blower_count == 1 or blower_data['port'] == None else f"blower_{int(blower_data['port']) + 1}"
         self.entity_id = self._attr_unique_id 
         self._is_processing = False  # Příznak zpracování

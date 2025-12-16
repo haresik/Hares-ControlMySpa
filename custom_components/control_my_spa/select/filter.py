@@ -9,7 +9,7 @@ _LOGGER = logging.getLogger(__name__)
 class SpaFilterTimeSelect(SpaSelectBase):
     """Select entity for spa filter time."""
     
-    def __init__(self, shared_data, device_info, filter_data, count_filter):
+    def __init__(self, shared_data, device_info, unique_id_suffix, filter_data, count_filter):
         self._shared_data = shared_data
         self._filter_data = filter_data
         self._attr_options = shared_data._client.createTimeOptions()  # Použít metodu z ControlMySpa
@@ -17,11 +17,12 @@ class SpaFilterTimeSelect(SpaSelectBase):
         self._attr_current_option = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:clock-outline"
-        self._attr_unique_id = (
+        base_id = (
             f"select.spa_filter_time"
             if count_filter == 1 or filter_data['port'] is None
             else f"select.spa_filter_time_{int(filter_data['port']) + 1}"
         )
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = (
             "filter_time"
             if count_filter == 1 or filter_data['port'] is None
@@ -184,7 +185,7 @@ class SpaFilterTimeSelect(SpaSelectBase):
 class SpaFilterDurationSelect(SpaSelectBase):
     """Select entity for spa filter duration."""
     
-    def __init__(self, shared_data, device_info, filter_data, count_filter):
+    def __init__(self, shared_data, device_info, unique_id_suffix, filter_data, count_filter):
         self._shared_data = shared_data
         self._filter_data = filter_data
         self._attr_options = shared_data._client.createDurationOptions()  # Použít metodu z ControlMySpa
@@ -192,11 +193,12 @@ class SpaFilterDurationSelect(SpaSelectBase):
         self._attr_current_option = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:timer-outline"
-        self._attr_unique_id = (
+        base_id = (
             f"select.spa_filter_duration"
             if count_filter == 1 or filter_data['port'] is None
             else f"select.spa_filter_duration_{int(filter_data['port']) + 1}"
         )
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = (
             "filter_duration"
             if count_filter == 1 or filter_data['port'] is None

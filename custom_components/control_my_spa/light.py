@@ -48,6 +48,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     data = hass.data[DOMAIN][config_entry.entry_id]
     shared_data = data["data"]
     device_info = data["device_info"]
+    unique_id_suffix = data["unique_id_suffix"]
     client = data["client"]
 
     if not client.userInfo:
@@ -60,7 +61,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     tzl_zones = shared_data.data.get("tzlZones", [])
 
     # Vytvořit Light entity pro každou TZL zone
-    entities = [SpaTzlZoneLight(shared_data, device_info, tzl_zone_data, len(tzl_zones)) for tzl_zone_data in tzl_zones]
+    entities = [SpaTzlZoneLight(shared_data, device_info, unique_id_suffix, tzl_zone_data, len(tzl_zones)) for tzl_zone_data in tzl_zones]
     # entities = []  # Prázdný seznam, protože Light entity jsou zakomentované
 
     async_add_entities(entities, True)
@@ -76,7 +77,7 @@ class SpaTzlZoneLight(LightEntity):
     _attr_color_mode = ColorMode.RGB
     _attr_supported_features = LightEntityFeature(0)  # Žádné speciální funkce
 
-    def __init__(self, shared_data, device_info, tzl_zone_data, count_tzl_zones):
+    def __init__(self, shared_data, device_info, unique_id_suffix, tzl_zone_data, count_tzl_zones):
         self._shared_data = shared_data
         self._tzl_zone_data = tzl_zone_data
         self._attr_should_poll = False  # Data jsou sdílena, posluchač
@@ -101,11 +102,12 @@ class SpaTzlZoneLight(LightEntity):
         
         # Debug: Zkontrolovat, zda se atribut nastavil
         _LOGGER.debug("After init, _attr_supported_color_list: %s", self._attr_supported_color_list)
-        self._attr_unique_id = (
+        base_id = (
             f"light.spa_tzl_zone"
             if count_tzl_zones == 1
             else f"light.spa_tzl_zone_{tzl_zone_data['zoneId']}"
         )
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = (
             "tzl_zone_light"
             if count_tzl_zones == 1

@@ -9,6 +9,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     data = hass.data[DOMAIN][config_entry.entry_id]
     shared_data = data["data"]
     device_info = data["device_info"]
+    unique_id_suffix = data["unique_id_suffix"]
     client = data["client"]
 
     if not client.userInfo:
@@ -48,18 +49,18 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         len(filters)
     )
 
-    entities = [SpaLightSwitch(shared_data, device_info, light, len(lights)) for light in lights]
-    entities += [SpaPumpSwitch(shared_data, device_info, pump, len(pumps)) for pump in pumps]
-    entities += [SpaBlowerSwitch(shared_data, device_info, blower, len(blowers)) for blower in blowers]
+    entities = [SpaLightSwitch(shared_data, device_info, unique_id_suffix, light, len(lights)) for light in lights]
+    entities += [SpaPumpSwitch(shared_data, device_info, pump, len(pumps), unique_id_suffix) for pump in pumps]
+    entities += [SpaBlowerSwitch(shared_data, device_info, unique_id_suffix, blower, len(blowers)) for blower in blowers]
     
     # Přidání switch pro druhý filtr pouze pokud existují dva filtry
     if len(filters) >= 2:
-        entities.append(SpaFilter2Switch(shared_data, device_info, client))
+        entities.append(SpaFilter2Switch(shared_data, device_info, unique_id_suffix, client))
     
     # Přidání TZL přepínače pouze pokud jsou k dispozici TZL zóny
     tzl_zones = shared_data.data.get("tzlZones", [])
     if tzl_zones:
-        entities.append(SpaTzlPowerSwitch(shared_data, device_info, client))
+        entities.append(SpaTzlPowerSwitch(shared_data, device_info, unique_id_suffix, client))
     
     async_add_entities(entities, True)
     _LOGGER.debug("START Switch control_my_spa")
@@ -72,17 +73,18 @@ class SpaSwitchBase(SwitchEntity):
     _attr_has_entity_name = True
 
 class SpaLightSwitch(SpaSwitchBase):
-    def __init__(self, shared_data, device_info, light_data, light_count):
+    def __init__(self, shared_data, device_info, unique_id_suffix, light_data, light_count):
         self._shared_data = shared_data
         self._light_data = light_data
         self._attr_device_info = device_info
         self._attr_icon = "mdi:lightbulb"
         self._attr_should_poll = False
-        self._attr_unique_id = (
+        base_id = (
             f"switch.spa_light"
             if light_count == 1 or light_data['port'] is None
             else f"switch.spa_light_{int(light_data['port']) + 1}"
         )
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = f"light" if light_count == 1 or light_data['port'] == None else f"light_{int(light_data['port']) + 1}"
         self.entity_id = self._attr_unique_id
         # Získání dostupných hodnot pro světlo, výchozí hodnoty jsou OFF a HIGH
@@ -205,17 +207,18 @@ class SpaLightSwitch(SpaSwitchBase):
             self._shared_data.resume_updates()
 
 class SpaPumpSwitch(SpaSwitchBase):
-    def __init__(self, shared_data, device_info, pump_data, pump_count):
+    def __init__(self, shared_data, device_info, pump_data, pump_count, unique_id_suffix=""):
         self._shared_data = shared_data
         self._pump_data = pump_data
         self._attr_device_info = device_info
         self._attr_icon = "mdi:weather-windy"
         self._attr_should_poll = False
-        self._attr_unique_id = (
+        base_id = (
             f"switch.spa_pump"
             if pump_count == 1 or pump_data['port'] is None
             else f"switch.spa_pump_{int(pump_data['port']) + 1}"
         )
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = (
             "pump"
             if pump_count == 1 or pump_data['port'] is None
@@ -369,17 +372,18 @@ class SpaPumpSwitch(SpaSwitchBase):
             self._shared_data.resume_updates()
 
 class SpaBlowerSwitch(SpaSwitchBase):
-    def __init__(self, shared_data, device_info, blower_data, blower_count):
+    def __init__(self, shared_data, device_info, unique_id_suffix, blower_data, blower_count):
         self._shared_data = shared_data
         self._blower_data = blower_data
         self._attr_device_info = device_info
         self._attr_icon = "mdi:weather-dust"
         self._attr_should_poll = False
-        self._attr_unique_id = (
+        base_id = (
             f"switch.spa_blower"
             if blower_count == 1 or blower_data['port'] is None
             else f"switch.spa_blower_{int(blower_data['port']) + 1}"
         )
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = (
             "blower"
             if blower_count == 1 or blower_data['port'] is None
@@ -535,12 +539,12 @@ class SpaBlowerSwitch(SpaSwitchBase):
 class SpaTzlPowerSwitch(SpaSwitchBase):
     """Přepínač pro zapnutí/vypnutí TZL světel."""
 
-    def __init__(self, shared_data, device_info, client):
+    def __init__(self, shared_data, device_info, unique_id_suffix, client):
         """Inicializace TZL přepínače."""
         self._shared_data = shared_data
         self._attr_device_info = device_info
         self._client = client
-        self._attr_unique_id = "switch.spa_tzl_power"
+        self._attr_unique_id = f"switch.spa_tzl_power{unique_id_suffix}"
         self._attr_translation_key = "tzl_power"
         self._attr_icon = "mdi:lightbulb-group"
         self._is_processing = False
@@ -652,12 +656,12 @@ class SpaTzlPowerSwitch(SpaSwitchBase):
 class SpaFilter2Switch(SpaSwitchBase):
     """Přepínač pro druhý filtr (spa_filter_2)."""
     
-    def __init__(self, shared_data, device_info, client):
+    def __init__(self, shared_data, device_info, unique_id_suffix, client):
         """Inicializace přepínače druhého filtru."""
         self._shared_data = shared_data
         self._attr_device_info = device_info
         self._client = client
-        self._attr_unique_id = "switch.spa_filter_2"
+        self._attr_unique_id = f"switch.spa_filter_2{unique_id_suffix}"
         self._attr_translation_key = "filter_2"
         self._attr_icon = "mdi:water-sync"
         self._is_processing = False

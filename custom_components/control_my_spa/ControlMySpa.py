@@ -100,6 +100,26 @@ class ControlMySpa:
 
     async def getSpaOwner(self):
         try:
+            # Test mode - načtení dat ze souboru
+            if const.TEST_SPAOWNER:
+                test_file_path = os.path.join(os.path.dirname(__file__), 'testData', 'DataSPA.json')
+                try:
+                    async with aiofiles.open(test_file_path, 'r', encoding='utf-8') as f:
+                        data = await f.read()
+                        test_data = json.loads(data)
+                        _LOGGER.info(f"Načtena testovací data z {test_file_path}")
+                        return test_data.get('data', {}).get('spas', [])
+                except FileNotFoundError:
+                    _LOGGER.error(f"Test file not found: {test_file_path}")
+                    return None
+                except json.JSONDecodeError as e:
+                    _LOGGER.error(f"Error parsing JSON file: {e}")
+                    return None
+                except Exception as e:
+                    _LOGGER.error(f"Error loading test data: {e}")
+                    return None
+            
+            # Normální režim - načtení dat z API
             if not self.isLoggedIn():
                 await self.login()
             headers = self.getAuthHeaders()

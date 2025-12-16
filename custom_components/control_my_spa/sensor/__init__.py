@@ -26,6 +26,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     # client = data["client"]
     shared_data = data["data"]
     device_info = data["device_info"]
+    unique_id_suffix = data["unique_id_suffix"]
     client = data["client"]
 
     if not client.userInfo:
@@ -81,24 +82,24 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     tzl_zones = shared_data.data.get("tzlZones", [])
 
     # Vytvořit entity pro každou CIRCULATION_PUMP
-    entities = [SpaCirculationPumpSensor(shared_data, device_info, pump, len(circulation_pumps)) for pump in circulation_pumps]
-    entities.append(SpaTemperatureSensor(shared_data, device_info))  # Aktuální teplota
-    entities.append(SpaDesiredTemperatureSensor(shared_data, device_info))  # Požadovaná teplota
-    entities += [SpaFilterSensor(shared_data, device_info, filter_data, len(filters)) for filter_data in filters]
-    entities += [SpaOzoneSensor(shared_data, device_info, ozone_data, len(ozones)) for ozone_data in ozones]
-    entities += [SpaHeaterSensor(shared_data, device_info, heater_data, len(heaters)) for heater_data in heaters]
+    entities = [SpaCirculationPumpSensor(shared_data, device_info, unique_id_suffix, pump, len(circulation_pumps)) for pump in circulation_pumps]
+    entities.append(SpaTemperatureSensor(shared_data, device_info, unique_id_suffix))  # Aktuální teplota
+    entities.append(SpaDesiredTemperatureSensor(shared_data, device_info, unique_id_suffix))  # Požadovaná teplota
+    entities += [SpaFilterSensor(shared_data, device_info, unique_id_suffix, filter_data, len(filters)) for filter_data in filters]
+    entities += [SpaOzoneSensor(shared_data, device_info, unique_id_suffix, ozone_data, len(ozones)) for ozone_data in ozones]
+    entities += [SpaHeaterSensor(shared_data, device_info, unique_id_suffix, heater_data, len(heaters)) for heater_data in heaters]
     
     # Vytvořit energy senzory pro heatery (pro Energy Dashboard - kWh)
-    entities += [SpaHeaterEnergySensor(shared_data, device_info, heater_data, len(heaters), config_options) for heater_data in heaters]
+    entities += [SpaHeaterEnergySensor(shared_data, device_info, unique_id_suffix, heater_data, len(heaters), config_options) for heater_data in heaters]
     
     # Vytvořit energy senzory pro pumpy (pro Energy Dashboard - kWh)
-    entities += [SpaPumpEnergySensor(shared_data, device_info, pump_data, len(pumps), config_options) for pump_data in pumps]
+    entities += [SpaPumpEnergySensor(shared_data, device_info, unique_id_suffix, pump_data, len(pumps), config_options) for pump_data in pumps]
     
     # Vytvořit energy senzory pro blowers (pro Energy Dashboard - kWh)
-    entities += [SpaBlowerEnergySensor(shared_data, device_info, blower_data, len(blowers), config_options) for blower_data in blowers]
+    entities += [SpaBlowerEnergySensor(shared_data, device_info, unique_id_suffix, blower_data, len(blowers), config_options) for blower_data in blowers]
     
     # Vytvořit energy senzory pro circulation pumps (pro Energy Dashboard - kWh)
-    entities += [SpaCirculationPumpEnergySensor(shared_data, device_info, pump_data, len(circulation_pumps), config_options) for pump_data in circulation_pumps]
+    entities += [SpaCirculationPumpEnergySensor(shared_data, device_info, unique_id_suffix, pump_data, len(circulation_pumps), config_options) for pump_data in circulation_pumps]
 
     async_add_entities(entities, True)
     _LOGGER.debug("START Śensor control_my_spa")

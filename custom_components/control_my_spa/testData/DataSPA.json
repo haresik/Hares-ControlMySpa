@@ -1,0 +1,22 @@
+{
+    "statusCode": 200,
+    "data": {
+        "spas": [
+            {
+                "_id": "1234577c9ed8d68",
+                "serialNumber": "12345***2112278899",
+                "alias": null,
+                "isDefault": true,
+                "businessLogoUrl": null
+            },
+            {
+                "_id": "54321a177c9ed8fd68",
+                "serialNumber": "54321***2112278899",
+                "alias": null,
+                "isDefault": false,
+                "businessLogoUrl": null
+            }
+        ]
+    },
+    "message": "Spas retrieved successfully."
+}

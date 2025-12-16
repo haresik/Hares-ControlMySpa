@@ -17,15 +17,16 @@ async def async_setup_entry(
     data = hass.data[DOMAIN][config_entry.entry_id]
     device_info = data["device_info"]
     shared_data = data["data"]
+    unique_id_suffix = data["unique_id_suffix"]
 
     # Seznam tlačítek k přidání
-    buttons = [SpaUpdateTimeButton(hass, device_info)]
+    buttons = [SpaUpdateTimeButton(hass, device_info, unique_id_suffix)]
     
     # Kontrola, jestli jsou k dispozici TZL zóny
     if shared_data.data:
         tzl_zones = shared_data.data.get("tzlZones", [])
         #if tzl_zones:
-        #    buttons.append(SpaTzlLightOffButton(hass, device_info))
+        #    buttons.append(SpaTzlLightOffButton(hass, device_info, unique_id_suffix))
 
     async_add_entities(buttons, True)
 
@@ -34,11 +35,11 @@ class SpaUpdateTimeButton(ButtonEntity):
 
     _attr_has_entity_name = True
 
-    def __init__(self, hass: HomeAssistant, device_info):
+    def __init__(self, hass: HomeAssistant, device_info, unique_id_suffix):
         """Inicializace tlačítka."""
         self.hass = hass
         self._attr_device_info = device_info
-        self._attr_unique_id = "button.spa_update_time"
+        self._attr_unique_id = f"button.spa_update_time{unique_id_suffix}"
         self._attr_translation_key = "update_time"
         self._attr_icon = "mdi:clock-outline"
         self.entity_id = self._attr_unique_id
@@ -61,11 +62,11 @@ class SpaTzlLightOffButton(ButtonEntity):
 
     _attr_has_entity_name = True
 
-    def __init__(self, hass: HomeAssistant, device_info):
+    def __init__(self, hass: HomeAssistant, device_info, unique_id_suffix):
         """Inicializace tlačítka."""
         self.hass = hass
         self._attr_device_info = device_info
-        self._attr_unique_id = "button.spa_tzl_light_off"
+        self._attr_unique_id = f"button.spa_tzl_light_off{unique_id_suffix}"
         self._attr_translation_key = "tzl_light_off"
         self._attr_icon = "mdi:lightbulb-off"
         self.entity_id = self._attr_unique_id

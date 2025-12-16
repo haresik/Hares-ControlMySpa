@@ -10,7 +10,7 @@ _LOGGER = logging.getLogger(__name__)
 class SpaTempRangeSelect(SpaSelectBase):
     """Select entity for spa temperature range."""
     
-    def __init__(self, shared_data, device_info, hass):
+    def __init__(self, shared_data, device_info, unique_id_suffix, hass):
         self._shared_data = shared_data
         self._hass = hass  # Uložit hass objekt pro notifikace
         self._attr_options = ["HIGH", "LOW"]  # Možnosti výběru
@@ -18,7 +18,7 @@ class SpaTempRangeSelect(SpaSelectBase):
         self._attr_current_option = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:pool-thermometer"
-        self._attr_unique_id = f"select.spa_temperature_range"
+        self._attr_unique_id = f"select.spa_temperature_range{unique_id_suffix}"
         self._attr_translation_key = f"temperature_range"
         self.entity_id = self._attr_unique_id
         self._is_processing = False  # Příznak zpracování
@@ -145,14 +145,14 @@ class SpaTempRangeSelect(SpaSelectBase):
 class SpaHeaterModeSelect(SpaSelectBase):
     """Select entity for spa heater mode."""
     
-    def __init__(self, shared_data, device_info):
+    def __init__(self, shared_data, device_info, unique_id_suffix):
         self._shared_data = shared_data
         self._attr_options = ["READY", "REST", "READY_REST"]  
         self._attr_should_poll = False
         self._attr_current_option = None
         self._attr_device_info = device_info
         self._attr_icon = "mdi:radiator"
-        self._attr_unique_id = f"select.spa_heater_mode"
+        self._attr_unique_id = f"select.spa_heater_mode{unique_id_suffix}"
         self._attr_translation_key = f"heater_mode"
         self.entity_id = self._attr_unique_id
         self._is_processing = False  # Příznak zpracování

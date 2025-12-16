@@ -11,6 +11,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     data = hass.data[DOMAIN][config_entry.entry_id]
     shared_data = data["data"]
     device_info = data["device_info"]
+    unique_id_suffix = data["unique_id_suffix"]
     client = data["client"]
 
     if not client.userInfo:
@@ -20,7 +21,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         return False
 
     # Vytvořit entitu pro targetDesiredTemp
-    entities = [SpaTargetDesiredTempNumber(shared_data, device_info)]
+    entities = [SpaTargetDesiredTempNumber(shared_data, device_info, unique_id_suffix)]
     async_add_entities(entities, True)
 
     _LOGGER.debug("START Number control_my_spa")
@@ -44,10 +45,11 @@ class SpaTargetDesiredTempNumber(NumberEntity):
     native_min_value = 10.0  # Výchozí hodnoty pro stupně
     native_max_value = 40.0
 
-    def __init__(self, shared_data, device_info):
+    def __init__(self, shared_data, device_info, unique_id_suffix):
         self._shared_data = shared_data
         self._attr_device_info = device_info
-        self._attr_unique_id = "spa_target_desired_temperature"
+        self._attr_unique_id = f"number.spa_target_desired_temperature{unique_id_suffix}"
+        self.entity_id = self._attr_unique_id
         self._state = None
 
         # debounce mechanismus

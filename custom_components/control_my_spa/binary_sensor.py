@@ -12,6 +12,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     data = hass.data[DOMAIN][config_entry.entry_id]
     shared_data = data["data"]
     device_info = data["device_info"]
+    unique_id_suffix = data["unique_id_suffix"]
     client = data["client"]
 
     if not client.userInfo:
@@ -21,7 +22,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
         return False
 
     entities = [
-        SpaIsOnlineSensor(shared_data, device_info),
+        SpaIsOnlineSensor(shared_data, device_info, unique_id_suffix),
     ]
 
     async_add_entities(entities)
@@ -35,11 +36,11 @@ class SpaBinarySensorBase(BinarySensorEntity):
 
 class SpaIsOnlineSensor(SpaBinarySensorBase):
 
-    def __init__(self, shared_data, device_info):
+    def __init__(self, shared_data, device_info, unique_id_suffix):
         self._shared_data = shared_data
         self._attr_should_poll = False
         self._attr_device_info = device_info
-        self._attr_unique_id = f'binary_sensor.isOnline'
+        self._attr_unique_id = f'binary_sensor.isOnline{unique_id_suffix}'
         self._attr_translation_key = f'isOnline'
         self.entity_id = self._attr_unique_id
         super().__init__()

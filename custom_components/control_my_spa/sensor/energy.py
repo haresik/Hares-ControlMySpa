@@ -12,7 +12,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class SpaHeaterEnergySensor(SpaSensorBase, RestoreEntity):
     """Senzor pro energii heateru (kWh) - používá se pro Energy Dashboard."""
-    def __init__(self, shared_data, device_info, heater_data, count_heater, config_options):
+    def __init__(self, shared_data, device_info, unique_id_suffix, heater_data, count_heater, config_options):
         self._shared_data = shared_data
         self._heater_data = heater_data
         self._config_options = config_options
@@ -37,11 +37,12 @@ class SpaHeaterEnergySensor(SpaSensorBase, RestoreEntity):
         # Načíst výkon z konfigurace (výchozí 3000 W)
         self._heater_power_watts = config_options.get(config_key, 2800)
         
-        self._attr_unique_id = (
+        base_id = (
             f"sensor.spa_heater_energy"
             if count_heater == 1 or heater_data['port'] is None
             else f"sensor.spa_heater_energy_{int(heater_data['port']) + 1}"
         )
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = (
             "heater_energy"
             if count_heater == 1 or heater_data['port'] is None
@@ -137,7 +138,7 @@ class SpaHeaterEnergySensor(SpaSensorBase, RestoreEntity):
 
 class SpaPumpEnergySensor(SpaSensorBase, RestoreEntity):
     """Senzor pro energii pumpy (kWh) - používá se pro Energy Dashboard."""
-    def __init__(self, shared_data, device_info, pump_data, count_pump, config_options):
+    def __init__(self, shared_data, device_info, unique_id_suffix, pump_data, count_pump, config_options):
         self._shared_data = shared_data
         self._pump_data = pump_data
         self._config_options = config_options
@@ -162,11 +163,12 @@ class SpaPumpEnergySensor(SpaSensorBase, RestoreEntity):
         # Načíst výkon z konfigurace (výchozí 2000 W)
         self._pump_power_watts = config_options.get(config_key, 2200)
         
-        self._attr_unique_id = (
+        base_id = (
             f"sensor.spa_pump_energy"
             if count_pump == 1 or pump_data['port'] is None
             else f"sensor.spa_pump_energy_{int(pump_data['port']) + 1}"
         )
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = (
             "pump_energy"
             if count_pump == 1 or pump_data['port'] is None
@@ -261,7 +263,7 @@ class SpaPumpEnergySensor(SpaSensorBase, RestoreEntity):
 
 class SpaBlowerEnergySensor(SpaSensorBase, RestoreEntity):
     """Senzor pro energii bloweru (kWh) - používá se pro Energy Dashboard."""
-    def __init__(self, shared_data, device_info, blower_data, count_blower, config_options):
+    def __init__(self, shared_data, device_info, unique_id_suffix, blower_data, count_blower, config_options):
         self._shared_data = shared_data
         self._blower_data = blower_data
         self._config_options = config_options
@@ -286,11 +288,12 @@ class SpaBlowerEnergySensor(SpaSensorBase, RestoreEntity):
         # Načíst výkon z konfigurace (výchozí 1500 W)
         self._blower_power_watts = config_options.get(config_key, 900)
         
-        self._attr_unique_id = (
+        base_id = (
             f"sensor.spa_blower_energy"
             if count_blower == 1 or blower_data['port'] is None
             else f"sensor.spa_blower_energy_{int(blower_data['port']) + 1}"
         )
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = (
             "blower_energy"
             if count_blower == 1 or blower_data['port'] is None
@@ -385,7 +388,7 @@ class SpaBlowerEnergySensor(SpaSensorBase, RestoreEntity):
 
 class SpaCirculationPumpEnergySensor(SpaSensorBase, RestoreEntity):
     """Senzor pro energii circulation pumpu (kWh) - používá se pro Energy Dashboard."""
-    def __init__(self, shared_data, device_info, pump_data, count_pump, config_options):
+    def __init__(self, shared_data, device_info, unique_id_suffix, pump_data, count_pump, config_options):
         self._shared_data = shared_data
         self._pump_data = pump_data
         self._config_options = config_options
@@ -410,11 +413,12 @@ class SpaCirculationPumpEnergySensor(SpaSensorBase, RestoreEntity):
         # Načíst výkon z konfigurace (výchozí 500 W)
         self._circulation_pump_power_watts = config_options.get(config_key, 400)
         
-        self._attr_unique_id = (
+        base_id = (
             f"sensor.spa_circulation_pump_energy"
             if count_pump == 1 or pump_data['port'] is None
             else f"sensor.spa_circulation_pump_energy_{int(pump_data['port']) + 1}"
         )
+        self._attr_unique_id = f"{base_id}{unique_id_suffix}"
         self._attr_translation_key = (
             "circulation_pump_energy"
             if count_pump == 1 or pump_data['port'] is None
