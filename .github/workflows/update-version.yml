@@ -1,0 +1,99 @@
+name: Update Version from Tag
+
+on:
+  release:
+    types: [published]
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Get version from tag
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" == "release" ]; then
+            # Z release eventu získám tag_name
+            VERSION="${{ github.event.release.tag_name }}"
+          else
+            # Z push eventu získám název tagu z ref
+            VERSION="${GITHUB_REF#refs/tags/}"
+          fi
+          
+          # Odstranění prefixu "v" pokud existuje
+          VERSION="${VERSION#v}"
+          
+          # Validace formátu verze (semantic versioning)
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?(\+[a-zA-Z0-9]+)?$ ]]; then
+            echo "Error: Invalid version format: $VERSION"
+            exit 1
+          fi
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Detected version: $VERSION"
+
+      - name: Update manifest.json
+        env:
+          VERSION: ${{ steps.get_version.outputs.version }}
+        run: |
+          # Aktualizace manifest.json pomocí Pythonu
+          python3 << EOF
+          import json
+          import sys
+          import os
+          
+          manifest_path = 'custom_components/control_my_spa/manifest.json'
+          version = os.environ.get('VERSION')
+          
+          if not version:
+              print("Error: VERSION environment variable not set")
+              sys.exit(1)
+          
+          try:
+              with open(manifest_path, 'r', encoding='utf-8') as f:
+                  manifest = json.load(f)
+              
+              old_version = manifest.get('version', 'unknown')
+              manifest['version'] = version
+              
+              with open(manifest_path, 'w', encoding='utf-8') as f:
+                  json.dump(manifest, f, indent=2, ensure_ascii=False)
+              # Přidání nového řádku na konec souboru
+              with open(manifest_path, 'a', encoding='utf-8') as f:
+                  f.write('\n')
+              
+              print(f"Updated version from {old_version} to {version}")
+          except Exception as e:
+              print(f"Error updating manifest.json: {e}")
+              sys.exit(1)
+          EOF
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          git add manifest.json
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update version to ${{ steps.get_version.outputs.version }} [skip ci]"
+            git push
+          fi
