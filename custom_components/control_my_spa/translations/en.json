@@ -523,6 +523,48 @@
         }
       }
     },
+    "fan": {
+      "pump": {
+        "name": "Jets",
+        "state": {
+          "OFF": "Off",
+          "LOW": "Low",
+          "MED": "Medium",
+          "HIGH": "High",
+          "HI": "High"
+        }
+      },
+      "pump_1": {
+        "name": "Jets 1",
+        "state": {
+          "OFF": "Off",
+          "LOW": "Low",
+          "MED": "Medium",
+          "HIGH": "High",
+          "HI": "High"
+        }
+      },
+      "pump_2": {
+        "name": "Jets 2",
+        "state": {
+          "OFF": "Off",
+          "LOW": "Low",
+          "MED": "Medium",
+          "HIGH": "High",
+          "HI": "High"
+        }
+      },
+      "pump_3": {
+        "name": "Jets 3",
+        "state": {
+          "OFF": "Off",
+          "LOW": "Low",
+          "MED": "Medium",
+          "HIGH": "High",
+          "HI": "High"
+        }
+      }
+    },
     "climate": {
       "thermostat": {
         "name": "Spa",

@@ -519,6 +519,48 @@
         }
       }
     },
+    "fan": {
+      "pump": {
+        "name": "Düsen",
+        "state": {
+          "OFF": "Aus",
+          "LOW": "Niedrig",
+          "MED": "Mittel",
+          "HIGH": "Hoch",
+          "HI": "Hoch"
+        }
+      },
+      "pump_1": {
+        "name": "Düsen 1",
+        "state": {
+          "OFF": "Aus",
+          "LOW": "Niedrig",
+          "MED": "Mittel",
+          "HIGH": "Hoch",
+          "HI": "Hoch"
+        }
+      },
+      "pump_2": {
+        "name": "Düsen 2",
+        "state": {
+          "OFF": "Aus",
+          "LOW": "Niedrig",
+          "MED": "Mittel",
+          "HIGH": "Hoch",
+          "HI": "Hoch"
+        }
+      },
+      "pump_3": {
+        "name": "Düsen 3",
+        "state": {
+          "OFF": "Aus",
+          "LOW": "Niedrig",
+          "MED": "Mittel",
+          "HIGH": "Hoch",
+          "HI": "Hoch"
+        }
+      }
+    },
     "climate": {
       "thermostat": {
         "name": "Whirlpool",

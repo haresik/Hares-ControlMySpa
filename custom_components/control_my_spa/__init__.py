@@ -21,6 +21,7 @@ PLATFORMS = [
     Platform.CLIMATE,
     Platform.BUTTON,
     Platform.LIGHT,
+    Platform.FAN,
 ]
 
 # async def async_setup(hass, config):

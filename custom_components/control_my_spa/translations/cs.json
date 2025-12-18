@@ -537,6 +537,48 @@
         }
       }
     },
+    "fan": {
+      "pump": {
+        "name": "Trysky",
+        "state": {
+          "OFF": "Vypnuto",
+          "LOW": "Nízká",
+          "MED": "Střední",
+          "HIGH": "Vysoká",
+          "HI": "Vysoká"
+        }
+      },
+      "pump_1": {
+        "name": "Trysky 1",
+        "state": {
+          "OFF": "Vypnuto",
+          "LOW": "Nízká",
+          "MED": "Střední",
+          "HIGH": "Vysoká",
+          "HI": "Vysoká"
+        }
+      },
+      "pump_2": {
+        "name": "Trysky 2",
+        "state": {
+          "OFF": "Vypnuto",
+          "LOW": "Nízká",
+          "MED": "Střední",
+          "HIGH": "Vysoká",
+          "HI": "Vysoká"
+        }
+      },
+      "pump_3": {
+        "name": "Trysky 3",
+        "state": {
+          "OFF": "Vypnuto",
+          "LOW": "Nízká",
+          "MED": "Střední",
+          "HIGH": "Vysoká",
+          "HI": "Vysoká"
+        }
+      }
+    },
     "climate": {
       "thermostat": {
         "name": "Vířivka",
