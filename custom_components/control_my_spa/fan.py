@@ -248,15 +248,29 @@ class SpaPumpFan(FanEntity):
             else:
                 target_state = self._get_next_higher_state(current_state)
             
-            # První pokus
+            # Odeslání požadavku
             success = await self._try_set_pump_state(device_number, target_state)
             
-            # Druhý pokus pokud první selhal
-            if not success:
-                _LOGGER.info("Zkouším znovu nastavit pumpu %s na %s", self._pump_data["port"], target_state)
-                success = await self._try_set_pump_state(device_number, target_state, True)
-                
+            # Aktualizace dat pro ověření stavu
             await self._shared_data.async_force_update()
+            
+            # Ověření nastavené hodnoty a logování stavu
+            if not success:
+                current_state = self._get_pump_state(self._shared_data.data)
+                if current_state == target_state:
+                    self._attr_preset_mode = target_state
+                    _LOGGER.info(
+                        "Pumpa %s byla nastavena na %s (ověřeno po aktualizaci)",
+                        self._pump_data["port"],
+                        target_state
+                    )
+                else:
+                    _LOGGER.warning(
+                        "Pumpa %s nebyla nastavena. Očekávaný stav: %s, Aktuální stav: %s",
+                        self._pump_data["port"],
+                        target_state,
+                        current_state
+                    )
         except ValueError as ve:
             _LOGGER.error("Invalid port value for pump: %s", self._pump_data["port"])
         except Exception as e:
@@ -271,15 +285,27 @@ class SpaPumpFan(FanEntity):
             self._shared_data.pause_updates()
             device_number = int(self._pump_data["port"])
             
-            # První pokus
+            # Odeslání požadavku
             success = await self._try_set_pump_state(device_number, "OFF")
             
-            # Druhý pokus pokud první selhal
-            if not success:
-                _LOGGER.info("Zkouším znovu vypnout pumpu %s", self._pump_data["port"])
-                success = await self._try_set_pump_state(device_number, "OFF", True)
-                
+            # Aktualizace dat pro ověření stavu
             await self._shared_data.async_force_update()
+            
+            # Ověření nastavené hodnoty a logování stavu
+            if not success:
+                current_state = self._get_pump_state(self._shared_data.data)
+                if current_state == "OFF":
+                    self._attr_preset_mode = "OFF"
+                    _LOGGER.info(
+                        "Pumpa %s byla vypnuta (ověřeno po aktualizaci)",
+                        self._pump_data["port"]
+                    )
+                else:
+                    _LOGGER.warning(
+                        "Pumpa %s nebyla vypnuta. Aktuální stav: %s",
+                        self._pump_data["port"],
+                        current_state
+                    )
         except ValueError as ve:
             _LOGGER.error("Invalid port value for pump: %s", self._pump_data["port"])
         except Exception as e:
@@ -341,15 +367,29 @@ class SpaPumpFan(FanEntity):
             # Určit cílový stav podle chytré logiky
             target_state = self._get_target_state_for_preset(current_state, preset_mode)
             
-            # První pokus
+            # Odeslání požadavku
             success = await self._try_set_pump_state(device_number, target_state)
             
-            # Druhý pokus pokud první selhal
-            if not success:
-                _LOGGER.info("Zkouším znovu nastavit pumpu %s na %s", self._pump_data["port"], target_state)
-                success = await self._try_set_pump_state(device_number, target_state, True)
-                
+            # Aktualizace dat pro ověření stavu
             await self._shared_data.async_force_update()
+            
+            # Ověření nastavené hodnoty a logování stavu
+            if not success:
+                current_state = self._get_pump_state(self._shared_data.data)
+                if current_state == target_state:
+                    self._attr_preset_mode = target_state
+                    _LOGGER.info(
+                        "Pumpa %s byla nastavena na %s (ověřeno po aktualizaci)",
+                        self._pump_data["port"],
+                        target_state
+                    )
+                else:
+                    _LOGGER.warning(
+                        "Pumpa %s nebyla nastavena. Očekávaný stav: %s, Aktuální stav: %s",
+                        self._pump_data["port"],
+                        target_state,
+                        current_state
+                    )
         except ValueError as ve:
             _LOGGER.error("Invalid port value for pump: %s", self._pump_data["port"])
         except Exception as e:
