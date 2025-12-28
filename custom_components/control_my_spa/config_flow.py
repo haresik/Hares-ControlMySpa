@@ -87,5 +87,5 @@ class ControlMySpaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         config_entry: config_entries.ConfigEntry,
     ) -> ControlMySpaOptionsFlowHandler:
         """Get the options flow for this handler."""
-        return ControlMySpaOptionsFlowHandler(config_entry)
+        return ControlMySpaOptionsFlowHandler()
 

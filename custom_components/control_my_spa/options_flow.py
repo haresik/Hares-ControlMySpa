@@ -6,10 +6,6 @@ from .const import DOMAIN
 class ControlMySpaOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle options flow for ControlMySpa."""
 
-    def __init__(self, config_entry):
-        """Initialize options flow."""
-        self.config_entry = config_entry
-
     def _get_component_count(self, component_type, prefix, default_min):
         """Získá počet komponent z shared_data, pokud jsou dostupná.
         
