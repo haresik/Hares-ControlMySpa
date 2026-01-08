@@ -67,8 +67,17 @@ class SpaPumpFan(FanEntity):
         
         # Nastavení preset modes podle dostupných hodnot
         self._available_values = pump_data.get("availableValues", ["OFF", "HIGH"])
-        # Vytvořit seznam preset modes z dostupných hodnot, OFF vždy první
-        preset_modes_list = ["OFF"] + [val for val in self._available_values if val != "OFF"]
+        # Zjistit, zda je podporován stav OFF
+        self._supports_off = "OFF" in self._available_values
+        # Vytvořit seznam preset modes z dostupných hodnot
+        # OFF nikdy nezobrazovat v seznamu výběru (je dostupný jen přes tlačítko vypnout)
+        if self._supports_off:
+            # Pokud OFF je podporován, zobrazit všechny ostatní stavy
+            preset_modes_list = [val for val in self._available_values if val != "OFF"]
+        else:
+            # Pokud OFF není podporován, LOW reprezentuje vypnutý stav, takže ho také nezobrazovat
+            # V seznamu budou jen aktivní stavy (HIGH, případně MED)
+            preset_modes_list = [val for val in self._available_values if val != "LOW"]
         self._attr_preset_modes = preset_modes_list
         self._attr_preset_mode = None
         self._is_processing = False  # Příznak zpracování
@@ -82,6 +91,9 @@ class SpaPumpFan(FanEntity):
     def icon(self):
         if self._is_processing:
             return "mdi:sync"  # Ikona pro zpracování
+        # Pokud není OFF podporován, LOW reprezentuje vypnutý stav
+        if not self._supports_off and self._attr_preset_mode == "LOW":
+            return "mdi:fan-off"
         if self._attr_preset_mode == "OFF":
             return "mdi:fan-off"
         elif self._attr_preset_mode == "LOW":
@@ -95,8 +107,13 @@ class SpaPumpFan(FanEntity):
 
     @property
     def is_on(self) -> bool:
-        """Vrátí True pokud není ve stavu OFF."""
-        return self._attr_preset_mode != "OFF" if self._attr_preset_mode else False
+        """Vrátí True pokud není ve stavu OFF (nebo pokud není OFF podporován, pak pokud je HIGH)."""
+        if not self._attr_preset_mode:
+            return False
+        if self._supports_off:
+            return self._attr_preset_mode != "OFF"
+        else:
+            return self._attr_preset_mode in ["HIGH", "HI"]
 
     def _get_pump_state(self, data):
         """Získá stav pumpy z dat."""
@@ -118,14 +135,18 @@ class SpaPumpFan(FanEntity):
                 if pump_state in self._available_values:
                     self._attr_preset_mode = pump_state
                 else:
-                    self._attr_preset_mode = "OFF"
+                    # Pokud není OFF podporován, použít LOW jako výchozí stav
+                    self._attr_preset_mode = "LOW" if not self._supports_off else "OFF"
                 _LOGGER.debug("Updated Pump Fan %s: %s", self._pump_data["port"], pump_state)
             else:
-                self._attr_preset_mode = "OFF"
+                # Pokud není OFF podporován, použít LOW jako výchozí stav
+                self._attr_preset_mode = "LOW" if not self._supports_off else "OFF"
 
     def _get_next_higher_state(self, current_state: str) -> str:
         """Získá další vyšší stav podle logiky."""
         available = self._available_values
+        # Pokud není OFF podporován, použít LOW místo OFF
+        off_state = "LOW" if not self._supports_off else "OFF"
         
         if current_state == "OFF":
             # Aktuální stav je OFF, chci zapnout
@@ -133,7 +154,7 @@ class SpaPumpFan(FanEntity):
                 # Neobsahuje LOW
                 if "MED" not in available:
                     # Neobsahuje MED → HIGH
-                    return "HIGH" if "HIGH" in available or "HI" in available else "OFF"
+                    return "HIGH" if "HIGH" in available or "HI" in available else off_state
                 else:
                     # Obsahuje MED → MED
                     return "MED"
@@ -143,6 +164,9 @@ class SpaPumpFan(FanEntity):
         
         elif current_state == "LOW":
             # Aktuální stav je LOW, chci vyšší
+            if not self._supports_off:
+                # Pokud není OFF podporován, LOW je nejnižší stav, takže přejít na HIGH
+                return "HIGH" if "HIGH" in available or "HI" in available else "LOW"
             if "MED" not in available:
                 # Neobsahuje MED
                 if "HIGH" not in available and "HI" not in available:
@@ -158,22 +182,24 @@ class SpaPumpFan(FanEntity):
         elif current_state == "MED":
             # Aktuální stav je MED, chci vyšší
             if "HIGH" not in available and "HI" not in available:
-                # Neobsahuje HIGH → OFF
-                return "OFF"
+                # Neobsahuje HIGH → OFF nebo LOW
+                return off_state
             else:
                 # Obsahuje HIGH → HIGH
                 return "HIGH" if "HIGH" in available else "HI"
         
         elif current_state in ["HIGH", "HI"]:
-            # Aktuální stav je HIGH, chci vyšší → cyklické přepínání na OFF
-            return "OFF"
+            # Aktuální stav je HIGH, chci vyšší → cyklické přepínání na OFF nebo LOW
+            return off_state
         
-        # Výchozí: pokud není rozpoznán stav, vrať OFF
-        return "OFF"
+        # Výchozí: pokud není rozpoznán stav, vrať OFF nebo LOW
+        return off_state
 
     def _get_next_lower_state(self, current_state: str) -> str:
         """Získá další nižší stav podle logiky."""
         available = self._available_values
+        # Pokud není OFF podporován, použít LOW místo OFF
+        off_state = "LOW" if not self._supports_off else "OFF"
         
         if current_state in ["HIGH", "HI"]:
             # Aktuální stav je HIGH, chci nižší
@@ -182,21 +208,24 @@ class SpaPumpFan(FanEntity):
             elif "LOW" in available:
                 return "LOW"
             else:
-                return "OFF"
+                return off_state
         
         elif current_state == "MED":
             # Aktuální stav je MED, chci nižší
             if "LOW" in available:
                 return "LOW"
             else:
-                return "OFF"
+                return off_state
         
         elif current_state == "LOW":
-            # Aktuální stav je LOW, chci nižší → OFF
+            # Aktuální stav je LOW, chci nižší → OFF nebo zůstat na LOW pokud není OFF podporován
+            if not self._supports_off:
+                # Pokud není OFF podporován, LOW je nejnižší stav
+                return "LOW"
             return "OFF"
         
-        # Výchozí: pokud je OFF nebo neznámý stav, vrať OFF
-        return "OFF"
+        # Výchozí: pokud je OFF nebo neznámý stav, vrať OFF nebo LOW
+        return off_state
 
     async def _try_set_pump_state(self, device_number: int, target_state: str, is_retry: bool = False) -> bool:
         """Pokus o nastavení stavu pumpy s možností opakování."""
@@ -239,7 +268,7 @@ class SpaPumpFan(FanEntity):
             device_number = int(self._pump_data["port"])
             
             # Získat aktuální stav
-            current_state = self._attr_preset_mode or "OFF"
+            current_state = self._attr_preset_mode or ("LOW" if not self._supports_off else "OFF")
             
             # Pokud je zadán preset_mode, použít ho
             if preset_mode:
@@ -285,8 +314,11 @@ class SpaPumpFan(FanEntity):
             self._shared_data.pause_updates()
             device_number = int(self._pump_data["port"])
             
+            # Pokud není OFF podporován, použít LOW místo OFF
+            target_state = "LOW" if not self._supports_off else "OFF"
+            
             # Odeslání požadavku
-            success = await self._try_set_pump_state(device_number, "OFF")
+            success = await self._try_set_pump_state(device_number, target_state)
             
             # Aktualizace dat pro ověření stavu
             await self._shared_data.async_force_update()
@@ -294,8 +326,8 @@ class SpaPumpFan(FanEntity):
             # Ověření nastavené hodnoty a logování stavu
             if not success:
                 current_state = self._get_pump_state(self._shared_data.data)
-                if current_state == "OFF":
-                    self._attr_preset_mode = "OFF"
+                if current_state == target_state:
+                    self._attr_preset_mode = target_state
                     _LOGGER.info(
                         "Pumpa %s byla vypnuta (ověřeno po aktualizaci)",
                         self._pump_data["port"]
@@ -318,9 +350,9 @@ class SpaPumpFan(FanEntity):
         """Získá cílový stav pro přechod z aktuálního stavu na požadovaný preset mode."""
         available = self._available_values
         
-        # Pokud chceme vypnout, vrať OFF
+        # Pokud chceme vypnout, vrať OFF nebo LOW pokud není OFF podporován
         if desired_preset == "OFF":
-            return "OFF"
+            return "LOW" if not self._supports_off else "OFF"
         
         # Pokud je aktuální stav stejný jako požadovaný, vrať aktuální
         if current_state == desired_preset or (current_state in ["HIGH", "HI"] and desired_preset in ["HIGH", "HI"]):
@@ -362,7 +394,7 @@ class SpaPumpFan(FanEntity):
             device_number = int(self._pump_data["port"])
             
             # Získat aktuální stav
-            current_state = self._attr_preset_mode or "OFF"
+            current_state = self._attr_preset_mode or ("LOW" if not self._supports_off else "OFF")
             
             # Určit cílový stav podle chytré logiky
             target_state = self._get_target_state_for_preset(current_state, preset_mode)
