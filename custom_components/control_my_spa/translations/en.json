@@ -487,6 +487,42 @@
           "HIGH": "On"
         }
       },
+      "low_pump": {
+        "name": "Jets - Low",
+        "state": {
+          "LOW": "Low",
+          "MED": "Medium",
+          "HIGH": "High",
+          "HI": "High"
+        }
+      },
+      "low_pump_1": {
+        "name": "Jets 1 - Low",
+        "state": {
+          "LOW": "Low",
+          "MED": "Medium",
+          "HIGH": "High",
+          "HI": "High"
+        }
+      },
+      "low_pump_2": {
+        "name": "Jets 2 - Low",
+        "state": {
+          "LOW": "Low",
+          "MED": "Medium",
+          "HIGH": "High",
+          "HI": "High"
+        }
+      },
+      "low_pump_3": {
+        "name": "Jets 3 - Low",
+        "state": {
+          "LOW": "Low",
+          "MED": "Medium",
+          "HIGH": "High",
+          "HI": "High"
+        }
+      },
       "blower": {
         "name": "Blower",
         "state": {

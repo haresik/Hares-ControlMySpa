@@ -18,31 +18,30 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         return False
 
     # Najít všechny PUMP komponenty s přesně třemi hodnotami (OFF, LOW, HIGH)
-    pumps = [
-        component for component in shared_data.data["components"]
-        if component["componentType"] == "PUMP" and 
-        len(component.get("availableValues", [])) >= 2 and
-        any(val in component.get("availableValues", []) for val in ["LOW", "MED"])
-    ]
+    # pumps = [
+    #     component for component in shared_data.data["components"]
+    #     if component["componentType"] == "PUMP" and 
+    #     len(component.get("availableValues", [])) >= 2 and
+    #     any(val in component.get("availableValues", []) for val in ["LOW", "MED"])
+    # ]
 
     # Logování informací o filtrování
-    _LOGGER.debug(
-        "Filtered components for Fan - Pumps with 3 states: %d",
-        len(pumps)
-    )
+    # _LOGGER.debug(
+    #     "Filtered components for Fan - Pumps with 3 states: %d",
+    #     len(pumps)
+    # )
 
-    entities = [SpaPumpFan(shared_data, device_info, unique_id_suffix, pump, len(pumps)) for pump in pumps]
+    # entities = [SpaPumpFan(shared_data, device_info, unique_id_suffix, pump, len(pumps)) for pump in pumps]
     
-    async_add_entities(entities, True)
-    _LOGGER.debug("START Fan control_my_spa")
+    async_add_entities([], True)
+    _LOGGER.debug("START Fan control_my_spa - no entities created")
 
-    for entity in entities:
-        shared_data.register_subscriber(entity)
-        _LOGGER.debug("Created Fan (%s) (%s)", entity._attr_unique_id, entity.entity_id)
+    # for entity in entities:
+    #     shared_data.register_subscriber(entity)
+    #     _LOGGER.debug("Created Fan (%s) (%s)", entity._attr_unique_id, entity.entity_id)
 
 class SpaPumpFan(FanEntity):
-    """Fan entity pro PUMP komponenty se 3 stavy (OFF, LOW, HIGH)."""
-    
+   
     _attr_has_entity_name = True
     _attr_supported_features = FanEntityFeature.PRESET_MODE | FanEntityFeature.TURN_ON | FanEntityFeature.TURN_OFF
 
@@ -66,7 +65,7 @@ class SpaPumpFan(FanEntity):
         self.entity_id = self._attr_unique_id
         
         # Nastavení preset modes podle dostupných hodnot
-        self._available_values = pump_data.get("availableValues", ["OFF", "HIGH"])
+        self._available_values = pump_data.get("availableValues", ["LOW", "HIGH"])
         # Zjistit, zda je podporován stav OFF
         self._supports_off = "OFF" in self._available_values
         # Vytvořit seznam preset modes z dostupných hodnot

@@ -483,6 +483,42 @@
           "HIGH": "Ein"
         }
       },
+      "low_pump": {
+        "name": "Düsen - Niedrig",
+        "state": {
+          "LOW": "Niedrig",
+          "MED": "Mittel",
+          "HIGH": "Hoch",
+          "HI": "Hoch"
+        }
+      },
+      "low_pump_1": {
+        "name": "Düsen 1 - Niedrig",
+        "state": {
+          "LOW": "Niedrig",
+          "MED": "Mittel",
+          "HIGH": "Hoch",
+          "HI": "Hoch"
+        }
+      },
+      "low_pump_2": {
+        "name": "Düsen 2 - Niedrig",
+        "state": {
+          "LOW": "Niedrig",
+          "MED": "Mittel",
+          "HIGH": "Hoch",
+          "HI": "Hoch"
+        }
+      },
+      "low_pump_3": {
+        "name": "Düsen 3 - Niedrig",
+        "state": {
+          "LOW": "Niedrig",
+          "MED": "Mittel",
+          "HIGH": "Hoch",
+          "HI": "Hoch"
+        }
+      },
       "blower": {
         "name": "Gebläse",
         "state": {

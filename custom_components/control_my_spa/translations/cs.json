@@ -501,6 +501,42 @@
           "HIGH": "Zapnuto"
         }
       },
+      "low_pump": {
+        "name": "Trysky - Nízký",
+        "state": {
+          "LOW": "Nízká",
+          "MED": "Střední",
+          "HIGH": "Vysoká",
+          "HI": "Vysoká"
+        }
+      },
+      "low_pump_1": {
+        "name": "Trysky 1 - Nízký",
+        "state": {
+          "LOW": "Nízká",
+          "MED": "Střední",
+          "HIGH": "Vysoká",
+          "HI": "Vysoká"
+        }
+      },
+      "low_pump_2": {
+        "name": "Trysky 2 - Nízký",
+        "state": {
+          "LOW": "Nízká",
+          "MED": "Střední",
+          "HIGH": "Vysoká",
+          "HI": "Vysoká"
+        }
+      },
+      "low_pump_3": {
+        "name": "Trysky 3 - Nízký",
+        "state": {
+          "LOW": "Nízká",
+          "MED": "Střední",
+          "HIGH": "Vysoká",
+          "HI": "Vysoká"
+        }
+      },
       "blower": {
         "name": "Vzduch",
         "state": {
