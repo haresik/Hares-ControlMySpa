@@ -1,0 +1,643 @@
+{
+  "title": "Balboa SPA",
+  "config": {
+    "abort": {
+      "already_configured": "Enheden er allerede konfigureret",
+      "already_in_progress": "Konfiguration er allerede i gang"
+    },
+    "error": {
+      "connection_error": "Kunne ikke forbinde",
+      "cannot_login": "Kan ikke logge ind, tjek dit brugernavn og adgangskode",
+      "cannot_connect": "Kunne ikke forbinde",
+      "invalid_auth": "Ugyldig godkendelse",
+      "unknown": "Uventet fejl"
+    },
+    "flow_title": "ControlMySpa",
+    "step": {
+      "user": {
+        "data": {
+          "username": "Brugernavn",
+          "password": "Adgangskode",
+          "updateintervalminutes": "Opdateringsinterval (minutter)"
+        },
+        "description": "Forbind til ControlMySpa",
+        "title": "SPA"
+      },
+      "select_spa": {
+        "data": {
+          "spa_id": "Vælg din SPA"
+        },
+        "description": "Vælg din SPA fra listen",
+        "title": "Vælg SPA"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "pump_1_power_watts": "Pumpe 1 effektforbrug (W)",
+          "pump_2_power_watts": "Pumpe 2 effektforbrug (W)",
+          "pump_3_power_watts": "Pumpe 3 effektforbrug (W)",
+          "heater_1_power_watts": "Varmelegeme 1 effektforbrug (W)",
+          "heater_2_power_watts": "Varmelegeme 2 effektforbrug (W)",
+          "heater_3_power_watts": "Varmelegeme 3 effektforbrug (W)",
+          "blower_1_power_watts": "Blæser 1 effektforbrug (W)",
+          "blower_2_power_watts": "Blæser 2 effektforbrug (W)",
+          "blower_3_power_watts": "Blæser 3 effektforbrug (W)",
+          "circulation_pump_1_power_watts": "Cirkulationspumpe 1 effektforbrug (W)",
+          "circulation_pump_2_power_watts": "Cirkulationspumpe 2 effektforbrug (W)",
+          "circulation_pump_3_power_watts": "Cirkulationspumpe 3 effektforbrug (W)"
+        },
+        "description": "Konfigurer pumpe- og varmelegeme-effektforbrug og energipris til omkostningsberegning.",
+        "title": "Effektforbrugsindstillinger"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "current_temperature": {
+        "name": "Aktuel temperatur"
+      },
+      "desired_temperature": {
+        "name": "Ønsket temperatur"
+      },
+      "circulation_pump": {
+        "name": "Cirkulationspumpe"
+      },
+      "circulation_pump_energy": {
+        "name": "Cirkulationspumpe energiforbrug"
+      },
+      "circulation_pump_energy_1": {
+        "name": "Cirkulationspumpe energiforbrug 1"
+      },
+      "circulation_pump_energy_2": {
+        "name": "Cirkulationspumpe energiforbrug 2"
+      },
+      "circulation_pump_energy_3": {
+        "name": "Cirkulationspumpe energiforbrug 3"
+      },
+      "filter": {
+        "name": "Filtercyklus"
+      },
+      "filter_1": {
+        "name": "Filtercyklus 1"
+      },
+      "filter_2": {
+        "name": "Filtercyklus 2"
+      },
+      "ozone": {
+        "name": "Ozon"
+      },
+      "heater": {
+        "name": "Varmelegeme"
+      },
+      "heater_1": {
+        "name": "Varmelegeme 1"
+      },
+      "heater_2": {
+        "name": "Varmelegeme 2"
+      },
+      "heater_energy": {
+        "name": "Varmelegeme energiforbrug"
+      },
+      "heater_energy_1": {
+        "name": "Varmelegeme energiforbrug 1"
+      },
+      "heater_energy_2": {
+        "name": "Varmelegeme energiforbrug 2"
+      },
+      "tzl_zone": {
+        "name": "TZL zone"
+      },
+      "tzl_zone_1": {
+        "name": "TZL zone A"
+      },
+      "tzl_zone_2": {
+        "name": "TZL zone B"
+      },
+      "tzl_zone_3": {
+        "name": "TZL zone C"
+      },
+      "tzl_rgb": {
+        "name": "TZL RGB"
+      },
+      "tzl_rgb_1": {
+        "name": "TZL RGB A"
+      },
+      "tzl_rgb_2": {
+        "name": "TZL RGB B"
+      },
+      "tzl_rgb_3": {
+        "name": "TZL RGB C"
+      },
+      "pump_energy": {
+        "name": "Pumpe energiforbrug"
+      },
+      "pump_energy_1": {
+        "name": "Pumpe energiforbrug 1"
+      },
+      "pump_energy_2": {
+        "name": "Pumpe energiforbrug 2"
+      },
+      "pump_energy_3": {
+        "name": "Pumpe energiforbrug 3"
+      },
+      "blower_energy": {
+        "name": "Blæser energiforbrug"
+      },
+      "blower_energy_1": {
+        "name": "Blæser energiforbrug 1"
+      },
+      "blower_energy_2": {
+        "name": "Blæser energiforbrug 2"
+      },
+      "blower_energy_3": {
+        "name": "Blæser energiforbrug 3"
+      }
+    },
+    "light": {
+      "tzl_zone_light": {
+        "name": "Chromazone lys"
+      },
+      "tzl_zone_light_1": {
+        "name": "Chromazone lys A"
+      },
+      "tzl_zone_light_2": {
+        "name": "Chromazone lys B"
+      },
+      "tzl_zone_light_3": {
+        "name": "Chromazone lys C"
+      }
+    },
+    "select": {
+      "tzl_color_select": {
+        "name": "Chromazone farve",
+        "state": {
+          "OFF": "Fra"
+        }
+      },
+      "tzl_color_select_1": {
+        "name": "Chromazone farve A",
+        "state": {
+          "OFF": "Fra"
+        }
+      },
+      "tzl_color_select_2": {
+        "name": "Chromazone farve B",
+        "state": {
+          "OFF": "Fra"
+        }
+      },
+      "tzl_color_select_3": {
+        "name": "Chromazone farve C",
+        "state": {
+          "OFF": "Fra"
+        }
+      },
+      "tzl_zone_mode": {
+        "name": "Chromazone zone tilstand",
+        "state": {
+          "OFF": "Fra",
+          "PARTY": "Fest",
+          "RELAX": "Afslapning",
+          "WHEEL": "Hjul",
+          "NORMAL": "Normal"
+        }
+      },
+      "tzl_zone_mode_1": {
+        "name": "Chromazone zone tilstand A",
+        "state": {
+          "OFF": "Fra",
+          "PARTY": "Fest",
+          "RELAX": "Afslapning",
+          "WHEEL": "Hjul",
+          "NORMAL": "Normal"
+        }
+      },
+      "tzl_zone_mode_2": {
+        "name": "Chromazone zone tilstand B",
+        "state": {
+          "OFF": "Fra",
+          "PARTY": "Fest",
+          "RELAX": "Afslapning",
+          "WHEEL": "Hjul",
+          "NORMAL": "Normal"
+        }
+      },
+      "tzl_zone_mode_3": {
+        "name": "Chromazone zone tilstand C",
+        "state": {
+          "OFF": "Fra",
+          "PARTY": "Fest",
+          "RELAX": "Afslapning",
+          "WHEEL": "Hjul",
+          "NORMAL": "Normal"
+        }
+      },
+      "tzl_zone_intensity": {
+        "name": "Chromazone - Zone intensitet",
+        "state": {
+          "0": "Fra",
+          "1": "Meget lav",
+          "2": "Lav",
+          "3": "Medium lav",
+          "4": "Medium",
+          "5": "Medium høj",
+          "6": "Høj",
+          "7": "Meget høj",
+          "8": "Maksimum"
+        }
+      },
+      "tzl_zone_intensity_1": {
+        "name": "Chromazone - Zone intensitet A",
+        "state": {
+          "0": "Fra",
+          "1": "Meget lav",
+          "2": "Lav",
+          "3": "Medium lav",
+          "4": "Medium",
+          "5": "Medium høj",
+          "6": "Høj",
+          "7": "Meget høj",
+          "8": "Maksimum"
+        }
+      },
+      "tzl_zone_intensity_2": {
+        "name": "Chromazone - Zone intensitet B",
+        "state": {
+          "0": "Fra",
+          "1": "Meget lav",
+          "2": "Lav",
+          "3": "Medium lav",
+          "4": "Medium",
+          "5": "Medium høj",
+          "6": "Høj",
+          "7": "Meget høj",
+          "8": "Maksimum"
+        }
+      },
+      "tzl_zone_intensity_3": {
+        "name": "Chromazone - Zone intensitet C",
+        "state": {
+          "0": "Fra",
+          "1": "Meget lav",
+          "2": "Lav",
+          "3": "Medium lav",
+          "4": "Medium",
+          "5": "Medium høj",
+          "6": "Høj",
+          "7": "Meget høj",
+          "8": "Maksimum"
+        }
+      },
+      "tzl_zone_speed": {
+        "name": "Chromazone - Zone hastighed",
+        "state": {
+          "0": "Fra",
+          "1": "Meget langsom",
+          "2": "Langsom",
+          "3": "Medium",
+          "4": "Hurtig",
+          "5": "Maksimum"
+        }
+      },
+      "tzl_zone_speed_1": {
+        "name": "Chromazone - Zone hastighed A",
+        "state": {
+          "0": "Fra",
+          "1": "Meget langsom",
+          "2": "Langsom",
+          "3": "Medium",
+          "4": "Hurtig",
+          "5": "Maksimum"
+        }
+      },
+      "tzl_zone_speed_2": {
+        "name": "Chromazone - Zone hastighed B",
+        "state": {
+          "0": "Fra",
+          "1": "Meget langsom",
+          "2": "Langsom",
+          "3": "Medium",
+          "4": "Hurtig",
+          "5": "Maksimum"
+        }
+      },
+      "tzl_zone_speed_3": {
+        "name": "Chromazone - Zone hastighed C",
+        "state": {
+          "0": "Fra",
+          "1": "Meget langsom",
+          "2": "Langsom",
+          "3": "Medium",
+          "4": "Hurtig",
+          "5": "Maksimum"
+        }
+      },
+      "light": {
+        "name": "Lys",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "light_1": {
+        "name": "Lys 1",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "light_2": {
+        "name": "Lys 2",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "pump": {
+        "name": "Jets",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "pump_1": {
+        "name": "Jets 1",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "pump_2": {
+        "name": "Jets 2",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "pump_3": {
+        "name": "Jets 3",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "blower": {
+        "name": "Blæser",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "blower_1": {
+        "name": "Blæser 1",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "blower_2": {
+        "name": "Blæser 2",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "temperature_range": {
+        "name": "Temperaturområde",
+        "state": {
+          "LOW": "Lavt område",
+          "HIGH": "Højt område"
+        }
+      },
+      "heater_mode": {
+        "name": "Varmelegeme tilstand",
+        "state": {
+          "READY": "Opvarmning også uden for cirkulation",
+          "REST": "Opvarmning kun under cirkulation",
+          "READY_REST": "Opvarmning som pr. enhed"
+        }
+      },
+      "filter_time": {
+        "name": "Filtertid"
+      },
+      "filter_time_1": {
+        "name": "Filtertid 1"
+      },
+      "filter_time_2": {
+        "name": "Filtertid 2"
+      },
+      "filter_duration": {
+        "name": "Filtervarighed"
+      },
+      "filter_duration_1": {
+        "name": "Filtervarighed 1"
+      },
+      "filter_duration_2": {
+        "name": "Filtervarighed 2"
+      }
+    },
+    "number": {
+      "target_desired_temperature": {
+        "name": "Måltemperatur"
+      }
+    },
+    "binary_sensor": {
+      "isOnline": {
+        "name": "Er online"
+      }
+    },
+    "switch": {
+      "light": {
+        "name": "Lys"
+      },
+      "light_1": {
+        "name": "Lys 1"
+      },
+      "light_2": {
+        "name": "Lys 2"
+      },
+      "pump": {
+        "name": "Jets",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "pump_1": {
+        "name": "Jets 1",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "pump_2": {
+        "name": "Jets 2",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "pump_3": {
+        "name": "Jets 3",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "low_pump": {
+        "name": "Jets - Lav",
+        "state": {
+          "LOW": "Lav",
+          "MED": "Medium",
+          "HIGH": "Høj",
+          "HI": "Høj"
+        }
+      },
+      "low_pump_1": {
+        "name": "Jets 1 - Lav",
+        "state": {
+          "LOW": "Lav",
+          "MED": "Medium",
+          "HIGH": "Høj",
+          "HI": "Høj"
+        }
+      },
+      "low_pump_2": {
+        "name": "Jets 2 - Lav",
+        "state": {
+          "LOW": "Lav",
+          "MED": "Medium",
+          "HIGH": "Høj",
+          "HI": "Høj"
+        }
+      },
+      "low_pump_3": {
+        "name": "Jets 3 - Lav",
+        "state": {
+          "LOW": "Lav",
+          "MED": "Medium",
+          "HIGH": "Høj",
+          "HI": "Høj"
+        }
+      },
+      "blower": {
+        "name": "Blæser",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "blower_1": {
+        "name": "Blæser 1",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "blower_2": {
+        "name": "Blæser 2",
+        "state": {
+          "OFF": "Fra",
+          "HIGH": "Til"
+        }
+      },
+      "tzl_power": {
+        "name": "TZL lys",
+        "state": {
+          "on": "Til",
+          "off": "Fra"
+        }
+      },
+      "filter_2": {
+        "name": "Aktiver filtercyklus 2",
+        "state": {
+          "on": "Til",
+          "off": "Fra"
+        }
+      }
+    },
+    "fan": {
+      "pump": {
+        "name": "Jets",
+        "state": {
+          "OFF": "Fra",
+          "LOW": "Lav",
+          "MED": "Medium",
+          "HIGH": "Høj",
+          "HI": "Høj"
+        }
+      },
+      "pump_1": {
+        "name": "Jets 1",
+        "state": {
+          "OFF": "Fra",
+          "LOW": "Lav",
+          "MED": "Medium",
+          "HIGH": "Høj",
+          "HI": "Høj"
+        }
+      },
+      "pump_2": {
+        "name": "Jets 2",
+        "state": {
+          "OFF": "Fra",
+          "LOW": "Lav",
+          "MED": "Medium",
+          "HIGH": "Høj",
+          "HI": "Høj"
+        }
+      },
+      "pump_3": {
+        "name": "Jets 3",
+        "state": {
+          "OFF": "Fra",
+          "LOW": "Lav",
+          "MED": "Medium",
+          "HIGH": "Høj",
+          "HI": "Høj"
+        }
+      }
+    },
+    "climate": {
+      "thermostat": {
+        "name": "Spa",
+        "current_temperature": "Aktuel temperatur",
+        "target_temperature": "Måltemperatur",
+        "desired_temperature": "Ønsket temperatur",
+        "state": {
+          "off": "Fra",
+          "heat": "Opvarmning"
+        }
+      }
+    },
+    "button": {
+      "update_time": {
+        "name": "Opdater tid",
+        "state": {
+          "pressed": "Trykket"
+        }
+      },
+      "tzl_light_off": {
+        "name": "Sluk TZL lys",
+        "state": {
+          "pressed": "Trykket"
+        }
+      }
+    }
+  },
+  "services": {
+    "update_time": {
+      "name": "Opdater tid",
+      "description": "Opdaterer enhedstiden til aktuel systemtid."
+    }
+  },
+  "notification": {
+    "time_update": {
+      "title": "Spa tid opdatering",
+      "message": "Spa tid er blevet opdateret med succes fra {old_time} til {new_time}"
+    }
+  }
+}
