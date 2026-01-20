@@ -18,12 +18,12 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         return False
 
     # Najít všechny PUMP komponenty s přesně třemi hodnotami (OFF, LOW, HIGH)
-    # pumps = [
-    #     component for component in shared_data.data["components"]
-    #     if component["componentType"] == "PUMP" and 
-    #     len(component.get("availableValues", [])) >= 2 and
-    #     any(val in component.get("availableValues", []) for val in ["LOW", "MED"])
-    # ]
+    pumps = [
+         component for component in shared_data.data["components"]
+         if component["componentType"] == "PUMP" and 
+         len(component.get("availableValues", [])) >= 2 and
+         any(val in component.get("availableValues", []) for val in ["LOW", "MED"])
+    ]
 
     # Logování informací o filtrování
     # _LOGGER.debug(
@@ -31,9 +31,9 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     #     len(pumps)
     # )
 
-    # entities = [SpaPumpFan(shared_data, device_info, unique_id_suffix, pump, len(pumps)) for pump in pumps]
+    entities = [SpaPumpFan(shared_data, device_info, unique_id_suffix, pump, len(pumps)) for pump in pumps]
     
-    async_add_entities([], True)
+    async_add_entities(entities, True)
     _LOGGER.debug("START Fan control_my_spa - no entities created")
 
     # for entity in entities:
@@ -130,16 +130,10 @@ class SpaPumpFan(FanEntity):
         if data:
             pump_state = self._get_pump_state(data)
             if pump_state is not None:
-                # Mapování stavu na preset mode
-                if pump_state in self._available_values:
-                    self._attr_preset_mode = pump_state
-                else:
-                    # Pokud není OFF podporován, použít LOW jako výchozí stav
-                    self._attr_preset_mode = "LOW" if not self._supports_off else "OFF"
-                _LOGGER.debug("Updated Pump Fan %s: %s", self._pump_data["port"], pump_state)
+                self._attr_preset_mode = pump_state
             else:
                 # Pokud není OFF podporován, použít LOW jako výchozí stav
-                self._attr_preset_mode = "LOW" if not self._supports_off else "OFF"
+                self._attr_preset_mode = "OFF"
 
     def _get_next_higher_state(self, current_state: str) -> str:
         """Získá další vyšší stav podle logiky."""

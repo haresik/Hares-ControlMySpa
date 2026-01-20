@@ -40,26 +40,26 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         if component["componentType"] == "FILTER"
     ]
     # Najít všechny PUMP komponenty s LOW nebo MED hodnotami (pro SpaPumpLowSwitch)
-    pumps_low = [
-        component for component in shared_data.data["components"]
-        if component["componentType"] == "PUMP" and 
-        len(component.get("availableValues", [])) >= 2 and
-        any(val in component.get("availableValues", []) for val in ["LOW", "MED"])
-    ]
+    # pumps_low = [
+    #     component for component in shared_data.data["components"]
+    #     if component["componentType"] == "PUMP" and
+    #     len(component.get("availableValues", [])) >= 2 and
+    #     any(val in component.get("availableValues", []) for val in ["LOW", "MED"])
+    # ]
 
     # Logování informací o filtrování
     _LOGGER.debug(
         "Filtered components for Switch - Lights: %d, Pumps: %d, Pumps Low: %d, Blowers: %d, Filters: %d",
         len(lights),
         len(pumps),
-        len(pumps_low),
+        0,
         len(blowers),
         len(filters)
     )
 
     entities = [SpaLightSwitch(shared_data, device_info, unique_id_suffix, light, len(lights)) for light in lights]
     entities += [SpaPumpSwitch(shared_data, device_info, pump, len(pumps), unique_id_suffix) for pump in pumps]
-    entities += [SpaPumpLowSwitch(shared_data, device_info, pump, len(pumps_low), unique_id_suffix) for pump in pumps_low]
+    # entities += [SpaPumpLowSwitch(shared_data, device_info, pump, len(pumps_low), unique_id_suffix) for pump in pumps_low]
     entities += [SpaBlowerSwitch(shared_data, device_info, unique_id_suffix, blower, len(blowers)) for blower in blowers]
     
     # Přidání switch pro druhý filtr pouze pokud existují dva filtry
