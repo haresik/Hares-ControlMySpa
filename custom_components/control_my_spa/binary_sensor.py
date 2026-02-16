@@ -40,7 +40,7 @@ class SpaIsOnlineSensor(SpaBinarySensorBase):
         self._shared_data = shared_data
         self._attr_should_poll = False
         self._attr_device_info = device_info
-        self._attr_unique_id = f'binary_sensor.isOnline{unique_id_suffix}'
+        self._attr_unique_id = f'binary_sensor.isonline{unique_id_suffix}'
         self._attr_translation_key = f'isOnline'
         self.entity_id = self._attr_unique_id
         super().__init__()
