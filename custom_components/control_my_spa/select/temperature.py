@@ -1,8 +1,10 @@
 """Temperature-related select entities."""
 
+import logging
+import time
+
 from homeassistant.components import persistent_notification
 from .base import SpaSelectBase
-import logging
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -95,7 +97,7 @@ class SpaTempRangeSelect(SpaSelectBase):
                                     self._hass,
                                     notification_message,
                                     title=notification_title,
-                                    notification_id=f"spa_temp_change_{int(self._hass.time.time())}"
+                                    notification_id=f"spa_temp_change_{int(time.time())}"
                                 )
                                 
                                 _LOGGER.info(
