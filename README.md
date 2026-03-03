@@ -2,6 +2,8 @@
 
 This component allows integration and control of hot tubs through the Home Assistant platform. It provides features not available in standard integrations and is intended for users with specific needs or those who want to test new functionalities.
 
+If you like it, [![Buy Me a Coffee](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=haresoft&button_colour=FFDD00&font_colour=000000&outline_colour=000000&coffee_colour=ffffff)](https://buymeacoffee.com/haresoft)
+
 ## How It Works
 
 When you change a state in Home Assistant, the request is sent to the cloud service. The system waits approximately 2 seconds for a response (or up to 4 seconds, as the request is sent twice for reliability). If the change was successful, it will be reflected in Home Assistant.
