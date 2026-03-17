@@ -47,7 +47,8 @@
           "blower_3_power_watts": "Blæser 3 effektforbrug (W)",
           "circulation_pump_1_power_watts": "Cirkulationspumpe 1 effektforbrug (W)",
           "circulation_pump_2_power_watts": "Cirkulationspumpe 2 effektforbrug (W)",
-          "circulation_pump_3_power_watts": "Cirkulationspumpe 3 effektforbrug (W)"
+          "circulation_pump_3_power_watts": "Cirkulationspumpe 3 effektforbrug (W)",
+          "enable_temp_change_notification": "Notifikation"
         },
         "description": "Konfigurer pumpe- og varmelegeme-effektforbrug og energipris til omkostningsberegning.",
         "title": "Effektforbrugsindstillinger"
@@ -638,6 +639,10 @@
     "time_update": {
       "title": "Spa tid opdatering",
       "message": "Spa tid er blevet opdateret med succes fra {old_time} til {new_time}"
+    },
+    "temp_range_high_change": {
+      "title": "Ændring af ønsket temperatur i HIGH område",
+      "message": "Ønsket temperatur i HIGH område er ændret!\nTidligere værdi: {previous_value}°C\nNy værdi: {new_value}°C\nForskel: {diff}°C"
     }
   }
 }

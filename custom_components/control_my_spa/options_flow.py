@@ -1,5 +1,7 @@
 import voluptuous as vol
 from homeassistant import config_entries
+from homeassistant.helpers import config_validation as cv
+
 from .const import DOMAIN
 
 
@@ -109,7 +111,13 @@ class ControlMySpaOptionsFlowHandler(config_entries.OptionsFlow):
         #    "energy_price_per_kwh",
         #    default=current_config.get("energy_price_per_kwh", 5.0)
         #)] = vol.All(vol.Coerce(float), vol.Range(min=0.0, max=100.0))
-        
+
+        # Zapnutá notifikace změny teploty (HIGH rozsah) – cv.boolean je serializovatelné pro UI
+        schema_dict[vol.Optional(
+            "enable_temp_change_notification",
+            default=current_config.get("enable_temp_change_notification", True),
+        )] = cv.boolean
+
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(schema_dict),

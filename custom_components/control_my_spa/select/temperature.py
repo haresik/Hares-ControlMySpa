@@ -4,6 +4,9 @@ import logging
 import time
 
 from homeassistant.components import persistent_notification
+from homeassistant.helpers import translation
+
+from ..const import DOMAIN
 from .base import SpaSelectBase
 
 _LOGGER = logging.getLogger(__name__)
@@ -12,9 +15,10 @@ _LOGGER = logging.getLogger(__name__)
 class SpaTempRangeSelect(SpaSelectBase):
     """Select entity for spa temperature range."""
     
-    def __init__(self, shared_data, device_info, unique_id_suffix, hass):
+    def __init__(self, shared_data, device_info, unique_id_suffix, hass, config_options=None):
         self._shared_data = shared_data
         self._hass = hass  # Uložit hass objekt pro notifikace
+        self._config_options = config_options or {}
         self._attr_options = ["HIGH", "LOW"]  # Možnosti výběru
         self._attr_should_poll = False  # Data jsou sdílena, posluchac
         self._attr_current_option = None
@@ -81,17 +85,34 @@ class SpaTempRangeSelect(SpaSelectBase):
                         if new_desired_temp_f is not None and current_high_range_temp is not None:
                             new_desired_temp_c = round((new_desired_temp_f - 32) * 5.0 / 9.0, 1)
                             
-                            # Porovnat hodnoty
-                            if abs(current_high_range_temp - new_desired_temp_c) > 0.1:  # Tolerance 0.1°C
-                                # Vytvořit notifikaci
-                                notification_title = "Změna požadované teploty v HIGH rozsahu"
-                                notification_message = (
-                                    f"Požadovaná teplota v HIGH rozsahu se změnila!\n"
-                                    f"Předchozí hodnota: {current_high_range_temp}°C\n"
-                                    f"Nová hodnota: {new_desired_temp_c}°C\n"
-                                    f"Rozdíl: {new_desired_temp_c - current_high_range_temp:+.1f}°C"
+                            # Porovnat hodnoty a zkontrolovat, zda je notifikace zapnutá v options
+                            if (
+                                abs(current_high_range_temp - new_desired_temp_c) > 0.1  # Tolerance 0.1°C
+                                and self._config_options.get("enable_temp_change_notification", True)
+                            ):
+                                # Načtení překladů a sestavení notifikace
+                                translations = await translation.async_get_translations(
+                                    self._hass,
+                                    self._hass.config.language,
+                                    "notification",
                                 )
-                                
+                                notification_title = translations.get(
+                                    f"component.{DOMAIN}.notification.temp_range_high_change.title",
+                                    "Změna požadované teploty v HIGH rozsahu",
+                                )
+                                diff_c = new_desired_temp_c - current_high_range_temp
+                                notification_message = translations.get(
+                                    f"component.{DOMAIN}.notification.temp_range_high_change.message",
+                                    "Požadovaná teplota v HIGH rozsahu se změnila!\n"
+                                    "Předchozí hodnota: {previous_value}°C\n"
+                                    "Nová hodnota: {new_value}°C\n"
+                                    "Rozdíl: {diff}°C",
+                                ).format(
+                                    previous_value=current_high_range_temp,
+                                    new_value=new_desired_temp_c,
+                                    diff=f"{diff_c:+.1f}",
+                                )
+
                                 # Odeslat notifikaci
                                 persistent_notification.async_create(
                                     self._hass,

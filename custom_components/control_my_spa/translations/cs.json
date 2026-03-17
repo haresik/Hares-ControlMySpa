@@ -47,7 +47,8 @@
           "blower_3_power_watts": "Příkon Blower 3 (W)",
           "circulation_pump_1_power_watts": "Příkon cirkulačního čerpadla 1 (W)",
           "circulation_pump_2_power_watts": "Příkon cirkulačního čerpadla 2 (W)",
-          "circulation_pump_3_power_watts": "Příkon cirkulačního čerpadla 3 (W)"
+          "circulation_pump_3_power_watts": "Příkon cirkulačního čerpadla 3 (W)",
+          "enable_temp_change_notification": "Notifikace"
         },
         "description": "Nastavte příkon čerpadel, topení a cenu elektřiny pro výpočet spotřeby a nákladů.",
         "title": "Nastavení spotřeby"

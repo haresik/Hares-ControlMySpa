@@ -72,13 +72,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     tzl_zones = shared_data.data.get("tzlZones", [])
     tzl_colors = shared_data.data.get("tzlColors", [])
 
+    config_options = config_entry.options or {}
+
     entities = []
     entities = [SpaPumpSelect(shared_data, device_info, unique_id_suffix, pump, len(pumps)) for pump in pumps]
     # entities += [SpaBlowerSelect(shared_data, device_info, unique_id_suffix, blower, len(blowers)) for blower in blowers]  # Zakomentováno - blowers se negenerují
     entities += [SpaLightSelect(shared_data, device_info, unique_id_suffix, light, len(lights)) for light in lights]
     entities += [SpaFilterTimeSelect(shared_data, device_info, unique_id_suffix, filter_data, len(filters)) for filter_data in filters]
     entities += [SpaFilterDurationSelect(shared_data, device_info, unique_id_suffix, filter_data, len(filters)) for filter_data in filters]
-    entities.append(SpaTempRangeSelect(shared_data, device_info, unique_id_suffix, hass))  # Přidat entitu
+    entities.append(SpaTempRangeSelect(shared_data, device_info, unique_id_suffix, hass, config_options))  # Přidat entitu
     entities.append(SpaHeaterModeSelect(shared_data, device_info, unique_id_suffix))  # Přidat entitu pro heater mode
     entities += [SpaTzlZoneModeSelect(shared_data, device_info, unique_id_suffix, tzl_zone_data, len(tzl_zones)) for tzl_zone_data in tzl_zones]
     entities += [SpaTzlZoneColorSelect(shared_data, device_info, unique_id_suffix, tzl_zone_data, tzl_colors, len(tzl_zones), hass) for tzl_zone_data in tzl_zones]

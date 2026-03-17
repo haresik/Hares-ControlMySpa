@@ -47,7 +47,8 @@
           "blower_3_power_watts": "Blower 3 power consumption (W)",
           "circulation_pump_1_power_watts": "Circulation pump 1 power consumption (W)",
           "circulation_pump_2_power_watts": "Circulation pump 2 power consumption (W)",
-          "circulation_pump_3_power_watts": "Circulation pump 3 power consumption (W)"
+          "circulation_pump_3_power_watts": "Circulation pump 3 power consumption (W)",
+          "enable_temp_change_notification": "Notification"
         },
         "description": "Configure pump and heater power consumption and energy price for cost calculation.",
         "title": "Power consumption settings"

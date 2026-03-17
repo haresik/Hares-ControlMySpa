@@ -47,7 +47,8 @@
           "blower_3_power_watts": "Gebläseleistungsaufnahme 3 (W)",
           "circulation_pump_1_power_watts": "Umwälzpumpenleistungsaufnahme 1 (W)",
           "circulation_pump_2_power_watts": "Umwälzpumpenleistungsaufnahme 2 (W)",
-          "circulation_pump_3_power_watts": "Umwälzpumpenleistungsaufnahme 3 (W)"
+          "circulation_pump_3_power_watts": "Umwälzpumpenleistungsaufnahme 3 (W)",
+          "enable_temp_change_notification": "Benachrichtigung"
         },
         "description": "Konfigurieren Sie die Pumpenleistungsaufnahme und den Energiepreis für die Kostenberechnung.",
         "title": "Einstellungen für Pumpenleistungsaufnahme"
