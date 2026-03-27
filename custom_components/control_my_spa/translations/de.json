@@ -137,6 +137,12 @@
       },
       "blower_energy_3": {
         "name": "Gebläseenergieverbrauch 3"
+      },
+      "fault_message": {
+        "name": "Störungsmeldung"
+      },
+      "total_alerts": {
+        "name": "Warnungen gesamt"
       }
     },
     "select": {

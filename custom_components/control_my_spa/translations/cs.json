@@ -155,6 +155,12 @@
       },
       "blower_energy_3": {
         "name": "Energie Blower 3"
+      },
+      "fault_message": {
+        "name": "Zpráva o závadě"
+      },
+      "total_alerts": {
+        "name": "Celkem výstrah"
       }
     },
     "select": {

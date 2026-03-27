@@ -155,6 +155,12 @@
       },
       "blower_energy_3": {
         "name": "Blæser energiforbrug 3"
+      },
+      "fault_message": {
+        "name": "Fejlmeddelelse"
+      },
+      "total_alerts": {
+        "name": "Samlede advarsler"
       }
     },
     "light": {

@@ -12,7 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    
+    # Od června 2026 bude default Node.js 24; už teď běžíme na něm, aby zmizelo varování o deprecation
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
