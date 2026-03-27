@@ -16,6 +16,7 @@ from .energy import (
     SpaBlowerEnergySensor,
     SpaCirculationPumpEnergySensor
 )
+from .alerts import SpaFaultMessageSensor, SpaTotalAlertsSensor
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -101,6 +102,9 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     # Vytvořit energy senzory pro circulation pumps (pro Energy Dashboard - kWh)
     entities += [SpaCirculationPumpEnergySensor(shared_data, device_info, unique_id_suffix, pump_data, len(circulation_pumps), config_options) for pump_data in circulation_pumps]
 
+    entities.append(SpaFaultMessageSensor(shared_data, device_info, unique_id_suffix))
+    entities.append(SpaTotalAlertsSensor(shared_data, device_info, unique_id_suffix))
+
     async_add_entities(entities, True)
     _LOGGER.debug("START Śensor control_my_spa")
     
@@ -120,6 +124,8 @@ __all__ = [
     "SpaPumpEnergySensor",
     "SpaBlowerEnergySensor",
     "SpaCirculationPumpEnergySensor",
+    "SpaFaultMessageSensor",
+    "SpaTotalAlertsSensor",
     "async_setup_entry",
 ]
 
