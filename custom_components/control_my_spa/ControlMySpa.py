@@ -197,6 +197,8 @@ class ControlMySpa:
                 'serialNumber': spaData['serialNumber'],
                 'controllerSoftwareVersion': spaData['systemInfo']['controllerSoftwareVersion'],
                 'isOnline': bool(spaData.get('isOnline')),
+                'currentFaultMessage': spaData.get('currentFaultMessage'),
+                'totalAlerts': spaData.get('totalAlerts'),
             }
             
             # Načtení TZL zones pokud je TZL připojen
