@@ -60,7 +60,7 @@ class ControlMySpa:
         try:
             headers = {**self.getCommonHeaders(), 'Content-Type': 'application/json'}
             payload = {'email': self.email, 'password': self.password}
-            async with self.session.post(f'{self.BASE_URL}/auth/login', json=payload, headers=headers, ssl=False) as resp:
+            async with self.session.post(f'{self.BASE_URL}/auth/login', json=payload, headers=headers, ssl=const.VERIFY_SSL) as resp:
                 if resp.status == 200:
                     res_json = await resp.json()
                     token = res_json.get('data', {}).get('accessToken')
@@ -82,7 +82,7 @@ class ControlMySpa:
     async def getWhoAmI(self):
         try:
             headers = self.getAuthHeaders()
-            async with self.session.get(f'{self.BASE_URL}/user-management/profile', headers=headers, ssl=False) as resp:
+            async with self.session.get(f'{self.BASE_URL}/user-management/profile', headers=headers, ssl=const.VERIFY_SSL) as resp:
                 if resp.status == 200:
                     res_json = await resp.json()
                     user = res_json.get('data', {}).get('user')
@@ -123,7 +123,7 @@ class ControlMySpa:
             if not self.isLoggedIn():
                 await self.login()
             headers = self.getAuthHeaders()
-            async with self.session.get(f'{self.BASE_URL}/spas/owned', headers=headers, ssl=False) as resp:
+            async with self.session.get(f'{self.BASE_URL}/spas/owned', headers=headers, ssl=const.VERIFY_SSL) as resp:
                 if resp.status == 200:
                     res_json = await resp.json()
                     return res_json.get('data', {}).get('spas', [])
@@ -161,7 +161,7 @@ class ControlMySpa:
                 return None
 
             headers = self.getAuthHeaders()
-            async with self.session.get(f'{self.BASE_URL}/spas/{self.spaId}/dashboard', headers=headers, ssl=False) as resp:
+            async with self.session.get(f'{self.BASE_URL}/spas/{self.spaId}/dashboard', headers=headers, ssl=const.VERIFY_SSL) as resp:
                 if resp.status == 200:
                     res_json = await resp.json()
                     return self.constructCurrentState(res_json.get('data'))
@@ -173,6 +173,14 @@ class ControlMySpa:
 
     def constructCurrentState(self, spaData):
         try:
+            # Uložení raw odpovědi dashboardu na disk místo do logu (dočasně vypnuto)
+            # debug_path = os.path.join(os.path.dirname(__file__), "last_spa_dashboard.json")
+            # try:
+            #     with open(debug_path, "w", encoding="utf-8") as f:
+            #         json.dump(spaData, f, ensure_ascii=False, indent=2)
+            # except (OSError, TypeError) as dump_err:
+            #     _LOGGER.warning("Nepodařilo se uložit last_spa_dashboard.json: %s", dump_err)
+
             result = {
                 'desiredTemp': float(spaData['desiredTemp']),
                 'targetDesiredTemp': float(spaData['desiredTemp']),
@@ -226,7 +234,7 @@ class ControlMySpa:
             if not self.isLoggedIn():
                 await self.login()
             headers = {**self.getAuthHeaders(), 'Content-Type': 'application/json'}
-            async with self.session.post(f'{self.BASE_URL}{endpoint}', json=payload, headers=headers, ssl=False) as resp:
+            async with self.session.post(f'{self.BASE_URL}{endpoint}', json=payload, headers=headers, ssl=const.VERIFY_SSL) as resp:
                 if resp.status == 200:
                     await asyncio.sleep(5)
                     return await self.getSpa()
