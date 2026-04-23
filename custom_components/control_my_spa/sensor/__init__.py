@@ -18,6 +18,7 @@ from .energy import (
 )
 from .alerts import SpaFaultMessageSensor, SpaTotalAlertsSensor
 from .c8z_heater_sensor import SpaC8zHeaterStateSensor, SpaC8zStatusSensor
+from .clock import SpaClockSensor
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -111,6 +112,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
             entities.append(SpaC8zHeaterStateSensor(shared_data, device_info, unique_id_suffix))
         if "c8zStatus" in c8z:
             entities.append(SpaC8zStatusSensor(shared_data, device_info, unique_id_suffix))
+    entities.append(SpaClockSensor(shared_data, device_info, unique_id_suffix))
 
     async_add_entities(entities, True)
     _LOGGER.debug("START Śensor control_my_spa")
@@ -135,6 +137,7 @@ __all__ = [
     "SpaTotalAlertsSensor",
     "SpaC8zHeaterStateSensor",
     "SpaC8zStatusSensor",
+    "SpaClockSensor",
     "async_setup_entry",
 ]
 

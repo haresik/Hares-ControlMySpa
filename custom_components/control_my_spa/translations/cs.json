@@ -167,6 +167,9 @@
       },
       "c8z_status": {
         "name": "Stav C8Z"
+      },
+      "spa_clock": {
+        "name": "Čas vířivky"
       }
     },
     "select": {

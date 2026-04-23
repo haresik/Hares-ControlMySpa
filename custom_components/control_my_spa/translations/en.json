@@ -167,6 +167,9 @@
       },
       "c8z_status": {
         "name": "C8Z status"
+      },
+      "spa_clock": {
+        "name": "Spa clock"
       }
     },
     "light": {
