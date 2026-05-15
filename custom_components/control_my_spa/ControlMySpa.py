@@ -207,6 +207,7 @@ class ControlMySpa:
                 'isOnline': bool(spaData.get('isOnline')),
                 'currentFaultMessage': spaData.get('currentFaultMessage'),
                 'totalAlerts': spaData.get('totalAlerts'),
+                'c8zCurrentState': spaData.get('c8zCurrentState'),
             }
             
             # Načtení TZL zones pokud je TZL připojen
@@ -364,6 +365,30 @@ class ControlMySpa:
             "speed": speed,
             "location": int(zone),
             "locationType": "ZONE",
+        })
+
+    async def setC8zSpeedState(self, speed_state: str):
+        """C8Z tepelné čerpadlo — rychlost (např. C8Z_SPEED_SMART)."""
+        return await self._postAndRefresh("/spa-commands/c8zone/state", {
+            "spaId": self.spaId,
+            "via": "MOBILE",
+            "speedState": speed_state,
+        })
+
+    async def setC8zHeaterState(self, heater_state: str):
+        """C8Z — režim ohřevu (např. C8Z_HEATER_AUTO)."""
+        return await self._postAndRefresh("/spa-commands/c8zone/state", {
+            "spaId": self.spaId,
+            "via": "MOBILE",
+            "heaterState": heater_state,
+        })
+
+    async def setC8zModeState(self, mode_state: str):
+        """C8Z — provozní režim (např. C8Z_MODE_HEAT)."""
+        return await self._postAndRefresh("/spa-commands/c8zone/state", {
+            "spaId": self.spaId,
+            "via": "MOBILE",
+            "modeState": mode_state,
         })
 
     def createTimeOptions(self):

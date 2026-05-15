@@ -143,6 +143,12 @@
       },
       "total_alerts": {
         "name": "Warnungen gesamt"
+      },
+      "c8z_heater_state": {
+        "name": "C8Z Heizstatus"
+      },
+      "c8z_status": {
+        "name": "C8Z Status"
       }
     },
     "select": {
@@ -421,6 +427,32 @@
           "READY": "Heizung auch außerhalb der Zirkulation",
           "REST": "Heizung nur während der Zirkulation",
           "READY_REST": "Heizung nach Geräteeinstellung"
+        }
+      },
+      "c8z_heater": {
+        "name": "C8Z Wärmepumpenheizung",
+        "state": {
+          "C8Z_HEATER_AUTO": "eBoost",
+          "C8Z_HEATER_CONTINUOUS": "Dauerhaft",
+          "C8Z_HEATER_M7": "M7-Modus",
+          "C8Z_HEATER_DISABLED": "Deaktiviert"
+        }
+      },
+      "c8z_mode": {
+        "name": "C8Z Modus",
+        "state": {
+          "C8Z_MODE_HEAT": "Nur Heizen",
+          "C8Z_MODE_BOTH": "Heizen und Kühlen",
+          "C8Z_MODE_COOL": "Nur Kühlen",
+          "C8Z_MODE_DISABLED": "Deaktiviert"
+        }
+      },
+      "c8z_speed": {
+        "name": "C8Z Geschwindigkeit",
+        "state": {
+          "C8Z_SPEED_SMART": "Auto Smart",
+          "C8Z_SPEED_POWERFUL": "Manuell hoch",
+          "C8Z_SPEED_SILENT": "Manuell niedrig"
         }
       },
       "filter_time": {

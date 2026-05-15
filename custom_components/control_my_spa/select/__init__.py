@@ -9,6 +9,7 @@ from homeassistant.helpers import translation
 from ..const import DOMAIN
 from .base import SpaSelectBase
 from .temperature import SpaTempRangeSelect, SpaHeaterModeSelect
+from .c8z import SpaC8zHeaterSelect, SpaC8zModeSelect, SpaC8zSpeedSelect
 from .components import SpaPumpSelect, SpaLightSelect, SpaBlowerSelect
 from .filter import SpaFilterTimeSelect, SpaFilterDurationSelect
 from .tzl import (
@@ -82,6 +83,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     entities += [SpaFilterDurationSelect(shared_data, device_info, unique_id_suffix, filter_data, len(filters)) for filter_data in filters]
     entities.append(SpaTempRangeSelect(shared_data, device_info, unique_id_suffix, hass, config_options))  # Přidat entitu
     entities.append(SpaHeaterModeSelect(shared_data, device_info, unique_id_suffix))  # Přidat entitu pro heater mode
+    c8z = shared_data.data.get("c8zCurrentState")
+    if isinstance(c8z, dict):
+        # Každý select jen pokud API vrátí daný klíč v c8zCurrentState (může chybět jen část)
+        if "c8zHeater" in c8z:
+            entities.append(SpaC8zHeaterSelect(shared_data, device_info, unique_id_suffix))
+        if "c8zMode" in c8z:
+            entities.append(SpaC8zModeSelect(shared_data, device_info, unique_id_suffix))
+        if "c8zSpeed" in c8z:
+            entities.append(SpaC8zSpeedSelect(shared_data, device_info, unique_id_suffix))
     entities += [SpaTzlZoneModeSelect(shared_data, device_info, unique_id_suffix, tzl_zone_data, len(tzl_zones)) for tzl_zone_data in tzl_zones]
     entities += [SpaTzlZoneColorSelect(shared_data, device_info, unique_id_suffix, tzl_zone_data, tzl_colors, len(tzl_zones), hass) for tzl_zone_data in tzl_zones]
     entities += [SpaTzlZoneIntensitySelect(shared_data, device_info, unique_id_suffix, tzl_zone_data, len(tzl_zones)) for tzl_zone_data in tzl_zones]
@@ -99,6 +109,9 @@ __all__ = [
     "SpaSelectBase",
     "SpaTempRangeSelect",
     "SpaHeaterModeSelect",
+    "SpaC8zHeaterSelect",
+    "SpaC8zModeSelect",
+    "SpaC8zSpeedSelect",
     "SpaPumpSelect",
     "SpaLightSelect",
     "SpaBlowerSelect",

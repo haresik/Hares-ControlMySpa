@@ -161,6 +161,12 @@
       },
       "total_alerts": {
         "name": "Samlede advarsler"
+      },
+      "c8z_heater_state": {
+        "name": "C8Z varmerstatus"
+      },
+      "c8z_status": {
+        "name": "C8Z status"
       }
     },
     "light": {
@@ -425,6 +431,32 @@
           "READY": "Opvarmning også uden for cirkulation",
           "REST": "Opvarmning kun under cirkulation",
           "READY_REST": "Opvarmning som pr. enhed"
+        }
+      },
+      "c8z_heater": {
+        "name": "C8Z varmepumpevarme",
+        "state": {
+          "C8Z_HEATER_AUTO": "eBoost",
+          "C8Z_HEATER_CONTINUOUS": "Kontinuerlig",
+          "C8Z_HEATER_M7": "M7-tilstand",
+          "C8Z_HEATER_DISABLED": "Deaktiveret"
+        }
+      },
+      "c8z_mode": {
+        "name": "C8Z tilstand",
+        "state": {
+          "C8Z_MODE_HEAT": "Kun opvarmning",
+          "C8Z_MODE_BOTH": "Opvarmning og køling",
+          "C8Z_MODE_COOL": "Kun køling",
+          "C8Z_MODE_DISABLED": "Deaktiveret"
+        }
+      },
+      "c8z_speed": {
+        "name": "C8Z hastighed",
+        "state": {
+          "C8Z_SPEED_SMART": "Auto smart",
+          "C8Z_SPEED_POWERFUL": "Manuel høj",
+          "C8Z_SPEED_SILENT": "Manuel lav"
         }
       },
       "filter_time": {

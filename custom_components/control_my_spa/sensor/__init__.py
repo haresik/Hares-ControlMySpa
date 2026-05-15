@@ -17,6 +17,7 @@ from .energy import (
     SpaCirculationPumpEnergySensor
 )
 from .alerts import SpaFaultMessageSensor, SpaTotalAlertsSensor
+from .c8z_heater_sensor import SpaC8zHeaterStateSensor, SpaC8zStatusSensor
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -104,6 +105,12 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
 
     entities.append(SpaFaultMessageSensor(shared_data, device_info, unique_id_suffix))
     entities.append(SpaTotalAlertsSensor(shared_data, device_info, unique_id_suffix))
+    c8z = shared_data.data.get("c8zCurrentState")
+    if isinstance(c8z, dict):
+        if "c8zHeaterState" in c8z:
+            entities.append(SpaC8zHeaterStateSensor(shared_data, device_info, unique_id_suffix))
+        if "c8zStatus" in c8z:
+            entities.append(SpaC8zStatusSensor(shared_data, device_info, unique_id_suffix))
 
     async_add_entities(entities, True)
     _LOGGER.debug("START Śensor control_my_spa")
@@ -126,6 +133,8 @@ __all__ = [
     "SpaCirculationPumpEnergySensor",
     "SpaFaultMessageSensor",
     "SpaTotalAlertsSensor",
+    "SpaC8zHeaterStateSensor",
+    "SpaC8zStatusSensor",
     "async_setup_entry",
 ]
 

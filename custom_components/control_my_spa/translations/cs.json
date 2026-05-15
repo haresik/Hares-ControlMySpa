@@ -161,6 +161,12 @@
       },
       "total_alerts": {
         "name": "Celkem výstrah"
+      },
+      "c8z_heater_state": {
+        "name": "Stav ohřevu C8Z"
+      },
+      "c8z_status": {
+        "name": "Stav C8Z"
       }
     },
     "select": {
@@ -439,6 +445,32 @@
           "READY": "Ohřev i mimo cirkulaci",
           "REST": "Ohřev jen při cirkulaci",
           "READY_REST": "Ohřev dle zařízení"
+        }
+      },
+      "c8z_heater": {
+        "name": "Ohřev tepelným čerpadlem C8Z",
+        "state": {
+          "C8Z_HEATER_AUTO": "eBoost",
+          "C8Z_HEATER_CONTINUOUS": "Nepřetržitý",
+          "C8Z_HEATER_M7": "Režim M7",
+          "C8Z_HEATER_DISABLED": "Zakázáno"
+        }
+      },
+      "c8z_mode": {
+        "name": "Režim C8Z",
+        "state": {
+          "C8Z_MODE_HEAT": "Pouze topení",
+          "C8Z_MODE_BOTH": "Vytápění a chlazení",
+          "C8Z_MODE_COOL": "Pouze chlazení",
+          "C8Z_MODE_DISABLED": "Zakázáno"
+        }
+      },
+      "c8z_speed": {
+        "name": "Rychlost C8Z",
+        "state": {
+          "C8Z_SPEED_SMART": "Auto Smart",
+          "C8Z_SPEED_POWERFUL": "Manuální vysoká",
+          "C8Z_SPEED_SILENT": "Manuální nízká"
         }
       },
       "filter_time": {

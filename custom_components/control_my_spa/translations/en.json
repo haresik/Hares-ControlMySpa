@@ -161,6 +161,12 @@
       },
       "total_alerts": {
         "name": "Total alerts"
+      },
+      "c8z_heater_state": {
+        "name": "C8Z heater state"
+      },
+      "c8z_status": {
+        "name": "C8Z status"
       }
     },
     "light": {
@@ -425,6 +431,32 @@
           "READY": "Heating also outside circulation",
           "REST": "Heating only during circulation",
           "READY_REST": "Heating as per device"
+        }
+      },
+      "c8z_heater": {
+        "name": "C8Z heat pump heating",
+        "state": {
+          "C8Z_HEATER_AUTO": "eBoost",
+          "C8Z_HEATER_CONTINUOUS": "Continuous",
+          "C8Z_HEATER_M7": "M7 mode",
+          "C8Z_HEATER_DISABLED": "Disabled"
+        }
+      },
+      "c8z_mode": {
+        "name": "C8Z mode",
+        "state": {
+          "C8Z_MODE_HEAT": "Heat only",
+          "C8Z_MODE_BOTH": "Heat and cool",
+          "C8Z_MODE_COOL": "Cool only",
+          "C8Z_MODE_DISABLED": "Disabled"
+        }
+      },
+      "c8z_speed": {
+        "name": "C8Z speed",
+        "state": {
+          "C8Z_SPEED_SMART": "Auto smart",
+          "C8Z_SPEED_POWERFUL": "Manual high",
+          "C8Z_SPEED_SILENT": "Manual low"
         }
       },
       "filter_time": {
