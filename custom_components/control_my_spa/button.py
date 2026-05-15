@@ -1,5 +1,6 @@
 """Implementace tlačítek pro Control My Spa."""
 from homeassistant.components.button import ButtonEntity
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -39,6 +40,7 @@ class SpaUpdateTimeButton(ButtonEntity):
         """Inicializace tlačítka."""
         self.hass = hass
         self._attr_device_info = device_info
+        self._attr_entity_category = EntityCategory.CONFIG  # sekce Nastavení na kartě zařízení
         self._attr_unique_id = f"button.spa_update_time{unique_id_suffix}"
         self._attr_translation_key = "update_time"
         self._attr_icon = "mdi:clock-outline"

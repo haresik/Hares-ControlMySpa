@@ -1,8 +1,11 @@
 """Alert and fault message sensor entities."""
 
-from homeassistant.components.sensor import SensorStateClass
-from .base import SpaSensorBase
 import logging
+
+from homeassistant.components.sensor import SensorStateClass
+from homeassistant.const import EntityCategory
+
+from .base import SpaSensorBase
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -14,6 +17,7 @@ class SpaFaultMessageSensor(SpaSensorBase):
         self._attr_should_poll = False
         self._attr_icon = "mdi:alert-circle"
         self._attr_device_info = device_info
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC  # sekce Diagnostika na kartě zařízení
         self._attr_unique_id = f"sensor.spa_fault_message{unique_id_suffix}"
         self._attr_translation_key = "fault_message"
         self.entity_id = self._attr_unique_id
@@ -51,6 +55,7 @@ class SpaTotalAlertsSensor(SpaSensorBase):
         self._attr_icon = "mdi:bell-alert"
         self._attr_state_class = SensorStateClass.MEASUREMENT
         self._attr_device_info = device_info
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC  # sekce Diagnostika na kartě zařízení
         self._attr_unique_id = f"sensor.spa_total_alerts{unique_id_suffix}"
         self._attr_translation_key = "total_alerts"
         self.entity_id = self._attr_unique_id

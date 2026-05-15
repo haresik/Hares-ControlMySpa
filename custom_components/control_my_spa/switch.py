@@ -1,5 +1,6 @@
 from ast import Await
 from homeassistant.components.switch import SwitchEntity
+from homeassistant.const import EntityCategory
 from .const import DOMAIN
 import logging
 
@@ -826,6 +827,7 @@ class SpaFilter2Switch(SpaSwitchBase):
         """Inicializace přepínače druhého filtru."""
         self._shared_data = shared_data
         self._attr_device_info = device_info
+        self._attr_entity_category = EntityCategory.CONFIG  # sekce Nastavení na kartě zařízení
         self._client = client
         self._attr_unique_id = f"switch.spa_filter_2{unique_id_suffix}"
         self._attr_translation_key = "filter_2"

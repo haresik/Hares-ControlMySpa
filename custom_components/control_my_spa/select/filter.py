@@ -1,7 +1,10 @@
 """Filter-related select entities."""
 
-from .base import SpaSelectBase
 import logging
+
+from homeassistant.const import EntityCategory
+
+from .base import SpaSelectBase
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -16,6 +19,7 @@ class SpaFilterTimeSelect(SpaSelectBase):
         self._attr_should_poll = False  # Data jsou sdílena, posluchač
         self._attr_current_option = None
         self._attr_device_info = device_info
+        self._attr_entity_category = EntityCategory.CONFIG  # sekce Nastavení na kartě zařízení
         self._attr_icon = "mdi:clock-outline"
         base_id = (
             f"select.spa_filter_time"
@@ -192,6 +196,7 @@ class SpaFilterDurationSelect(SpaSelectBase):
         self._attr_should_poll = False  # Data jsou sdílena, posluchač
         self._attr_current_option = None
         self._attr_device_info = device_info
+        self._attr_entity_category = EntityCategory.CONFIG  # sekce Nastavení na kartě zařízení
         self._attr_icon = "mdi:timer-outline"
         base_id = (
             f"select.spa_filter_duration"
