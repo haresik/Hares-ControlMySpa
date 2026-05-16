@@ -1,270 +1,247 @@
-# ControlMySpa Hares for Home Assistant (experimental)
+# ControlMySpa Hares for Home Assistant *(experimental)*
 
-This component allows integration and control of hot tubs through the Home Assistant platform. It provides features not available in standard integrations and is intended for users with specific needs or those who want to test new functionalities.
+Connect your hot tub to Home Assistant using the same **ControlMySpa** cloud account as the official mobile app. This custom integration adds extra monitoring and control options beyond the standard integration — ideal if you want more detail, energy estimates, **Chromazone** lighting, or **Clim8Zone** heat pump control in HA.
 
-If you like it, [![Buy Me a Coffee](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=haresoft&button_colour=FFDD00&font_colour=000000&outline_colour=000000&coffee_colour=ffffff)](https://buymeacoffee.com/haresoft)
+If you find it useful, you can support development here:  
+[![Buy Me a Coffee](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=haresoft&button_colour=FFDD00&font_colour=000000&outline_colour=000000&coffee_colour=ffffff)](https://buymeacoffee.com/haresoft)
 
-## How It Works
+---
 
-When you change a state in Home Assistant, the request is sent to the cloud service. The system waits approximately 2 seconds for a response (or up to 4 seconds, as the request is sent twice for reliability). If the change was successful, it will be reflected in Home Assistant.
+## What you need
 
-In detail: The request is sent to the cloud, which forwards it to your spa. The spa responds with confirmation of the change, and the cloud then responds back to Home Assistant with the updated state. The request path is long because it's not a local transmission - it goes through the cloud infrastructure.
+- A **ControlMySpa** account (same login as the mobile app)
+- Home Assistant with **HACS** (recommended) or manual install
+- Your spa reachable via the ControlMySpa cloud (internet connection required)
 
-This function simulates the mobile application, where changes also take time to process. Please be patient when making changes, as the communication path involves multiple steps through the cloud service.
+> **Note:** Communication goes through the cloud — not directly over your local network. Behaviour is similar to the mobile app: changes are not instant.
 
-## What This Component Contains
+---
 
-This integration provides comprehensive monitoring and control of your hot tub through Home Assistant. It creates various entities including sensors, switches, climate controls, and light entities that allow you to monitor and control all aspects of your spa.
+## Installation
 
-### Main Features: 
+After installation (either method below), add the integration under **Settings** → **Devices & services** → **Add integration** → **ControlMySpa Hares**.
 
-- **Hot tub status monitoring**:
-  - Display of current water temperature.
-  - Display of target water temperature.
-  - Information about the status of the circulation pump, lights, heaters, filters, ozone generators, and other components.
+### Option A — HACS *(recommended)*
 
-- **Hot tub control**:
-  - Setting the desired water temperature.
-  - Switching between high and low temperature ranges.
-  - Control of lights, pumps, blowers, and air bubbles.
-  - Filter cycle scheduling and management.
+1. In Home Assistant, open **HACS** → **Integrations**.
+2. Open the menu (⋮) → **Custom repositories**.
+3. Add repository: `https://github.com/haresik/Hares-ControlMySpa.git`
+4. Category: **Integration** → **Add**.
+5. Install **ControlMySpa Hares** from the integration list.
+6. **Restart Home Assistant** when prompted (or restart manually).
 
-- **Energy monitoring**:
-  - Detailed energy consumption tracking for all major components.
-  - Integration with Home Assistant Energy Dashboard.
+### Option B — Manual copy
 
-- **Chromazone external lighting**:
-  - Full control of external Chromazone lighting system.
-  - Multi-zone support with individual zone control.
+If you do not use HACS, copy the integration folder into your Home Assistant configuration directory:
 
-- **Automation**:
-  - Integration with Home Assistant automations to schedule and manage the hot tub based on conditions such as time, weather, or user presence.
+1. Download the repository ([ZIP from GitHub](https://github.com/haresik/Hares-ControlMySpa/archive/refs/heads/main.zip) or `git clone`).
+2. Copy the entire folder  
+   `custom_components/control_my_spa`  
+   into your HA config folder so the path is:  
+   `config/custom_components/control_my_spa/`  
+   (same level as `configuration.yaml`).
+3. The folder must contain `manifest.json` and the other integration files — not the whole GitHub repo root.
+4. **Restart Home Assistant** (full restart, not only “reload YAML”).
+5. Add the integration as described above.
 
-![Energy Dashboard](img/scan1en.png)
+**Example** (Samba / File editor / SSH):
 
-## Energy Monitoring
+```text
+/config/
+  configuration.yaml
+  custom_components/
+    control_my_spa/          ← this folder from the repo
+      __init__.py
+      manifest.json
+      …
+```
 
-This component includes comprehensive energy monitoring capabilities that integrate seamlessly with Home Assistant's Energy Dashboard. The integration tracks energy consumption for all major hot tub components.
+For updates with manual install, replace the `control_my_spa` folder with the new version and restart Home Assistant again.
 
-### Available Energy Sensors:
+---
 
-- **Heater Energy Sensors**: Track energy consumption of heating elements (kWh)
-- **Pump Energy Sensors**: Monitor energy usage of all pumps (kWh)
-- **Blower Energy Sensors**: Track energy consumption of air blowers (kWh)
-- **Circulation Pump Energy Sensors**: Monitor circulation pump energy usage (kWh)
+## First-time setup
 
-![Energy Dashboard](img/energyentity.png)
+During setup you will:
 
-### How It Works:
+1. Enter your **ControlMySpa username and password**.
+2. Choose **how often** Home Assistant should refresh spa data (default: every **1 minute**).
+3. Pick **which spa** to add if your account has more than one.
 
-Each energy sensor calculates consumption based on:
-- Component power rating (configurable in integration options)
-- Actual runtime of the component
-- Automatic accumulation of total energy consumption
+After setup, open the spa device in Home Assistant. The entities you see depend on **your spa model** — not every tub has Chromazone lighting, a Clim8Zone heat pump, a second filter, or multi-speed jets.
 
-The sensors use the `TOTAL_INCREASING` state class, making them compatible with Home Assistant's Energy Dashboard. You can configure the power consumption (in watts) for each component type in the integration options to ensure accurate energy calculations.
+### Integration options
 
-![Energy Dashboard Configuration](img/energydashboard.png)
+Under **Configure** on the integration you can tune:
 
-### Configuration:
+- **Power (W)** for each heater, jet pump, blower, and circulation pump — used for **estimated** energy consumption (see below).
 
-During integration setup, you can configure the power consumption for:
-- Individual heaters (default: 2800W)
-- Individual pumps (default: 2200W)
-- Individual blowers (default: 1500W)
-- Circulation pumps (default: 200W)
+Default power values if you do not change anything:
 
-These values are used to calculate energy consumption based on the actual runtime of each component.
+| Component            | Default |
+|----------------------|--------:|
+| Heater               | 2800 W  |
+| Jet pump             | 2200 W  |
+| Blower               | 900 W   |
+| Circulation pump     | 400 W   |
 
-![Energy Configuration](img/energyconfig.png)
+Adjust these to match your hardware if you want more realistic energy numbers.
 
-## Chromazone External Lighting
+---
 
-The component provides full control over the Chromazone external lighting system, allowing you to manage lighting zones, colors, brightness, and special effects directly from Home Assistant.
+## How control works (good to know)
 
-### Features:
+When you change something in Home Assistant:
 
-- **Power Control**: Master switch to turn Chromazone lighting on/off
-- **Multi-Zone Support**: Independent control of multiple lighting zones (Zone A, B, C)
-- **Light Entities**: Full RGB color control with brightness adjustment for each zone
-- **Zone Modes**: Select from various lighting modes:
-  - **OFF**: Zone is turned off
-  - **NORMAL**: Standard lighting mode
-  - **PARTY**: Party mode with dynamic color effects
-  - **RELAX**: Relaxing color transitions
-  - **WHEEL**: Color wheel mode with smooth transitions
-- **Color Selection**: Choose from predefined favorite colors or use RGB color picker
-- **Brightness Control**: Adjust intensity from 0 (off) to 8 (maximum)
-- **Speed Control**: Control color transition speed from 0 (off) to 5 (maximum)
+1. The command is sent to the **ControlMySpa cloud**.
+2. The cloud forwards it to your spa.
+3. The spa confirms; updated data comes back to Home Assistant.
 
-### Available Entities:
+This usually takes about **2–4 seconds**. Failed commands are **retried once** automatically. While a command is processing, controls may briefly show as busy (sync icon).
 
-For each Chromazone zone, the integration creates:
-- **Switch**: Master power control for Chromazone system
-- **Light Entity**: RGB light control with color and brightness
-- **Select Entities**: 
-  - Zone mode selector (OFF, NORMAL, PARTY, RELAX, WHEEL)
-  - Color selector (predefined colors)
-  - Intensity selector (0-8)
-  - Speed selector (0-5)
+**Tip:** Wait a moment after tapping a switch before changing the same thing again — especially on slower connections.
 
-### Usage:
+---
 
-You can control Chromazone lighting through:
-- Home Assistant UI (Lovelace cards)
-- Automations and scripts
-- Voice assistants (Google Home, Alexa)
-- Home Assistant mobile app
+## What you can do in Home Assistant
 
-![Chromazone Control](img/cromazone.png)
+The integration creates a **Spa** device with entities that match what your tub reports. Typical capabilities:
 
-## Warning:
-This component is experimental and may include features that are not fully tested. Use at your own risk.  
-This is my first project for Home Assistant. Please be patient regarding functionality and any shortcomings. If you encounter bugs or have suggestions for improvement, feel free to contact me or create an issue on GitHub. Thank you for your understanding and support!
+### Temperature
 
-## Register the component as a HACS custom repository
+- **Climate** — set target water temperature like a thermostat.
+- **Sensors** — current and desired water temperature.
+- **Select** — switch between low / high temperature range and heater mode (when supported).
 
-If you want to add this component via HACS (Home Assistant Community Store), follow these steps:
+### Jets, lights, blowers
 
-1. Open Home Assistant and go to **HACS** → **Integrations**.
-2. Click **Menu** (3 dots in the upper right corner) → **Custom repositories**.
-3. Enter the repository URL https://github.com/haresik/Hares-ControlMySpa.git in the **Repository** field.
-4. In the **Category** field, select **Integration**.
-5. Click **Add**.
+- **Switches** — simple on/off for lights, jet pumps, and blowers.
+- **Select** — multiple speed or brightness levels when your spa supports more than on/off.
+- **Fan** — some jet pumps with LOW / MED / HIGH appear as a fan with preset speeds.
 
-After adding the repository, the component will appear in the standard list of integrations, and you can install it directly from there.
-***
+Exact names and count of entities vary by spa (one jet vs several, one light vs several, and so on).
 
-# ControlMySpa Hares pro Home Assistant (experimentální)
+### Filters
 
-Tato komponenta umožňuje integraci a ovládání vířivek prostřednictvím platformy Home Assistant. Poskytuje funkce, které nejsou dostupné ve standardních integracích, a je určena pro uživatele s konkrétními potřebami nebo pro ty, kteří chtějí testovat nové funkce.
+- Status sensors for filter operation.
+- **Select** — filter cycle start time and duration (when available).
+- **Switch** — enable or disable a **second filter** (only if your spa has two filters).
 
-## Jak to funguje
+### Status & alerts
 
-Při změně stavu v Home Assistantu se požadavek odešle do cloudové služby. Systém počká přibližně 2 sekundy na odpověď (nebo až 4 sekundy, protože se požadavek pro spolehlivost posílá dvakrát). Pokud změna proběhla úspěšně, projeví se v Home Assistantu.
+- **Online** indicator — is the spa reachable in the cloud?
+- Sensors for **fault messages** and **alert count**.
 
-Podrobněji: Požadavek se odešle do cloudu, který jej přepošle do vaší vířivky. Vířivka odpoví potvrzením změny a cloud pak odpoví zpět do Home Assistantu se změněným stavem. Cesta přenosu požadavku je dlouhá, protože nejde o lokální přenos - prochází cloudovou infrastrukturou.
+### Clim8Zone heat pump *(if installed)*
 
-Tato funkce simuluje mobilní aplikaci, kde také probíhají změny zdlouhavě. Při provádění změn buďte prosím trpěliví, protože komunikační cesta zahrnuje několik kroků přes cloudovou službu.
+See the dedicated section below for heating mode, heat/cool operation, and fan speed.
 
-## Co tato komponenta obsahuje
+### Automations
 
-Tato integrace poskytuje komplexní monitorování a ovládání vaší vířivky prostřednictvím Home Assistantu. Vytváří různé entity včetně senzorů, přepínačů, klimatických ovládání a světelných entit, které vám umožňují monitorovat a ovládat všechny aspekty vaší vířivky.
+Use any entity in Home Assistant **automations**, **scripts**, **scenes**, dashboards, and the mobile app — for example heat before you arrive, turn off lights at night, or notify on faults.
 
-### Hlavní funkce:
+![Overview in Home Assistant](img/setting01.png)
 
-- **Monitorování stavu vířivky**:
-  - Zobrazení aktuální teploty vody.
-  - Zobrazení požadované teploty vody.
-  - Informace o stavu cirkulačního čerpadla, světel, topení, filtrů, ozonových generátorů a dalších komponent.
+![Home Assistant settings](img/setting02.png)
 
-- **Ovládání vířivky**:
-  - Nastavení požadované teploty vody.
-  - Přepínání mezi vysokým a nízkým teplotním rozsahem.
-  - Ovládání světel, čerpadel, blowrů a vzduchových bublin.
-  - Plánování a správa filtračních cyklů.
+---
 
-- **Sledování energie**:
-  - Detailní sledování spotřeby energie pro všechny hlavní komponenty.
-  - Integrace s Energy Dashboard v Home Assistantu.
+## Energy monitoring (estimated)
 
-- **Externí osvětlení Chromazone**:
-  - Plné ovládání externího osvětlovacího systému Chromazone.
-  - Podpora více zón s individuálním ovládáním zón.
+Energy sensors show **calculated** consumption in **kWh**, not readings from a built-in electricity meter. The integration:
 
-- **Automatizace**:
-  - Možnost integrace s automatizacemi Home Assistantu pro plánování a řízení vířivky na základě podmínek, jako je čas, počasí nebo přítomnost uživatelů.
+- Tracks how long each component runs (heater, jet pumps, blowers, circulation pump).
+- Multiplies runtime by the **wattage** you set in integration options.
+- Adds up total kWh over time.
 
-![Energy Dashboard](img/scan1cs.png)
+These sensors work with the Home Assistant **Energy** dashboard (`Settings` → `Dashboards` → `Energy`).
 
-## Sledování energie
+![Energy sensors on the device](img/energyentity.png)
 
-Tato komponenta zahrnuje komplexní možnosti sledování energie, které se bezproblémově integrují s Energy Dashboard v Home Assistantu. Integrace sleduje spotřebu energie pro všechny hlavní komponenty vířivky.
+For meaningful charts:
 
-### Dostupné energetické senzory:
+1. Add the spa’s `… energy` sensors to the Energy dashboard.
+2. Set realistic **watt values** in integration options (see table above).
+3. Remember: values are **estimates** — useful for trends, not for billing.
 
-- **Senzory energie topení**: Sledují spotřebu energie topných prvků (kWh)
-- **Senzory energie čerpadel**: Monitorují spotřebu energie všech čerpadel (kWh)
-- **Senzory energie blowrů**: Sledují spotřebu energie vzduchových blowrů (kWh)
-- **Senzory energie cirkulačních čerpadel**: Monitorují spotřebu energie cirkulačních čerpadel (kWh)
+![Energy dashboard example](img/energydashboard.png)
 
-![Energy Dashboard](img/energyentity.png)
+![Configuring power in options](img/energyconfig.png)
 
-### Jak to funguje:
+---
 
-Každý energetický senzor počítá spotřebu na základě:
-- Jmenovitého výkonu komponenty (konfigurovatelné v nastavení integrace)
-- Skutečné doby provozu komponenty
-- Automatického sčítání celkové spotřeby energie
+## Chromazone external lighting *(if installed)*
 
-Senzory používají třídu stavu `TOTAL_INCREASING`, což je činí kompatibilními s Energy Dashboard v Home Assistantu. Můžete nakonfigurovat spotřebu energie (ve wattech) pro každý typ komponenty v nastavení integrace, abyste zajistili přesné výpočty spotřeby energie.
+If your spa has **Chromazone / TZL** zones, you get lighting control in Home Assistant:
 
-![Konfigurace Energy Dashboard](img/energydashboard.png)
+| What | How |
+|------|-----|
+| All zones on/off | **Switch** — Chromazone power |
+| Per zone colour & brightness | **Light** — RGB |
+| Mode (Party, Relax, Wheel, …) | **Select** per zone |
+| Preset colours, intensity, speed | **Select** per zone |
 
-### Konfigurace:
+Available modes include **OFF**, **NORMAL**, **PARTY**, **RELAX**, and **WHEEL**. Intensity and transition speed use the ranges your spa supports (typically intensity 0–8, speed 0–5).
 
-Během nastavení integrace můžete nakonfigurovat spotřebu energie pro:
-- Jednotlivá topení (výchozí: 2800W)
-- Jednotlivá čerpadla (výchozí: 2200W)
-- Jednotlivé blowry (výchozí: 1500W)
-- Cirkulační čerpadla (výchozí: 200W)
+Use Lovelace light cards, automations, or voice assistants (via Home Assistant) like any other light.
 
-Tyto hodnoty se používají k výpočtu spotřeby energie na základě skutečné doby provozu každé komponenty.
+![Chromazone in Home Assistant](img/cromazone.png)
 
-![Konfigurace energie](img/energyconfig.png)
+---
 
-## Externí osvětlení Chromazone
+## Clim8Zone heat pump *(if installed)*
 
-Komponenta poskytuje plné ovládání externího osvětlovacího systému Chromazone, což vám umožňuje spravovat osvětlovací zóny, barvy, jas a speciální efekty přímo z Home Assistantu.
+**Clim8Zone** (API name **C8Z**) is an optional **heat pump** add-on that can heat or cool spa water more efficiently than electric heaters alone. If your spa has it and ControlMySpa exposes it, the integration adds matching entities on the **Spa** device.
 
-### Funkce:
+> If you do not see any **C8Z …** entities after setup, your tub either has no Clim8Zone unit or the cloud API does not report it for your model.
 
-- **Ovládání napájení**: Hlavní přepínač pro zapnutí/vypnutí osvětlení Chromazone
-- **Podpora více zón**: Nezávislé ovládání více osvětlovacích zón (Zóna A, B, C)
-- **Světelné entity**: Plné RGB ovládání barev s nastavením jasu pro každou zónu
-- **Režimy zón**: Výběr z různých osvětlovacích režimů:
-  - **OFF**: Zóna je vypnutá
-  - **NORMAL**: Standardní režim osvětlení
-  - **PARTY**: Párty režim s dynamickými barevnými efekty
-  - **RELAX**: Relaxační barevné přechody
-  - **WHEEL**: Režim barevného kola s plynulými přechody
-- **Výběr barvy**: Výběr z předdefinovaných oblíbených barev nebo použití RGB výběru barev
-- **Ovládání jasu**: Nastavení intenzity od 0 (vypnuto) do 8 (maximum)
-- **Ovládání rychlosti**: Ovládání rychlosti přechodu barev od 0 (vypnuto) do 5 (maximum)
+### What appears in Home Assistant
 
-### Dostupné entity:
+Entities are created **only for settings your spa reports to the cloud** — you might get all controls, only status sensors, or nothing. That is normal and depends on hardware and firmware.
 
-Pro každou zónu Chromazone integrace vytváří:
-- **Přepínač**: Hlavní ovládání napájení systému Chromazone
-- **Světelná entity**: RGB ovládání světla s barvou a jasem
-- **Select entity**: 
-  - Výběr režimu zóny (OFF, NORMAL, PARTY, RELAX, WHEEL)
-  - Výběr barvy (předdefinované barvy)
-  - Výběr intenzity (0-8)
-  - Výběr rychlosti (0-5)
+| Purpose | Entity type | What you can set or read |
+|--------|-------------|---------------------------|
+| How the heat pump heats | **Select** — *C8Z heat pump heating* | **eBoost** (auto), **Continuous**, **M7 mode**, or **Disabled** |
+| Heat / cool operation | **Select** — *C8Z mode* | **Heat only**, **Heat and cool**, **Cool only**, or **Disabled** |
+| Fan / compressor speed | **Select** — *C8Z speed* | **Auto smart**, **Manual high**, or **Manual low** |
+| Current heating activity | **Sensor** — *C8Z heater state* | Live state from the unit (e.g. on/off / activity reported by the spa) |
+| Unit status | **Sensor** — *C8Z status* | Overall Clim8Zone status from the spa |
 
-### Použití:
+Labels in the UI follow your Home Assistant language (translations are included for EN, CS, DE, DA).
 
-Osvětlení Chromazone můžete ovládat prostřednictvím:
-- Uživatelského rozhraní Home Assistantu (Lovelace karty)
-- Automatizací a skriptů
-- Hlasových asistentů (Google Home, Alexa)
-- Mobilní aplikace Home Assistant
+### Tips
 
-![Ovládání Chromazone](img/cromazone.png)
+- Commands use the same **cloud path** as other controls (~2–4 seconds, one automatic retry). Wait for the sync icon to clear before changing the same setting again.
+- Use **automations** like any other select — e.g. switch to *Manual low* at night, or notify when *C8Z status* reports a fault.
+- Spa **water temperature** is still set via the main **Climate** entity; Clim8Zone selects configure *how* the heat pump supports heating or cooling.
 
-## Upozornění:
-Tato komponenta je experimentální a může obsahovat funkce, které nejsou plně otestovány. Používejte ji na vlastní riziko.
-Toto je můj první projekt pro Home Assistant. Prosím o schovívavost ohledně funkčnosti a případných nedostatků. Pokud narazíte na chyby nebo máte návrhy na zlepšení, neváhejte mě kontaktovat nebo vytvořit issue na GitHubu. Děkuji za pochopení a podporu!
+![Clim8Zone in Home Assistant](img/c8z.png)
 
-## Zaregistrovat komponentu jako HACS custom repository
+---
 
-Pokud chcete tuto komponentu přidat prostřednictvím HACS (Home Assistant Community Store), postupujte podle následujících kroků:
+## Service: Update spa time
 
-1. Otevřete Home Assistant a přejděte do **HACS** → **Integrations**.
-2. Klikněte na **Menu** (3 tečky v pravém horním rohu) → **Custom repositories**.
-3. Do pole **Repository** zadejte URL https://github.com/haresik/Hares-ControlMySpa.git repozitáře.
-4. V poli **Category** vyberte možnost **Integration**.
-5. Klikněte na **Add**.
+A **button** on the device card (*Update spa time*) syncs the spa’s internal clock with your Home Assistant server. Useful after power loss or daylight saving changes. The same action is available as the `control_my_spa.update_time` service.
 
-Po přidání repozitáře se komponenta objeví ve standardním seznamu integrací a můžete ji nainstalovat přímo odtud.
+---
+
+## Experimental — please read
+
+This integration is **experimental** and community-maintained. It is my first Home Assistant project: some features may be incomplete or behave differently on certain spa models.
+
+- Test changes when you can supervise the tub.
+- Report issues on [GitHub](https://github.com/haresik/Hares-ControlMySpa/issues).
+- Use at your own risk.
+
+---
+
+## Acknowledgements
+
+Thank you to everyone who supports this project and helped with testing during development.
+
+Special thanks to:
+
+- **[glinzay](https://github.com/glinzay)** — development and testing of **Chromazone Lighting**
+- **[ehoppitt](https://github.com/ehoppitt)** — development and testing of the **Clim8Zone** heat pump
+
+Thank you for trying the integration and for any feedback!
