@@ -237,15 +237,18 @@ class SpaHeaterModeSelect(SpaSelectBase):
 
         try:
             self._shared_data.pause_updates()
-            
+
             # První pokus
             success = await self._try_set_heater_mode(option)
-            
+
             # Druhý pokus pokud první selhal
             if not success:
                 _LOGGER.info("Zkouším znovu nastavit režim ohřevu na %s", option)
                 success = await self._try_set_heater_mode(option, True)
-                
+
             await self._shared_data.async_force_update()
         except Exception as e:
             _LOGGER.error("Error setting heater mode to %s: %s", option, str(e))
+            raise
+        finally:
+            self._shared_data.resume_updates()
