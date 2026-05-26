@@ -26,7 +26,10 @@ class ControlMySpa:
 
     async def init_session(self):
         if self.session is None:
-            self.session = aiohttp.ClientSession()
+            # 20s total timeout per request keeps a stalled cloud call from
+            # blocking the 60s periodic update tick (aiohttp's 5-min default
+            # left last_reported frozen long enough to trip the stale alert).
+            self.session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=20))
 
     async def close(self):
         if self.session:
