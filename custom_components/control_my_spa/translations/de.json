@@ -149,6 +149,9 @@
       },
       "c8z_status": {
         "name": "C8Z Status"
+      },
+      "spa_clock": {
+        "name": "Spa-Uhr"
       }
     },
     "select": {
