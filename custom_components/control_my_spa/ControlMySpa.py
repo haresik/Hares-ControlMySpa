@@ -264,7 +264,7 @@ class ControlMySpa:
         })
 
     async def setTime(self, date, time, military_format=True):
-        return await self._postAndRefresh("/spa-commands/time   ", {
+        return await self._postAndRefresh("/spa-commands/time", {
             "spaId": self.spaId,
             "via": "MOBILE",
             "date": date,
