@@ -9,6 +9,17 @@ from . import const
 
 _LOGGER = logging.getLogger(__name__)
 
+
+def _parse_float(value):
+    """Převod hodnoty z API na float; prázdný řetězec nebo None -> None."""
+    if value is None or value == "":
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
 class ControlMySpa:
     # BASE_URL = 'https://production.controlmyspa.net'
     BASE_URL = 'https://iot.controlmyspa.com'
@@ -184,10 +195,13 @@ class ControlMySpa:
             # except (OSError, TypeError) as dump_err:
             #     _LOGGER.warning("Nepodařilo se uložit last_spa_dashboard.json: %s", dump_err)
 
+            desired_temp = _parse_float(spaData.get("desiredTemp"))
+            current_temp = _parse_float(spaData.get("currentTemp"))
+
             result = {
-                'desiredTemp': float(spaData['desiredTemp']),
-                'targetDesiredTemp': float(spaData['desiredTemp']),
-                'currentTemp': float(spaData['currentTemp']),
+                'desiredTemp': desired_temp,
+                'targetDesiredTemp': desired_temp,
+                'currentTemp': current_temp,
                 'celsius': bool(spaData['isCelsius']),
                 'panelLock': spaData['isPanelLocked'],
                 'heaterMode': spaData['heaterMode'],
