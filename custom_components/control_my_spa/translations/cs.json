@@ -613,6 +613,13 @@
           "on": "Zapnuto",
           "off": "Vypnuto"
         }
+      },
+      "panel_lock": {
+        "name": "Zámek panelu",
+        "state": {
+          "on": "Zamčeno",
+          "off": "Odemčeno"
+        }
       }
     },
     "fan": {

@@ -595,6 +595,13 @@
           "on": "Ein",
           "off": "Aus"
         }
+      },
+      "panel_lock": {
+        "name": "Panelverriegelung",
+        "state": {
+          "on": "Gesperrt",
+          "off": "Entsperrt"
+        }
       }
     },
     "fan": {

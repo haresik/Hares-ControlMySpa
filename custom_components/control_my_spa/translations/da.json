@@ -599,6 +599,13 @@
           "on": "Til",
           "off": "Fra"
         }
+      },
+      "panel_lock": {
+        "name": "Panellås",
+        "state": {
+          "on": "Låst",
+          "off": "Ulåst"
+        }
       }
     },
     "fan": {
