@@ -835,7 +835,6 @@ class SpaPanelLockSwitch(SpaSwitchBase):
         """Read panel lock state from spa data payload."""
         if not data:
             return False
-        # Uses 'panelLock' flag parsed as a Python boolean by the client object
         return bool(data.get("panelLock", False))
 
     async def async_update(self):
@@ -845,16 +844,33 @@ class SpaPanelLockSwitch(SpaSwitchBase):
             _LOGGER.debug("Updated Panel Lock: %s", self._attr_is_on)
 
     async def _try_set_panel_lock(self, locked: bool, is_retry: bool = False) -> bool:
-        """Attempt to set panel lock state with optional retry."""
+        """Attempt to set panel lock state with response verification."""
         self._is_processing = True
         self.async_write_ha_state()
         try:
-            # Pass raw boolean flag (True/False) directly to the wrapper library method
             response_data = await self._client.setPanelLock(locked)
             if response_data is None:
                 _LOGGER.warning("setPanelLock(%s) returned None", locked)
                 return False
-            return True
+            
+            # ACK Check: Read the server response payload to ensure state changed successfully
+            new_state = self._get_panel_lock_state(response_data)
+            if new_state == locked:
+                self._attr_is_on = new_state
+                _LOGGER.info(
+                    "Successfully %s panel lock%s",
+                    "engaged" if locked else "released",
+                    " (retry)" if is_retry else ""
+                )
+                return True
+            else:
+                _LOGGER.warning(
+                    "Panel lock modification rejected by cloud endpoint. Expected: %s, Got: %s%s",
+                    locked,
+                    new_state,
+                    " (retry)" if is_retry else ""
+                )
+                return False
         finally:
             self._is_processing = False
             self.async_write_ha_state()
