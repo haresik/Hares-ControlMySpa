@@ -835,7 +835,7 @@ class SpaPanelLockSwitch(SpaSwitchBase):
         """Read panel lock state from spa data payload."""
         if not data:
             return False
-        return bool(data.get("panelLock", False))
+        return bool(data.get("isPanelLocked", False))
 
     async def async_update(self):
         data = self._shared_data.data
