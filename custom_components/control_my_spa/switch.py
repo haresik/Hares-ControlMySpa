@@ -2,6 +2,8 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.const import EntityCategory
 from .const import DOMAIN
 import logging
+import asyncio
+import time
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -134,20 +136,20 @@ class SpaLightSwitch(SpaSwitchBase):
             if new_state == target_state:
                 self._attr_is_on = (target_state == self._on_value)
                 _LOGGER.info(
-                    "Successfully %s light %s%s",
-                    "turned on" if target_state == self._on_value else "turned off",
+                    "Úspěšně %s světlo %s%s",
+                    "zapnuto" if target_state == self._on_value else "vypnuto",
                     self._light_data["port"],
-                    " (retry)" if is_retry else ""
+                    " (2. pokus)" if is_retry else ""
                 )
                 return True
             else:
                 _LOGGER.warning(
-                    "Light %s was not %s. Expected: %s, Got: %s%s",
+                    "Light %s was not %s. Expected state: %s, Current state: %s%s",
                     self._light_data["port"],
-                    "turned on" if target_state == self._on_value else "turned off",
+                    "zapnuto" if target_state == self._on_value else "vypnuto",
                     target_state,
                     new_state,
-                    " (retry)" if is_retry else ""
+                    " (2. pokus)" if is_retry else ""
                 )
                 return False
         finally:
@@ -160,10 +162,10 @@ class SpaLightSwitch(SpaSwitchBase):
             device_number = int(self._light_data["port"])
             success = await self._try_set_light_state(device_number, self._on_value)
             if not success:
-                _LOGGER.info("Retrying light on %s", self._light_data["port"])
+                _LOGGER.info("Zkouším znovu zapnout světlo %s", self._light_data["port"])
                 success = await self._try_set_light_state(device_number, self._on_value, True)
             await self._shared_data.async_force_update()
-        except ValueError:
+        except ValueError as ve:
             _LOGGER.error("Invalid port value for light: %s", self._light_data["port"])
         except Exception as e:
             _LOGGER.error("Error turning on light (port %s): %s", self._light_data["port"], str(e))
@@ -177,10 +179,10 @@ class SpaLightSwitch(SpaSwitchBase):
             device_number = int(self._light_data["port"])
             success = await self._try_set_light_state(device_number, self._off_value)
             if not success:
-                _LOGGER.info("Retrying light off %s", self._light_data["port"])
+                _LOGGER.info("Zkouším znovu vypnout světlo %s", self._light_data["port"])
                 success = await self._try_set_light_state(device_number, self._off_value, True)
             await self._shared_data.async_force_update()
-        except ValueError:
+        except ValueError as ve:
             _LOGGER.error("Invalid port value for light: %s", self._light_data["port"])
         except Exception as e:
             _LOGGER.error("Error turning off light (port %s): %s", self._light_data["port"], str(e))
@@ -275,20 +277,20 @@ class SpaPumpSwitch(SpaSwitchBase):
             if expected_is_on == actual_is_on:
                 self._attr_is_on = actual_is_on
                 _LOGGER.info(
-                    "Successfully %s pump %s%s",
-                    "turned on" if expected_is_on else "turned off",
+                    "Úspěšně %s čerpadlo %s%s",
+                    "zapnuto" if expected_is_on else "vypnuto",
                     self._pump_data["port"],
-                    " (retry)" if is_retry else ""
+                    " (2. pokus)" if is_retry else ""
                 )
                 return True
             else:
                 _LOGGER.warning(
-                    "Pump %s was not %s. Expected: %s (%s), Got: %s (%s)%s",
+                    "Pump %s was not %s. Expected state: %s (%s), Current state: %s (%s)%s",
                     self._pump_data["port"],
-                    "turned on" if expected_is_on else "turned off",
+                    "zapnuto" if expected_is_on else "vypnuto",
                     target_state, expected_is_on,
                     new_state, actual_is_on,
-                    " (retry)" if is_retry else ""
+                    " (2. pokus)" if is_retry else ""
                 )
                 return False
         finally:
@@ -301,10 +303,10 @@ class SpaPumpSwitch(SpaSwitchBase):
             device_number = int(self._pump_data["port"])
             success = await self._try_set_pump_state(device_number, self._on_value)
             if not success:
-                _LOGGER.info("Retrying pump on %s", self._pump_data["port"])
+                _LOGGER.info("Zkouším znovu zapnout čerpadlo %s", self._pump_data["port"])
                 success = await self._try_set_pump_state(device_number, self._on_value, True)
             await self._shared_data.async_force_update()
-        except ValueError:
+        except ValueError as ve:
             _LOGGER.error("Invalid port value for pump: %s", self._pump_data["port"])
         except Exception as e:
             _LOGGER.error("Error turning on pump (port %s): %s", self._pump_data["port"], str(e))
@@ -318,10 +320,10 @@ class SpaPumpSwitch(SpaSwitchBase):
             device_number = int(self._pump_data["port"])
             success = await self._try_set_pump_state(device_number, self._off_value)
             if not success:
-                _LOGGER.info("Retrying pump off %s", self._pump_data["port"])
+                _LOGGER.info("Zkouším znovu vypnout čerpadlo %s", self._pump_data["port"])
                 success = await self._try_set_pump_state(device_number, self._off_value, True)
             await self._shared_data.async_force_update()
-        except ValueError:
+        except ValueError as ve:
             _LOGGER.error("Invalid port value for pump: %s", self._pump_data["port"])
         except Exception as e:
             _LOGGER.error("Error turning off pump (port %s): %s", self._pump_data["port"], str(e))
@@ -411,20 +413,20 @@ class SpaPumpLowSwitch(SpaSwitchBase):
             if expected_is_on == actual_is_on:
                 self._attr_is_on = actual_is_on
                 _LOGGER.info(
-                    "Successfully %s pump low %s%s",
-                    "turned on" if expected_is_on else "turned off",
+                    "Úspěšně %s čerpadlo Low %s%s",
+                    "zapnuto" if expected_is_on else "vypnuto",
                     self._pump_data["port"],
-                    " (retry)" if is_retry else ""
+                    " (2. pokus)" if is_retry else ""
                 )
                 return True
             else:
                 _LOGGER.warning(
-                    "Pump Low %s was not %s. Expected: %s (%s), Got: %s (%s)%s",
+                    "Pump Low %s was not %s. Expected state: %s (%s), Current state: %s (%s)%s",
                     self._pump_data["port"],
-                    "turned on" if expected_is_on else "turned off",
+                    "zapnuto" if expected_is_on else "vypnuto",
                     target_state, expected_is_on,
                     new_state, actual_is_on,
-                    " (retry)" if is_retry else ""
+                    " (2. pokus)" if is_retry else ""
                 )
                 return False
         finally:
@@ -437,12 +439,12 @@ class SpaPumpLowSwitch(SpaSwitchBase):
             device_number = int(self._pump_data["port"])
             success = await self._try_set_pump_state(device_number, self._on_value)
             if not success:
-                _LOGGER.info("First attempt to turn on pump low %s failed", self._pump_data["port"])
+                _LOGGER.info("První pokus o zapnutí čerpadla Low %s selhal", self._pump_data["port"])
             await self._shared_data.async_force_update()
-        except ValueError:
-            _LOGGER.error("Invalid port value for pump low: %s", self._pump_data["port"])
+        except ValueError as ve:
+            _LOGGER.error("Invalid port value for pump Low: %s", self._pump_data["port"])
         except Exception as e:
-            _LOGGER.error("Error turning on pump low (port %s): %s", self._pump_data["port"], str(e))
+            _LOGGER.error("Error turning on pump Low (port %s): %s", self._pump_data["port"], str(e))
             raise
         finally:
             self._shared_data.resume_updates()
@@ -453,12 +455,12 @@ class SpaPumpLowSwitch(SpaSwitchBase):
             device_number = int(self._pump_data["port"])
             success = await self._try_set_pump_state(device_number, self._off_value)
             if not success:
-                _LOGGER.info("First attempt to turn off pump low %s failed", self._pump_data["port"])
+                _LOGGER.info("První pokus o vypnutí čerpadla Low %s selhal", self._pump_data["port"])
             await self._shared_data.async_force_update()
-        except ValueError:
-            _LOGGER.error("Invalid port value for pump low: %s", self._pump_data["port"])
+        except ValueError as ve:
+            _LOGGER.error("Invalid port value for pump Low: %s", self._pump_data["port"])
         except Exception as e:
-            _LOGGER.error("Error turning off pump low (port %s): %s", self._pump_data["port"], str(e))
+            _LOGGER.error("Error turning off pump Low (port %s): %s", self._pump_data["port"], str(e))
             raise
         finally:
             self._shared_data.resume_updates()
@@ -550,20 +552,20 @@ class SpaBlowerSwitch(SpaSwitchBase):
             if expected_is_on == actual_is_on:
                 self._attr_is_on = actual_is_on
                 _LOGGER.info(
-                    "Successfully %s blower %s%s",
-                    "turned on" if expected_is_on else "turned off",
+                    "Úspěšně %s vzduchovač %s%s",
+                    "zapnut" if expected_is_on else "vypnut",
                     self._blower_data["port"],
-                    " (retry)" if is_retry else ""
+                    " (2. pokus)" if is_retry else ""
                 )
                 return True
             else:
                 _LOGGER.warning(
-                    "Blower %s was not %s. Expected: %s (%s), Got: %s (%s)%s",
+                    "Blower %s was not %s. Expected state: %s (%s), Current state: %s (%s)%s",
                     self._blower_data["port"],
-                    "turned on" if expected_is_on else "turned off",
+                    "zapnut" if expected_is_on else "vypnut",
                     target_state, expected_is_on,
                     new_state, actual_is_on,
-                    " (retry)" if is_retry else ""
+                    " (2. pokus)" if is_retry else ""
                 )
                 return False
         finally:
@@ -576,10 +578,10 @@ class SpaBlowerSwitch(SpaSwitchBase):
             device_number = int(self._blower_data["port"])
             success = await self._try_set_blower_state(device_number, self._on_value)
             if not success:
-                _LOGGER.info("Retrying blower on %s", self._blower_data["port"])
+                _LOGGER.info("Zkouším znovu zapnout vzduchovač %s", self._blower_data["port"])
                 success = await self._try_set_blower_state(device_number, self._on_value, True)
             await self._shared_data.async_force_update()
-        except ValueError:
+        except ValueError as ve:
             _LOGGER.error("Invalid port value for blower: %s", self._blower_data["port"])
         except Exception as e:
             _LOGGER.error("Error turning on blower (port %s): %s", self._blower_data["port"], str(e))
@@ -593,10 +595,10 @@ class SpaBlowerSwitch(SpaSwitchBase):
             device_number = int(self._blower_data["port"])
             success = await self._try_set_blower_state(device_number, self._off_value)
             if not success:
-                _LOGGER.info("Retrying blower off %s", self._blower_data["port"])
+                _LOGGER.info("Zkouším znovu vypnout vzduchovač %s", self._blower_data["port"])
                 success = await self._try_set_blower_state(device_number, self._off_value, True)
             await self._shared_data.async_force_update()
-        except ValueError:
+        except ValueError as ve:
             _LOGGER.error("Invalid port value for blower: %s", self._blower_data["port"])
         except Exception as e:
             _LOGGER.error("Error turning off blower (port %s): %s", self._blower_data["port"], str(e))
@@ -606,8 +608,6 @@ class SpaBlowerSwitch(SpaSwitchBase):
 
 
 class SpaTzlPowerSwitch(SpaSwitchBase):
-    """Switch for TZL/Chromazone lighting power."""
-
     def __init__(self, shared_data, device_info, unique_id_suffix, client):
         self._shared_data = shared_data
         self._attr_device_info = device_info
@@ -657,17 +657,17 @@ class SpaTzlPowerSwitch(SpaSwitchBase):
             if new_state == expected_state:
                 self._attr_is_on = expected_state
                 _LOGGER.info(
-                    "Successfully %s TZL lights%s",
-                    "turned on" if power_state == "ON" else "turned off",
-                    " (retry)" if is_retry else ""
+                    "Úspěšně %s TZL světla%s",
+                    "zapnuto" if power_state == "ON" else "vypnuto",
+                    " (2. pokus)" if is_retry else ""
                 )
                 return True
             else:
                 _LOGGER.warning(
-                    "TZL lights were not %s. Expected: %s, Got: %s%s",
-                    "turned on" if power_state == "ON" else "turned off",
+                    "TZL světla nebyla %s. Očekávaný stav: %s, Aktuální stav: %s%s",
+                    "zapnuto" if power_state == "ON" else "vypnuto",
                     expected_state, new_state,
-                    " (retry)" if is_retry else ""
+                    " (2. pokus)" if is_retry else ""
                 )
                 return False
         finally:
@@ -679,7 +679,7 @@ class SpaTzlPowerSwitch(SpaSwitchBase):
             self._shared_data.pause_updates()
             success = await self._try_set_tzl_power_state("ON")
             if not success:
-                _LOGGER.info("Retrying TZL lights on")
+                _LOGGER.info("Zkouším znovu zapnout TZL světla")
                 success = await self._try_set_tzl_power_state("ON", True)
             await self._shared_data.async_force_update()
         except Exception as e:
@@ -692,7 +692,7 @@ class SpaTzlPowerSwitch(SpaSwitchBase):
             self._shared_data.pause_updates()
             success = await self._try_set_tzl_power_state("OFF")
             if not success:
-                _LOGGER.info("Retrying TZL lights off")
+                _LOGGER.info("Zkouším znovu vypnout TZL světla")
                 success = await self._try_set_tzl_power_state("OFF", True)
             await self._shared_data.async_force_update()
         except Exception as e:
@@ -702,8 +702,6 @@ class SpaTzlPowerSwitch(SpaSwitchBase):
 
 
 class SpaFilter2Switch(SpaSwitchBase):
-    """Switch for second filter."""
-
     def __init__(self, shared_data, device_info, unique_id_suffix, client):
         self._shared_data = shared_data
         self._attr_device_info = device_info
@@ -761,17 +759,17 @@ class SpaFilter2Switch(SpaSwitchBase):
             if new_state == expected_state:
                 self._attr_is_on = expected_state
                 _LOGGER.info(
-                    "Successfully %s filter 2%s",
-                    "turned on" if state == "ON" else "turned off",
-                    " (retry)" if is_retry else ""
+                    "Úspěšně %s druhý filtr%s",
+                    "zapnuto" if state == "ON" else "vypnuto",
+                    " (2. pokus)" if is_retry else ""
                 )
                 return True
             else:
                 _LOGGER.warning(
-                    "Filter 2 was not %s. Expected: %s, Got: %s%s",
-                    "turned on" if state == "ON" else "turned off",
+                    "Druhý filtr nebyl %s. Očekávaný stav: %s, Aktuální stav: %s%s",
+                    "zapnuto" if state == "ON" else "vypnuto",
                     expected_state, new_state,
-                    " (retry)" if is_retry else ""
+                    " (2. pokus)" if is_retry else ""
                 )
                 return False
         finally:
@@ -783,7 +781,7 @@ class SpaFilter2Switch(SpaSwitchBase):
             self._shared_data.pause_updates()
             success = await self._try_set_filter2_state("ON")
             if not success:
-                _LOGGER.info("Retrying filter 2 on")
+                _LOGGER.info("Zkouším znovu zapnout druhý filtr")
                 success = await self._try_set_filter2_state("ON", True)
             await self._shared_data.async_force_update()
         except Exception as e:
@@ -796,7 +794,7 @@ class SpaFilter2Switch(SpaSwitchBase):
             self._shared_data.pause_updates()
             success = await self._try_set_filter2_state("OFF")
             if not success:
-                _LOGGER.info("Retrying filter 2 off")
+                _LOGGER.info("Zkouším znovu vypnout druhý filtr")
                 success = await self._try_set_filter2_state("OFF", True)
             await self._shared_data.async_force_update()
         except Exception as e:
@@ -816,73 +814,41 @@ class SpaPanelLockSwitch(SpaSwitchBase):
         self._attr_translation_key = "panel_lock"
         self._attr_icon = "mdi:lock"
         self._attr_entity_category = EntityCategory.CONFIG
-        self._is_processing = False
+        self._attr_should_poll = False
+        self._attr_is_on = False
+        self._optimistic_until = 0
+        self.entity_id = "switch.spa_panel_lock"
 
     @property
-    def available(self) -> bool:
-        return not self._is_processing
+    def is_on(self):
+        return self._attr_is_on
 
     @property
-    def icon(self):
-        if self._is_processing:
-            return "mdi:sync"
-        if self.is_on:
-            return "mdi:lock"
-        else:
-            return "mdi:lock-open"
+    def assumed_state(self) -> bool:
+        return True
 
     def _get_panel_lock_state(self, data):
-        """Read panel lock state from spa data payload."""
         if not data:
             return False
-        return bool(data.get("isPanelLocked", False))
+        return bool(data.get("panelLock", False))
 
     async def async_update(self):
+        if time.time() < self._optimistic_until:
+            _LOGGER.debug("Panel lock in optimistic guard window; skipping state overwrite.")
+            return
         data = self._shared_data.data
         if data:
             self._attr_is_on = self._get_panel_lock_state(data)
             _LOGGER.debug("Updated Panel Lock: %s", self._attr_is_on)
 
-    async def _try_set_panel_lock(self, locked: bool, is_retry: bool = False) -> bool:
-        """Attempt to set panel lock state with response verification."""
-        self._is_processing = True
-        self.async_write_ha_state()
-        try:
-            response_data = await self._client.setPanelLock(locked)
-            if response_data is None:
-                _LOGGER.warning("setPanelLock(%s) returned None", locked)
-                return False
-            
-            # ACK Check: Read the server response payload to ensure state changed successfully
-            new_state = self._get_panel_lock_state(response_data)
-            if new_state == locked:
-                self._attr_is_on = new_state
-                _LOGGER.info(
-                    "Successfully %s panel lock%s",
-                    "engaged" if locked else "released",
-                    " (retry)" if is_retry else ""
-                )
-                return True
-            else:
-                _LOGGER.warning(
-                    "Panel lock modification rejected by cloud endpoint. Expected: %s, Got: %s%s",
-                    locked,
-                    new_state,
-                    " (retry)" if is_retry else ""
-                )
-                return False
-        finally:
-            self._is_processing = False
-            self.async_write_ha_state()
-
     async def async_turn_on(self, **kwargs):
         """Lock the panel."""
+        self._attr_is_on = True
+        self._optimistic_until = time.time() + 22
+        self.async_write_ha_state()
         try:
             self._shared_data.pause_updates()
-            success = await self._try_set_panel_lock(True)
-            if not success:
-                _LOGGER.info("Retrying panel lock engage")
-                success = await self._try_set_panel_lock(True, True)
+            await self._client.setPanelLock(True)
             await self._shared_data.async_force_update()
         except Exception as e:
             _LOGGER.error("Error engaging panel lock: %s", str(e))
@@ -891,12 +857,12 @@ class SpaPanelLockSwitch(SpaSwitchBase):
 
     async def async_turn_off(self, **kwargs):
         """Unlock the panel."""
+        self._attr_is_on = False
+        self._optimistic_until = time.time() + 22
+        self.async_write_ha_state()
         try:
             self._shared_data.pause_updates()
-            success = await self._try_set_panel_lock(False)
-            if not success:
-                _LOGGER.info("Retrying panel lock release")
-                success = await self._try_set_panel_lock(False, True)
+            await self._client.setPanelLock(False)
             await self._shared_data.async_force_update()
         except Exception as e:
             _LOGGER.error("Error releasing panel lock: %s", str(e))
