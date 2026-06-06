@@ -172,20 +172,6 @@
         "name": "Čas vířivky"
       }
     },
-    "select": {
-      "tzl_color_select": {
-        "name": "TZL barva"
-      },
-      "tzl_color_select_1": {
-        "name": "TZL barva A"
-      },
-      "tzl_color_select_2": {
-        "name": "TZL barva B"
-      },
-      "tzl_color_select_3": {
-        "name": "TZL barva C"
-      }
-    },
     "light": {
       "tzl_zone_light": {
         "name": "Chromazone - Světlo"
@@ -613,6 +599,13 @@
           "on": "Zapnuto",
           "off": "Vypnuto"
         }
+      },
+      "panel_lock": {
+        "name": "Zámek panelu",
+        "state": {
+          "on": "Zamčeno",
+          "off": "Odemčeno"
+        }
       }
     },
     "fan": {
@@ -697,4 +690,3 @@
     }
   }
 }
-   
