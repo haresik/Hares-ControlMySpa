@@ -71,7 +71,7 @@ class SpaTargetDesiredTempNumber(NumberEntity):
                     self.native_max_value = 40.0
                     self._state = round((fahrenheit_temp - 32) * 5.0 / 9.0, 1)
                     _LOGGER.debug(
-                        "Aktualizována cílová teplota: %s °C", self._state
+                        "Updated target temperature: %s °C", self._state
                     )
                 else:
                     self.native_unit_of_measurement = UnitOfTemperature.FAHRENHEIT
@@ -79,7 +79,7 @@ class SpaTargetDesiredTempNumber(NumberEntity):
                     self.native_max_value = 104.0
                     self._state = fahrenheit_temp
                     _LOGGER.debug(
-                        "Aktualizována cílová teplota: %s °F", self._state
+                        "Updated target temperature: %s °F", self._state
                     )
 
     @property
@@ -110,12 +110,12 @@ class SpaTargetDesiredTempNumber(NumberEntity):
         # Zrušit případný předchozí plánovaný úkol
         if self._debounce_task and not self._debounce_task.done():
             self._debounce_task.cancel()
-            _LOGGER.debug("Zrušeno předchozí zpožděné nastavení hodnoty")
+            _LOGGER.debug("Cancelled previous delayed value set")
 
         self._pending_value = value
         unit_symbol = "°C" if self.native_unit_of_measurement == UnitOfTemperature.CELSIUS else "°F"
         _LOGGER.debug(
-            "Naplánováno nastavení teploty %s %s za %.1f s",
+            "Scheduled temperature set to %s %s in %.1f s",
             value,
             unit_symbol,
             self._debounce_delay,
@@ -132,16 +132,16 @@ class SpaTargetDesiredTempNumber(NumberEntity):
                 self._pending_value = None
                 await self._debounced_set_value(value)
         except asyncio.CancelledError:
-            _LOGGER.debug("Zpožděné nastavení bylo zrušeno")
+            _LOGGER.debug("Delayed set was cancelled")
         except Exception as e:
-            _LOGGER.exception("Chyba v zpožděném nastavení: %s", e)
+            _LOGGER.exception("Error in delayed set: %s", e)
 
     async def _debounced_set_value(self, value: float):
         """Skutečné nastavení hodnoty po debounce zpoždění."""
         if self._is_processing:
             unit_symbol = "°C" if self.native_unit_of_measurement == UnitOfTemperature.CELSIUS else "°F"
             _LOGGER.debug(
-                "Přeskočeno nastavení hodnoty %s %s — již probíhá zpracování",
+                "Skipped setting value %s %s — processing already in progress",
                 value,
                 unit_symbol,
             )
@@ -163,7 +163,7 @@ class SpaTargetDesiredTempNumber(NumberEntity):
 
             if success:
                 self._state = value
-                _LOGGER.info("Nastavena cílová teplota na %s %s", value, unit_symbol)
+                _LOGGER.info("Set target temperature to %s %s", value, unit_symbol)
             else:
                 _LOGGER.error(
                     "Failed to set target temperature to %s %s", value, unit_symbol
@@ -172,7 +172,7 @@ class SpaTargetDesiredTempNumber(NumberEntity):
             await self._shared_data.async_force_update()
 
         except Exception as e:
-            _LOGGER.exception("Chyba při nastavování teploty: %s", e)
+            _LOGGER.exception("Error setting temperature: %s", e)
         finally:
             self._shared_data.resume_updates()
             self._is_processing = False
@@ -184,6 +184,6 @@ class SpaTargetDesiredTempNumber(NumberEntity):
             delay = 0.0
 
         self._debounce_delay = delay
-        _LOGGER.info("Nastaveno nové zpoždění debounce na %.1f s", delay)
+        _LOGGER.info("Set new debounce delay to %.1f s", delay)
         self.async_write_ha_state()
 

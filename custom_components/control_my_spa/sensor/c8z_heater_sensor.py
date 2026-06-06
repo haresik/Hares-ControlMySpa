@@ -14,7 +14,7 @@ def _read_c8z_state(shared_data):
     c8z = data.get("c8zCurrentState")
     if not isinstance(c8z, dict):
         if c8z is not None:
-            _LOGGER.debug("c8zCurrentState není dict, ignoruji: %r", type(c8z).__name__)
+            _LOGGER.debug("c8zCurrentState is not a dict, ignoring: %r", type(c8z).__name__)
         return None
     return c8z
 
@@ -39,7 +39,7 @@ class SpaC8zHeaterStateSensor(SpaSensorBase):
             self._state = None
             return
         self._state = c8z.get("c8zHeaterState")
-        _LOGGER.debug("Aktualizace C8Z heater state: %s", self._state)
+        _LOGGER.debug("Updated C8Z heater state: %s", self._state)
 
     @property
     def native_value(self):
@@ -66,7 +66,7 @@ class SpaC8zStatusSensor(SpaSensorBase):
             self._state = None
             return
         self._state = c8z.get("c8zStatus")
-        _LOGGER.debug("Aktualizace C8Z status: %s", self._state)
+        _LOGGER.debug("Updated C8Z status: %s", self._state)
 
     @property
     def native_value(self):

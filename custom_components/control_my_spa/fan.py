@@ -235,10 +235,10 @@ class SpaPumpFan(FanEntity):
             if new_state == target_state:
                 self._attr_preset_mode = target_state
                 _LOGGER.info(
-                    "Úspěšně nastavena pumpa %s na %s%s",
+                    "Successfully set pump %s to %s%s",
                     self._pump_data["port"],
                     target_state,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return True
             else:
@@ -247,7 +247,7 @@ class SpaPumpFan(FanEntity):
                     self._pump_data["port"],
                     target_state,
                     new_state,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return False
         finally:
@@ -282,13 +282,13 @@ class SpaPumpFan(FanEntity):
                 if current_state == target_state:
                     self._attr_preset_mode = target_state
                     _LOGGER.info(
-                        "Pumpa %s byla nastavena na %s (ověřeno po aktualizaci)",
+                        "Pump %s was set to %s (verified after update)",
                         self._pump_data["port"],
                         target_state
                     )
                 else:
                     _LOGGER.warning(
-                        "Pumpa %s nebyla nastavena. Očekávaný stav: %s, Aktuální stav: %s",
+                        "Pump %s was not set. Expected state: %s, Current state: %s",
                         self._pump_data["port"],
                         target_state,
                         current_state
@@ -322,12 +322,12 @@ class SpaPumpFan(FanEntity):
                 if current_state == target_state:
                     self._attr_preset_mode = target_state
                     _LOGGER.info(
-                        "Pumpa %s byla vypnuta (ověřeno po aktualizaci)",
+                        "Pump %s was turned off (verified after update)",
                         self._pump_data["port"]
                     )
                 else:
                     _LOGGER.warning(
-                        "Pumpa %s nebyla vypnuta. Aktuální stav: %s",
+                        "Pump %s was not turned off. Current state: %s",
                         self._pump_data["port"],
                         current_state
                     )
@@ -404,13 +404,13 @@ class SpaPumpFan(FanEntity):
                 if current_state == target_state:
                     self._attr_preset_mode = target_state
                     _LOGGER.info(
-                        "Pumpa %s byla nastavena na %s (ověřeno po aktualizaci)",
+                        "Pump %s was set to %s (verified after update)",
                         self._pump_data["port"],
                         target_state
                     )
                 else:
                     _LOGGER.warning(
-                        "Pumpa %s nebyla nastavena. Očekávaný stav: %s, Aktuální stav: %s",
+                        "Pump %s was not set. Expected state: %s, Current state: %s",
                         self._pump_data["port"],
                         target_state,
                         current_state

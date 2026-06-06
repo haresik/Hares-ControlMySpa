@@ -34,7 +34,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
                     
                     # Volání metody setTime s aktuálním časem
                     await client.setTime(date_str, time_str, True)  # True pro 24h formát
-                    _LOGGER.info("Čas úspěšně aktualizován z %s na %s %s", current_spa_time, date_str, time_str)
+                    _LOGGER.info("Time successfully updated from %s to %s %s", current_spa_time, date_str, time_str)
                     
                     # Načtení překladů
                     translations = await translation.async_get_translations(
@@ -62,7 +62,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
                     )
                     
                     # Pro debug
-                    _LOGGER.debug("Dostupné překlady: %s", translations)
+                    _LOGGER.debug("Available translations: %s", translations)
                     
                 except Exception as e:
                     _LOGGER.error("Error updating time: %s", str(e))

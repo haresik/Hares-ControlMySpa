@@ -100,10 +100,10 @@ class SpaTzlZoneModeSelect(SpaSelectBase):
                 if new_state == target_state:
                     self._attr_current_option = target_state
                     _LOGGER.info(
-                        "Úspěšně nastavena TZL zóna %s na režim %s%s",
+                        "Successfully set TZL zone %s to mode %s%s",
                         self._tzl_zone_data["zoneId"],
                         target_state,
-                        " (2. pokus)" if is_retry else ""
+                        " (2nd attempt)" if is_retry else ""
                     )
                     return True
                 else:
@@ -112,7 +112,7 @@ class SpaTzlZoneModeSelect(SpaSelectBase):
                         self._tzl_zone_data["zoneId"],
                         target_state,
                         new_state,
-                        " (2. pokus)" if is_retry else ""
+                        " (2nd attempt)" if is_retry else ""
                     )
                     return False
             else:
@@ -144,7 +144,7 @@ class SpaTzlZoneModeSelect(SpaSelectBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu nastavit TZL zónu %s na %s", self._tzl_zone_data["zoneId"], option)
+                _LOGGER.info("Retrying to set TZL zone %s to %s", self._tzl_zone_data["zoneId"], option)
                 success = await self._try_set_tzl_zone_mode(option, True)
                 
             await self._shared_data.async_force_update()
@@ -499,9 +499,9 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
                 if new_state == "OFF":
                     self._current_option = "OFF"
                     _LOGGER.info(
-                        "Úspěšně vypnuta TZL zóna %s%s",
+                        "Successfully turned off TZL zone %s%s",
                         self._tzl_zone_data["zoneId"],
-                        " (2. pokus)" if is_retry else ""
+                        " (2nd attempt)" if is_retry else ""
                     )
                     return True
                 else:
@@ -509,7 +509,7 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
                         "TZL zone %s was not turned off. Expected state: OFF, Current state: %s%s",
                         self._tzl_zone_data["zoneId"],
                         new_state,
-                        " (2. pokus)" if is_retry else ""
+                        " (2nd attempt)" if is_retry else ""
                     )
                     return False
             else:
@@ -571,10 +571,10 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
                             self._current_option = f"{color_name} (RGB: {red},{green},{blue})"
                             
                             _LOGGER.info(
-                                "Úspěšně nastavena barva TZL zóny %s na color_id %s%s",
+                                "Successfully set TZL zone %s color to color_id %s%s",
                                 self._tzl_zone_data["zoneId"],
                                 color_id,
-                                " (2. pokus)" if is_retry else ""
+                                " (2nd attempt)" if is_retry else ""
                             )
                             return True
                         else:
@@ -583,7 +583,7 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
                                 self._tzl_zone_data["zoneId"],
                                 expected_red, expected_green, expected_blue,
                                 red, green, blue,
-                                " (2. pokus)" if is_retry else ""
+                                " (2nd attempt)" if is_retry else ""
                             )
                             return False
                     else:
@@ -615,7 +615,7 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
                 
                 # Druhý pokus pokud první selhal
                 if not success:
-                    _LOGGER.info("Zkouším znovu vypnout TZL zónu %s", self._tzl_zone_data["zoneId"])
+                    _LOGGER.info("Retrying to turn off TZL zone %s", self._tzl_zone_data["zoneId"])
                     success = await self._try_set_tzl_zone_off(True)
             else:
                 # Najít odpovídající barvu podle option v dictionary
@@ -629,7 +629,7 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
                         
                         # Druhý pokus pokud první selhal
                         if not success:
-                            _LOGGER.info("Zkouším znovu nastavit barvu TZL zóny %s na color_id %s", 
+                            _LOGGER.info("Retrying to set TZL zone %s color to color_id %s", 
                                        self._tzl_zone_data["zoneId"], color_id)
                             success = await self._try_set_tzl_zone_color(color_id, True)
                     else:
@@ -756,10 +756,10 @@ class SpaTzlZoneIntensitySelect(SpaSelectBase):
                 if new_intensity == intensity:
                     self._attr_current_option = str(intensity)
                     _LOGGER.info(
-                        "Úspěšně nastavena intenzita TZL zóny %s na %s%s",
+                        "Successfully set TZL zone %s intensity to %s%s",
                         self._tzl_zone_data["zoneId"],
                         intensity,
-                        " (2. pokus)" if is_retry else ""
+                        " (2nd attempt)" if is_retry else ""
                     )
                     return True
                 else:
@@ -768,7 +768,7 @@ class SpaTzlZoneIntensitySelect(SpaSelectBase):
                         self._tzl_zone_data["zoneId"],
                         intensity,
                         new_intensity,
-                        " (2. pokus)" if is_retry else ""
+                        " (2nd attempt)" if is_retry else ""
                     )
                     return False
             else:
@@ -801,7 +801,7 @@ class SpaTzlZoneIntensitySelect(SpaSelectBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu nastavit intenzitu TZL zóny %s na %s", self._tzl_zone_data["zoneId"], intensity)
+                _LOGGER.info("Retrying to set TZL zone %s intensity to %s", self._tzl_zone_data["zoneId"], intensity)
                 success = await self._try_set_tzl_zone_intensity(intensity, True)
                 
             await self._shared_data.async_force_update()
@@ -918,10 +918,10 @@ class SpaTzlZoneSpeedSelect(SpaSelectBase):
                 if new_speed == speed:
                     self._attr_current_option = str(speed)
                     _LOGGER.info(
-                        "Úspěšně nastavena rychlost TZL zóny %s na %s%s",
+                        "Successfully set TZL zone %s speed to %s%s",
                         self._tzl_zone_data["zoneId"],
                         speed,
-                        " (2. pokus)" if is_retry else ""
+                        " (2nd attempt)" if is_retry else ""
                     )
                     return True
                 else:
@@ -930,7 +930,7 @@ class SpaTzlZoneSpeedSelect(SpaSelectBase):
                         self._tzl_zone_data["zoneId"],
                         speed,
                         new_speed,
-                        " (2. pokus)" if is_retry else ""
+                        " (2nd attempt)" if is_retry else ""
                     )
                     return False
             else:
@@ -963,7 +963,7 @@ class SpaTzlZoneSpeedSelect(SpaSelectBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu nastavit rychlost TZL zóny %s na %s", self._tzl_zone_data["zoneId"], speed)
+                _LOGGER.info("Retrying to set TZL zone %s speed to %s", self._tzl_zone_data["zoneId"], speed)
                 success = await self._try_set_tzl_zone_speed(speed, True)
                 
             await self._shared_data.async_force_update()

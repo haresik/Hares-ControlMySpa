@@ -55,7 +55,7 @@ class SpaUpdateTimeButton(ButtonEntity):
                 {},
                 blocking=True
             )
-            _LOGGER.info("Služba pro aktualizaci času byla úspěšně zavolána")
+            _LOGGER.info("Time update service called successfully")
         except Exception as e:
             _LOGGER.error("Error calling time update service: %s", str(e))
 
@@ -84,7 +84,7 @@ class SpaTzlLightOffButton(ButtonEntity):
                     # Volání metody setChromazonePower s parametrem "OFF"
                     response = await client.setChromazonePower("OFF")
                     if response:
-                        _LOGGER.info("TZL světla byla úspěšně vypnuta")
+                        _LOGGER.info("TZL lights turned off successfully")
                     else:
                         _LOGGER.warning("Failed to turn off TZL lights")
                     break

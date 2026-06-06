@@ -121,7 +121,7 @@ class ControlMySpa:
                     async with aiofiles.open(test_file_path, 'r', encoding='utf-8') as f:
                         data = await f.read()
                         test_data = json.loads(data)
-                        _LOGGER.info(f"Načtena testovací data z {test_file_path}")
+                        _LOGGER.info(f"Loaded test data from {test_file_path}")
                         return test_data.get('data', {}).get('spas', [])
                 except FileNotFoundError:
                     _LOGGER.error(f"Test file not found: {test_file_path}")
@@ -156,7 +156,7 @@ class ControlMySpa:
                     async with aiofiles.open(test_file_path, 'r', encoding='utf-8') as f:
                         data = await f.read()
                         test_data = json.loads(data)
-                        _LOGGER.info(f"Načtena testovací data z {test_file_path}")
+                        _LOGGER.info(f"Loaded test data from {test_file_path}")
                         return self.constructCurrentState(test_data.get('data'))
                 except FileNotFoundError:
                     _LOGGER.error(f"Test file not found: {test_file_path}")

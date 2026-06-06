@@ -61,9 +61,9 @@ class SpaTempRangeSelect(SpaSelectBase):
             if new_state == target_state:
                 self._attr_current_option = target_state
                 _LOGGER.info(
-                    "Úspěšně nastaven teplotní rozsah na %s%s",
+                    "Successfully set temperature range to %s%s",
                     target_state,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
 
                 # Porovnat hodnotu z sensor.spa_desired_temperature s novou hodnotou desiredTemp
@@ -122,7 +122,7 @@ class SpaTempRangeSelect(SpaSelectBase):
                                 )
                                 
                                 _LOGGER.info(
-                                    "Notifikace odeslána: Změna požadované teploty v HIGH rozsahu z %s°C na %s°C",
+                                    "Notification sent: Desired temperature in HIGH range changed from %s°C to %s°C",
                                     current_high_range_temp,
                                     new_desired_temp_c
                                 )
@@ -135,7 +135,7 @@ class SpaTempRangeSelect(SpaSelectBase):
                     "Temperature range was not set. Expected state: %s, Current state: %s%s",
                     target_state,
                     new_state,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return False
         finally:
@@ -155,7 +155,7 @@ class SpaTempRangeSelect(SpaSelectBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu nastavit teplotní rozsah na %s", option)
+                _LOGGER.info("Retrying to set temperature range to %s", option)
                 success = await self._try_set_temp_range(option, True)
                 
             await self._shared_data.async_force_update()
@@ -213,9 +213,9 @@ class SpaHeaterModeSelect(SpaSelectBase):
             if new_state == target_state:
                 self._attr_current_option = target_state
                 _LOGGER.info(
-                    "Úspěšně nastaven režim ohřevu na %s%s",
+                    "Successfully set heater mode to %s%s",
                     target_state,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return True
             else:
@@ -223,7 +223,7 @@ class SpaHeaterModeSelect(SpaSelectBase):
                     "Heater mode was not set. Expected state: %s, Current state: %s%s",
                     target_state,
                     new_state,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return False
         finally:
@@ -243,7 +243,7 @@ class SpaHeaterModeSelect(SpaSelectBase):
 
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu nastavit režim ohřevu na %s", option)
+                _LOGGER.info("Retrying to set heater mode to %s", option)
                 success = await self._try_set_heater_mode(option, True)
 
             await self._shared_data.async_force_update()

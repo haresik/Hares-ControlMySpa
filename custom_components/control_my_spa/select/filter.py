@@ -129,10 +129,10 @@ class SpaFilterTimeSelect(SpaSelectBase):
                     if response_time_str == time_str:
                         self._attr_current_option = time_str
                         _LOGGER.info(
-                            "Úspěšně nastaven čas filtru %s na %s%s",
+                            "Successfully set filter %s time to %s%s",
                             self._filter_data["port"],
                             time_str,
-                            " (2. pokus)" if is_retry else ""
+                            " (2nd attempt)" if is_retry else ""
                         )
                         return True
                     else:
@@ -141,7 +141,7 @@ class SpaFilterTimeSelect(SpaSelectBase):
                             self._filter_data["port"],
                             time_str,
                             response_time_str,
-                            " (2. pokus)" if is_retry else ""
+                            " (2nd attempt)" if is_retry else ""
                         )
                         return False
                 else:
@@ -176,7 +176,7 @@ class SpaFilterTimeSelect(SpaSelectBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu nastavit čas filtru %s na %s", self._filter_data["port"], option)
+                _LOGGER.info("Retrying to set filter %s time to %s", self._filter_data["port"], option)
                 success = await self._try_set_filter_time(option, True)
                 
             await self._shared_data.async_force_update()
@@ -335,10 +335,10 @@ class SpaFilterDurationSelect(SpaSelectBase):
                     if response_duration_str == duration_str:
                         self._attr_current_option = duration_str
                         _LOGGER.info(
-                            "Úspěšně nastavena délka filtru %s na %s%s",
+                            "Successfully set filter %s duration to %s%s",
                             self._filter_data["port"],
                             duration_str,
-                            " (2. pokus)" if is_retry else ""
+                            " (2nd attempt)" if is_retry else ""
                         )
                         return True
                     else:
@@ -347,7 +347,7 @@ class SpaFilterDurationSelect(SpaSelectBase):
                             self._filter_data["port"],
                             duration_str,
                             response_duration_str,
-                            " (2. pokus)" if is_retry else ""
+                            " (2nd attempt)" if is_retry else ""
                         )
                         return False
                 else:
@@ -382,7 +382,7 @@ class SpaFilterDurationSelect(SpaSelectBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu nastavit délku filtru %s na %s", self._filter_data["port"], option)
+                _LOGGER.info("Retrying to set filter %s duration to %s", self._filter_data["port"], option)
                 success = await self._try_set_filter_duration(option, True)
                 
             await self._shared_data.async_force_update()

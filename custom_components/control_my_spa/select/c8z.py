@@ -36,7 +36,7 @@ def _read_c8z_dict(shared_data: Any) -> dict | None:
     c8z = data.get("c8zCurrentState")
     if not isinstance(c8z, dict):
         if c8z is not None:
-            _LOGGER.debug("c8zCurrentState není dict, ignoruji: %r", type(c8z).__name__)
+            _LOGGER.debug("c8zCurrentState is not a dict, ignoring: %r", type(c8z).__name__)
         return None
     return c8z
 
@@ -95,7 +95,7 @@ class SpaC8zHeaterSelect(SpaSelectBase):
             return
         val = c8z.get(self._FIELD)
         self._attr_current_option = val if val in self._attr_options else None
-        _LOGGER.debug("Aktualizace C8Z heater select: %s", self._attr_current_option)
+        _LOGGER.debug("Updated C8Z heater select: %s", self._attr_current_option)
 
     async def _try_set(self, option: str, is_retry: bool = False) -> bool:
         self._is_processing = True
@@ -108,16 +108,16 @@ class SpaC8zHeaterSelect(SpaSelectBase):
             if new_state == option:
                 self._attr_current_option = option
                 _LOGGER.info(
-                    "C8Z heater nastaven na %s%s",
+                    "C8Z heater set to %s%s",
                     option,
-                    " (2. pokus)" if is_retry else "",
+                    " (2nd attempt)" if is_retry else "",
                 )
                 return True
             _LOGGER.warning(
-                "C8Z heater se nepodařilo nastavit. Očekáváno: %s, vráceno: %s%s",
+                "Failed to set C8Z heater. Expected: %s, returned: %s%s",
                 option,
                 new_state,
-                " (2. pokus)" if is_retry else "",
+                " (2nd attempt)" if is_retry else "",
             )
             return False
         finally:
@@ -131,11 +131,11 @@ class SpaC8zHeaterSelect(SpaSelectBase):
             self._shared_data.pause_updates()
             success = await self._try_set(option)
             if not success:
-                _LOGGER.info("Opakuji nastavení C8Z heater na %s", option)
+                _LOGGER.info("Retrying to set C8Z heater to %s", option)
                 await self._try_set(option, True)
             await self._shared_data.async_force_update()
         except Exception as e:
-            _LOGGER.error("Chyba při nastavení C8Z heater na %s: %s", option, e)
+            _LOGGER.error("Error setting C8Z heater to %s: %s", option, e)
         finally:
             self._shared_data.resume_updates()
 
@@ -179,7 +179,7 @@ class SpaC8zModeSelect(SpaSelectBase):
             return
         val = c8z.get(self._FIELD)
         self._attr_current_option = val if val in self._attr_options else None
-        _LOGGER.debug("Aktualizace C8Z mode select: %s", self._attr_current_option)
+        _LOGGER.debug("Updated C8Z mode select: %s", self._attr_current_option)
 
     async def _try_set(self, option: str, is_retry: bool = False) -> bool:
         self._is_processing = True
@@ -192,16 +192,16 @@ class SpaC8zModeSelect(SpaSelectBase):
             if new_state == option:
                 self._attr_current_option = option
                 _LOGGER.info(
-                    "C8Z mode nastaven na %s%s",
+                    "C8Z mode set to %s%s",
                     option,
-                    " (2. pokus)" if is_retry else "",
+                    " (2nd attempt)" if is_retry else "",
                 )
                 return True
             _LOGGER.warning(
-                "C8Z mode se nepodařilo nastavit. Očekáváno: %s, vráceno: %s%s",
+                "Failed to set C8Z mode. Expected: %s, returned: %s%s",
                 option,
                 new_state,
-                " (2. pokus)" if is_retry else "",
+                " (2nd attempt)" if is_retry else "",
             )
             return False
         finally:
@@ -215,11 +215,11 @@ class SpaC8zModeSelect(SpaSelectBase):
             self._shared_data.pause_updates()
             success = await self._try_set(option)
             if not success:
-                _LOGGER.info("Opakuji nastavení C8Z mode na %s", option)
+                _LOGGER.info("Retrying to set C8Z mode to %s", option)
                 await self._try_set(option, True)
             await self._shared_data.async_force_update()
         except Exception as e:
-            _LOGGER.error("Chyba při nastavení C8Z mode na %s: %s", option, e)
+            _LOGGER.error("Error setting C8Z mode to %s: %s", option, e)
         finally:
             self._shared_data.resume_updates()
 
@@ -262,7 +262,7 @@ class SpaC8zSpeedSelect(SpaSelectBase):
             return
         val = c8z.get(self._FIELD)
         self._attr_current_option = val if val in self._attr_options else None
-        _LOGGER.debug("Aktualizace C8Z speed select: %s", self._attr_current_option)
+        _LOGGER.debug("Updated C8Z speed select: %s", self._attr_current_option)
 
     async def _try_set(self, option: str, is_retry: bool = False) -> bool:
         self._is_processing = True
@@ -275,16 +275,16 @@ class SpaC8zSpeedSelect(SpaSelectBase):
             if new_state == option:
                 self._attr_current_option = option
                 _LOGGER.info(
-                    "C8Z speed nastaven na %s%s",
+                    "C8Z speed set to %s%s",
                     option,
-                    " (2. pokus)" if is_retry else "",
+                    " (2nd attempt)" if is_retry else "",
                 )
                 return True
             _LOGGER.warning(
-                "C8Z speed se nepodařilo nastavit. Očekáváno: %s, vráceno: %s%s",
+                "Failed to set C8Z speed. Expected: %s, returned: %s%s",
                 option,
                 new_state,
-                " (2. pokus)" if is_retry else "",
+                " (2nd attempt)" if is_retry else "",
             )
             return False
         finally:
@@ -298,10 +298,10 @@ class SpaC8zSpeedSelect(SpaSelectBase):
             self._shared_data.pause_updates()
             success = await self._try_set(option)
             if not success:
-                _LOGGER.info("Opakuji nastavení C8Z speed na %s", option)
+                _LOGGER.info("Retrying to set C8Z speed to %s", option)
                 await self._try_set(option, True)
             await self._shared_data.async_force_update()
         except Exception as e:
-            _LOGGER.error("Chyba při nastavení C8Z speed na %s: %s", option, e)
+            _LOGGER.error("Error setting C8Z speed to %s: %s", option, e)
         finally:
             self._shared_data.resume_updates()

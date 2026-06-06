@@ -45,7 +45,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     password = config_entry.data["password"]
     spa_id = config_entry.data["spa_id"]
     minUpdate = config_entry.data.get("updateintervalminutes", 2)
-    _LOGGER.info("Aktuální lokalizace uživatele: %s", hass.config.language)
+    _LOGGER.info("Current user locale: %s", hass.config.language)
 
     # translations = await hass.helpers.translation.async_get_translations(hass.config.language, "entity")
     # light_translation = translations.get("component.control_my_spa.entity.select.light.name", "Překlad nenalezen")

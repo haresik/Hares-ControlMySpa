@@ -154,20 +154,20 @@ class SpaLightSwitch(SpaSwitchBase):
             if new_state == target_state:
                 self._attr_is_on = (target_state == self._on_value)
                 _LOGGER.info(
-                    "Úspěšně %s světlo %s%s",
-                    "zapnuto" if target_state == self._on_value else "vypnuto",
+                    "Successfully %s light %s%s",
+                    "turned on" if target_state == self._on_value else "turned off",
                     self._light_data["port"],
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return True
             else:
                 _LOGGER.warning(
                     "Light %s was not %s. Expected state: %s, Current state: %s%s",
                     self._light_data["port"],
-                    "zapnuto" if target_state == self._on_value else "vypnuto",
+                    "turned on" if target_state == self._on_value else "turned off",
                     target_state,
                     new_state,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return False
         finally:
@@ -184,7 +184,7 @@ class SpaLightSwitch(SpaSwitchBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu zapnout světlo %s", self._light_data["port"])
+                _LOGGER.info("Retrying to turn on light %s", self._light_data["port"])
                 success = await self._try_set_light_state(device_number, self._on_value, True)
                 
             await self._shared_data.async_force_update()
@@ -206,7 +206,7 @@ class SpaLightSwitch(SpaSwitchBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu vypnout světlo %s", self._light_data["port"])
+                _LOGGER.info("Retrying to turn off light %s", self._light_data["port"])
                 success = await self._try_set_light_state(device_number, self._off_value, True)
                 
             await self._shared_data.async_force_update()
@@ -317,22 +317,22 @@ class SpaPumpSwitch(SpaSwitchBase):
             if expected_is_on == actual_is_on:
                 self._attr_is_on = actual_is_on
                 _LOGGER.info(
-                    "Úspěšně %s čerpadlo %s%s",
-                    "zapnuto" if expected_is_on else "vypnuto",
+                    "Successfully %s pump %s%s",
+                    "turned on" if expected_is_on else "turned off",
                     self._pump_data["port"],
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return True
             else:
                 _LOGGER.warning(
                     "Pump %s was not %s. Expected state: %s (%s), Current state: %s (%s)%s",
                     self._pump_data["port"],
-                    "zapnuto" if expected_is_on else "vypnuto",
+                    "turned on" if expected_is_on else "turned off",
                     target_state,
                     expected_is_on,
                     new_state,
                     actual_is_on,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return False
         finally:
@@ -349,7 +349,7 @@ class SpaPumpSwitch(SpaSwitchBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu zapnout čerpadlo %s", self._pump_data["port"])
+                _LOGGER.info("Retrying to turn on pump %s", self._pump_data["port"])
                 success = await self._try_set_pump_state(device_number, self._on_value, True)
                 
             await self._shared_data.async_force_update()
@@ -371,7 +371,7 @@ class SpaPumpSwitch(SpaSwitchBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu vypnout čerpadlo %s", self._pump_data["port"])
+                _LOGGER.info("Retrying to turn off pump %s", self._pump_data["port"])
                 success = await self._try_set_pump_state(device_number, self._off_value, True)
                 
             await self._shared_data.async_force_update()
@@ -476,22 +476,22 @@ class SpaPumpLowSwitch(SpaSwitchBase):
             if expected_is_on == actual_is_on:
                 self._attr_is_on = actual_is_on
                 _LOGGER.info(
-                    "Úspěšně %s čerpadlo Low %s%s",
-                    "zapnuto" if expected_is_on else "vypnuto",
+                    "Successfully %s pump Low %s%s",
+                    "turned on" if expected_is_on else "turned off",
                     self._pump_data["port"],
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return True
             else:
                 _LOGGER.warning(
                     "Pump Low %s was not %s. Expected state: %s (%s), Current state: %s (%s)%s",
                     self._pump_data["port"],
-                    "zapnuto" if expected_is_on else "vypnuto",
+                    "turned on" if expected_is_on else "turned off",
                     target_state,
                     expected_is_on,
                     new_state,
                     actual_is_on,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return False
         finally:
@@ -508,7 +508,7 @@ class SpaPumpLowSwitch(SpaSwitchBase):
             
             # Logování pokud první pokus selhal (bez druhého pokusu)
             if not success:
-                _LOGGER.info("První pokus o zapnutí čerpadla Low %s selhal", self._pump_data["port"])
+                _LOGGER.info("First attempt to turn on pump Low %s failed", self._pump_data["port"])
                 
             await self._shared_data.async_force_update()
         except ValueError as ve:
@@ -529,7 +529,7 @@ class SpaPumpLowSwitch(SpaSwitchBase):
             
             # Logování pokud první pokus selhal (bez druhého pokusu)
             if not success:
-                _LOGGER.info("První pokus o vypnutí čerpadla Low %s selhal", self._pump_data["port"])
+                _LOGGER.info("First attempt to turn off pump Low %s failed", self._pump_data["port"])
                 
             await self._shared_data.async_force_update()
         except ValueError as ve:
@@ -639,22 +639,22 @@ class SpaBlowerSwitch(SpaSwitchBase):
             if expected_is_on == actual_is_on:
                 self._attr_is_on = actual_is_on
                 _LOGGER.info(
-                    "Úspěšně %s vzduchovač %s%s",
-                    "zapnut" if expected_is_on else "vypnut",
+                    "Successfully %s blower %s%s",
+                    "turned on" if expected_is_on else "turned off",
                     self._blower_data["port"],
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return True
             else:
                 _LOGGER.warning(
                     "Blower %s was not %s. Expected state: %s (%s), Current state: %s (%s)%s",
                     self._blower_data["port"],
-                    "zapnut" if expected_is_on else "vypnut",
+                    "turned on" if expected_is_on else "turned off",
                     target_state,
                     expected_is_on,
                     new_state,
                     actual_is_on,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return False
         finally:
@@ -671,7 +671,7 @@ class SpaBlowerSwitch(SpaSwitchBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu zapnout vzduchovač %s", self._blower_data["port"])
+                _LOGGER.info("Retrying to turn on blower %s", self._blower_data["port"])
                 success = await self._try_set_blower_state(device_number, self._on_value, True)
                 
             await self._shared_data.async_force_update()
@@ -693,7 +693,7 @@ class SpaBlowerSwitch(SpaSwitchBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu vypnout vzduchovač %s", self._blower_data["port"])
+                _LOGGER.info("Retrying to turn off blower %s", self._blower_data["port"])
                 success = await self._try_set_blower_state(device_number, self._off_value, True)
                 
             await self._shared_data.async_force_update()
@@ -766,18 +766,18 @@ class SpaTzlPowerSwitch(SpaSwitchBase):
             if new_state == expected_state:
                 self._attr_is_on = expected_state
                 _LOGGER.info(
-                    "Úspěšně %s TZL světla%s",
-                    "zapnuto" if power_state == "ON" else "vypnuto",
-                    " (2. pokus)" if is_retry else ""
+                    "Successfully %s TZL lights%s",
+                    "turned on" if power_state == "ON" else "turned off",
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return True
             else:
                 _LOGGER.warning(
-                    "TZL světla nebyla %s. Očekávaný stav: %s, Aktuální stav: %s%s",
-                    "zapnuto" if power_state == "ON" else "vypnuto",
+                    "TZL lights were not %s. Expected state: %s, Current state: %s%s",
+                    "turned on" if power_state == "ON" else "turned off",
                     expected_state,
                     new_state,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return False
         finally:
@@ -794,7 +794,7 @@ class SpaTzlPowerSwitch(SpaSwitchBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu zapnout TZL světla")
+                _LOGGER.info("Retrying to turn on TZL lights")
                 success = await self._try_set_tzl_power_state("ON", True)
                 
             await self._shared_data.async_force_update()
@@ -813,7 +813,7 @@ class SpaTzlPowerSwitch(SpaSwitchBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu vypnout TZL světla")
+                _LOGGER.info("Retrying to turn off TZL lights")
                 success = await self._try_set_tzl_power_state("OFF", True)
                 
             await self._shared_data.async_force_update()
@@ -892,18 +892,18 @@ class SpaFilter2Switch(SpaSwitchBase):
             if new_state == expected_state:
                 self._attr_is_on = expected_state
                 _LOGGER.info(
-                    "Úspěšně %s druhý filtr%s",
-                    "zapnuto" if state == "ON" else "vypnuto",
-                    " (2. pokus)" if is_retry else ""
+                    "Successfully %s filter 2%s",
+                    "turned on" if state == "ON" else "turned off",
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return True
             else:
                 _LOGGER.warning(
-                    "Druhý filtr nebyl %s. Očekávaný stav: %s, Aktuální stav: %s%s",
-                    "zapnuto" if state == "ON" else "vypnuto",
+                    "Filter 2 was not %s. Expected state: %s, Current state: %s%s",
+                    "turned on" if state == "ON" else "turned off",
                     expected_state,
                     new_state,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return False
         finally:
@@ -920,7 +920,7 @@ class SpaFilter2Switch(SpaSwitchBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu zapnout druhý filtr")
+                _LOGGER.info("Retrying to turn on filter 2")
                 success = await self._try_set_filter2_state("ON", True)
                 
             await self._shared_data.async_force_update()
@@ -939,7 +939,7 @@ class SpaFilter2Switch(SpaSwitchBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu vypnout druhý filtr")
+                _LOGGER.info("Retrying to turn off filter 2")
                 success = await self._try_set_filter2_state("OFF", True)
                 
             await self._shared_data.async_force_update()
@@ -1007,18 +1007,18 @@ class SpaPanelLockSwitch(SpaSwitchBase):
             if new_state == locked:
                 self._attr_is_on = locked
                 _LOGGER.info(
-                    "Úspěšně %s panel%s",
-                    "zamčen" if locked else "odemčen",
-                    " (2. pokus)" if is_retry else "",
+                    "Successfully %s panel%s",
+                    "locked" if locked else "unlocked",
+                    " (2nd attempt)" if is_retry else "",
                 )
                 return True
 
             _LOGGER.warning(
-                "Panel nebyl %s. Očekávaný stav: %s, Aktuální stav: %s%s",
-                "zamčen" if locked else "odemčen",
+                "Panel was not %s. Expected state: %s, Current state: %s%s",
+                "locked" if locked else "unlocked",
                 locked,
                 new_state,
-                " (2. pokus)" if is_retry else "",
+                " (2nd attempt)" if is_retry else "",
             )
             return False
         finally:
@@ -1031,7 +1031,7 @@ class SpaPanelLockSwitch(SpaSwitchBase):
             self._shared_data.pause_updates()
             success = await self._try_set_panel_lock_state(True)
             if not success:
-                _LOGGER.info("Zkouším znovu zamknout panel")
+                _LOGGER.info("Retrying to engage panel lock")
                 success = await self._try_set_panel_lock_state(True, True)
             await self._shared_data.async_force_update()
         except Exception as e:
@@ -1045,7 +1045,7 @@ class SpaPanelLockSwitch(SpaSwitchBase):
             self._shared_data.pause_updates()
             success = await self._try_set_panel_lock_state(False)
             if not success:
-                _LOGGER.info("Zkouším znovu odemknout panel")
+                _LOGGER.info("Retrying to release panel lock")
                 success = await self._try_set_panel_lock_state(False, True)
             await self._shared_data.async_force_update()
         except Exception as e:

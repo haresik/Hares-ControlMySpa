@@ -353,7 +353,7 @@ class SpaTzlZoneLight(LightEntity):
                 if intensity_response is None:
                     _LOGGER.warning("Function setChromazoneBrightness, parameter %s is not supported", intensity)
                 else:
-                    _LOGGER.info("Úspěšně nastavena intenzita TZL zóny %s na %s", self._tzl_zone_data["zoneId"], intensity)
+                    _LOGGER.info("Successfully set TZL zone %s intensity to %s", self._tzl_zone_data["zoneId"], intensity)
             
             # Zpracovat barvu z výběrových barev
             if "rgb_color" in kwargs:
@@ -379,7 +379,7 @@ class SpaTzlZoneLight(LightEntity):
                     if color_response is None:
                         _LOGGER.warning("Function setChromazoneColor, parameter %s is not supported", color_id)
                     else:
-                        _LOGGER.info("Úspěšně nastavena barva TZL zóny %s na color_id %s", self._tzl_zone_data["zoneId"], color_id)
+                        _LOGGER.info("Successfully set TZL zone %s color to color_id %s", self._tzl_zone_data["zoneId"], color_id)
                 else:
                     _LOGGER.warning("Selected color %s not found in available colors: %s", rgb, available_rgb_colors)
                     # Najít nejbližší dostupnou barvu
@@ -400,7 +400,7 @@ class SpaTzlZoneLight(LightEntity):
                             self._tzl_zone_data["zoneId"]
                         )
                         if color_response:
-                            _LOGGER.info("Úspěšně nastavena nejbližší barva TZL zóny %s na color_id %s", self._tzl_zone_data["zoneId"], color_id)
+                            _LOGGER.info("Successfully set closest TZL zone %s color to color_id %s", self._tzl_zone_data["zoneId"], color_id)
             
             await self._shared_data.async_force_update()
         except Exception as e:
@@ -453,7 +453,7 @@ class SpaTzlZoneLight(LightEntity):
                 new_state = tzl_zone["state"] if tzl_zone else None
                 
                 if new_state == "OFF":
-                    _LOGGER.info("Úspěšně vypnuta TZL zóna %s", self._tzl_zone_data["zoneId"])
+                    _LOGGER.info("Successfully turned off TZL zone %s", self._tzl_zone_data["zoneId"])
                 else:
                     _LOGGER.warning(
                         "TZL zone %s was not turned off. Expected state: OFF, Current state: %s",

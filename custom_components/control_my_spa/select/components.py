@@ -86,10 +86,10 @@ class SpaPumpSelect(SpaSelectBase):
             if new_state == target_state:
                 self._attr_current_option = target_state
                 _LOGGER.info(
-                    "Úspěšně nastaveno čerpadlo %s na %s%s",
+                    "Successfully set pump %s to %s%s",
                     self._pump_data["port"],
                     target_state,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return True
             else:
@@ -98,7 +98,7 @@ class SpaPumpSelect(SpaSelectBase):
                     self._pump_data["port"],
                     target_state,
                     new_state,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return False
         finally:
@@ -119,7 +119,7 @@ class SpaPumpSelect(SpaSelectBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu nastavit čerpadlo %s na %s", self._pump_data["port"], option)
+                _LOGGER.info("Retrying to set pump %s to %s", self._pump_data["port"], option)
                 success = await self._try_set_pump_state(device_number, option, True)
                 
             await self._shared_data.async_force_update()
@@ -190,10 +190,10 @@ class SpaLightSelect(SpaSelectBase):
             if new_state == target_state:
                 self._attr_current_option = target_state
                 _LOGGER.info(
-                    "Úspěšně nastaveno světlo %s na %s%s",
+                    "Successfully set light %s to %s%s",
                     self._light_data["port"],
                     target_state,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return True
             else:
@@ -202,7 +202,7 @@ class SpaLightSelect(SpaSelectBase):
                     self._light_data["port"],
                     target_state,
                     new_state,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return False
         finally:
@@ -223,7 +223,7 @@ class SpaLightSelect(SpaSelectBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu nastavit světlo %s na %s", self._light_data["port"], option)
+                _LOGGER.info("Retrying to set light %s to %s", self._light_data["port"], option)
                 success = await self._try_set_light_state(device_number, option, True)
                 
             await self._shared_data.async_force_update()
@@ -294,10 +294,10 @@ class SpaBlowerSelect(SpaSelectBase):
             if new_state == target_state:
                 self._attr_current_option = target_state
                 _LOGGER.info(
-                    "Úspěšně nastaven vzduchovač %s na %s%s",
+                    "Successfully set blower %s to %s%s",
                     self._blower_data["port"],
                     target_state,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return True
             else:
@@ -306,7 +306,7 @@ class SpaBlowerSelect(SpaSelectBase):
                     self._blower_data["port"],
                     target_state,
                     new_state,
-                    " (2. pokus)" if is_retry else ""
+                    " (2nd attempt)" if is_retry else ""
                 )
                 return False
         finally:
@@ -327,7 +327,7 @@ class SpaBlowerSelect(SpaSelectBase):
             
             # Druhý pokus pokud první selhal
             if not success:
-                _LOGGER.info("Zkouším znovu nastavit vzduchovač %s na %s", self._blower_data["port"], option)
+                _LOGGER.info("Retrying to set blower %s to %s", self._blower_data["port"], option)
                 success = await self._try_set_blower_state(device_number, option, True)
                 
             await self._shared_data.async_force_update()
