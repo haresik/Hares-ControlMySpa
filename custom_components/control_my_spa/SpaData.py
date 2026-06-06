@@ -77,3 +77,15 @@ class SpaData:
     def data(self):
         """Vrací aktuální data."""
         return self._data
+
+    @property
+    def is_remote_control_allowed(self) -> bool:
+        """Vzdálené ovládání povoleno jen když je vana online a panel není zamčen."""
+        data = self._data
+        if not data:
+            return False
+        if not data.get("isOnline", False):
+            return False
+        if data.get("panelLock", False):
+            return False
+        return True

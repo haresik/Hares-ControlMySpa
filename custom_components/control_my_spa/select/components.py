@@ -24,11 +24,6 @@ class SpaPumpSelect(SpaSelectBase):
         self._is_processing = False  # Příznak zpracování
 
     @property
-    def available(self) -> bool:
-        """Indikuje, zda je entita dostupná pro ovládání."""
-        return not self._is_processing
-
-    @property
     def icon(self):
         if self._is_processing:
             return "mdi:sync"  # Ikona pro zpracování
@@ -149,11 +144,6 @@ class SpaLightSelect(SpaSelectBase):
         self._is_processing = False  # Příznak zpracování
 
     @property
-    def available(self) -> bool:
-        """Indikuje, zda je entita dostupná pro ovládání."""
-        return not self._is_processing
-
-    @property
     def icon(self):
         if self._is_processing:
             return "mdi:sync"  # Ikona pro zpracování
@@ -251,11 +241,6 @@ class SpaBlowerSelect(SpaSelectBase):
         self._attr_translation_key = f"blower" if blower_count == 1 or blower_data['port'] == None else f"blower_{int(blower_data['port']) + 1}"
         self.entity_id = self._attr_unique_id 
         self._is_processing = False  # Příznak zpracování
-
-    @property
-    def available(self) -> bool:
-        """Indikuje, zda je entita dostupná pro ovládání."""
-        return not self._is_processing
 
     @property
     def icon(self):

@@ -84,7 +84,9 @@ class SpaPumpFan(FanEntity):
     @property
     def available(self) -> bool:
         """Indikuje, zda je entita dostupná pro ovládání."""
-        return not self._is_processing
+        if self._is_processing:
+            return False
+        return self._shared_data.is_remote_control_allowed
 
     @property
     def icon(self):

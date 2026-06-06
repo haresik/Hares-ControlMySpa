@@ -21,7 +21,7 @@ async def async_setup_entry(
     unique_id_suffix = data["unique_id_suffix"]
 
     # Seznam tlačítek k přidání
-    buttons = [SpaUpdateTimeButton(hass, device_info, unique_id_suffix)]
+    buttons = [SpaUpdateTimeButton(hass, shared_data, device_info, unique_id_suffix)]
     
     # Kontrola, jestli jsou k dispozici TZL zóny
     if shared_data.data:
@@ -36,15 +36,21 @@ class SpaUpdateTimeButton(ButtonEntity):
 
     _attr_has_entity_name = True
 
-    def __init__(self, hass: HomeAssistant, device_info, unique_id_suffix):
+    def __init__(self, hass: HomeAssistant, shared_data, device_info, unique_id_suffix):
         """Inicializace tlačítka."""
         self.hass = hass
+        self._shared_data = shared_data
         self._attr_device_info = device_info
         self._attr_entity_category = EntityCategory.CONFIG  # sekce Nastavení na kartě zařízení
         self._attr_unique_id = f"button.spa_update_time{unique_id_suffix}"
         self._attr_translation_key = "update_time"
         self._attr_icon = "mdi:clock-outline"
         self.entity_id = self._attr_unique_id
+
+    @property
+    def available(self) -> bool:
+        """Indikuje, zda je entita dostupná pro ovládání."""
+        return self._shared_data.is_remote_control_allowed
 
     async def async_press(self) -> None:
         """Zpracování stisku tlačítka."""

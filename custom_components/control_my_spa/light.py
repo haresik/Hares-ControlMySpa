@@ -116,6 +116,11 @@ class SpaTzlZoneLight(LightEntity):
         self.entity_id = self._attr_unique_id
         _LOGGER.debug("Set entity_id in __init__: %s", self.entity_id)
 
+    @property
+    def available(self) -> bool:
+        """Indikuje, zda je entita dostupná pro ovládání."""
+        return self._shared_data.is_remote_control_allowed
+
     async def async_added_to_hass(self):
         """Called when entity is added to Home Assistant."""
         _LOGGER.debug("Entity added to hass: %s", self.entity_id)

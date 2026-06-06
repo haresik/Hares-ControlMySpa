@@ -84,6 +84,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class SpaSwitchBase(SwitchEntity):
     _attr_has_entity_name = True
 
+    @property
+    def available(self) -> bool:
+        """Indikuje, zda je entita dostupná pro ovládání."""
+        if getattr(self, "_is_processing", False):
+            return False
+        if self._attr_translation_key == "panel_lock":
+            return True
+        return self._shared_data.is_remote_control_allowed
+
 class SpaLightSwitch(SpaSwitchBase):
     def __init__(self, shared_data, device_info, unique_id_suffix, light_data, light_count):
         self._shared_data = shared_data
@@ -104,11 +113,6 @@ class SpaLightSwitch(SpaSwitchBase):
         self._off_value = self._available_values[0]  # První hodnota pro vypnuto
         self._on_value = self._available_values[-1]  # Poslední hodnota pro zapnuto
         self._is_processing = False  # Příznak zpracování
-
-    @property
-    def available(self) -> bool:
-        """Indikuje, zda je entita dostupná pro ovládání."""
-        return not self._is_processing
 
     @property
     def icon(self):
@@ -242,11 +246,6 @@ class SpaPumpSwitch(SpaSwitchBase):
         self._off_value = "OFF"  # Pevná hodnota pro vypnuto
         self._on_value = "HIGH"  # Pevná hodnota pro zapnuto
         self._is_processing = False  # Příznak zpracování
-
-    @property
-    def available(self) -> bool:
-        """Indikuje, zda je entita dostupná pro ovládání."""
-        return not self._is_processing
 
     @property
     def icon(self):
@@ -421,11 +420,6 @@ class SpaPumpLowSwitch(SpaSwitchBase):
         self._is_processing = False  # Příznak zpracování
 
     @property
-    def available(self) -> bool:
-        """Indikuje, zda je entita dostupná pro ovládání."""
-        return not self._is_processing
-
-    @property
     def icon(self):
         if self._is_processing:
             return "mdi:sync"  # Ikona pro zpracování
@@ -564,11 +558,6 @@ class SpaBlowerSwitch(SpaSwitchBase):
         self._off_value = "OFF"  # Pevná hodnota pro vypnuto
         self._on_value = "HIGH"  # Pevná hodnota pro zapnuto
         self._is_processing = False  # Příznak zpracování
-
-    @property
-    def available(self) -> bool:
-        """Indikuje, zda je entita dostupná pro ovládání."""
-        return not self._is_processing
 
     @property
     def icon(self):
@@ -719,11 +708,6 @@ class SpaTzlPowerSwitch(SpaSwitchBase):
         self._is_processing = False
 
     @property
-    def available(self) -> bool:
-        """Indikuje, zda je entita dostupná pro ovládání."""
-        return not self._is_processing
-        
-    @property
     def icon(self):
         if self._is_processing:
             return "mdi:sync"  # Ikona pro zpracování
@@ -836,11 +820,6 @@ class SpaFilter2Switch(SpaSwitchBase):
         self._attr_icon = "mdi:water-sync"
         self._is_processing = False
 
-    @property
-    def available(self) -> bool:
-        """Indikuje, zda je entita dostupná pro ovládání."""
-        return not self._is_processing
-        
     @property
     def icon(self):
         if self._is_processing:
@@ -965,7 +944,7 @@ class SpaPanelLockSwitch(SpaSwitchBase):
 
     @property
     def available(self) -> bool:
-        """Indikuje, zda je entita dostupná pro ovládání."""
+        """Panel lock zůstane ovladatelný pro odemknutí na dálku."""
         return not self._is_processing
 
     @property

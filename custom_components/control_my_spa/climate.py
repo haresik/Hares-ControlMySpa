@@ -95,6 +95,11 @@ class SpaClimate(ClimateEntity):
             self.async_write_ha_state()
 
     @property
+    def available(self) -> bool:
+        """Indikuje, zda je entita dostupná pro ovládání."""
+        return self._shared_data.is_remote_control_allowed
+
+    @property
     def current_temperature(self):
         return self._current_temperature
 

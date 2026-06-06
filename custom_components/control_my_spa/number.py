@@ -83,6 +83,13 @@ class SpaTargetDesiredTempNumber(NumberEntity):
                     )
 
     @property
+    def available(self) -> bool:
+        """Indikuje, zda je entita dostupná pro ovládání."""
+        if self._is_processing:
+            return False
+        return self._shared_data.is_remote_control_allowed
+
+    @property
     def native_value(self) -> float | None:
         """Vrací aktuální hodnotu."""
         return self._state

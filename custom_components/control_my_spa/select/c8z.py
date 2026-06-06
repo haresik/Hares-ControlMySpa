@@ -87,10 +87,6 @@ class SpaC8zHeaterSelect(SpaSelectBase):
         self._is_processing = False
 
     @property
-    def available(self) -> bool:
-        return not self._is_processing
-
-    @property
     def icon(self):
         if self._is_processing:
             return "mdi:sync"
@@ -171,10 +167,6 @@ class SpaC8zModeSelect(SpaSelectBase):
         self._is_processing = False
 
     @property
-    def available(self) -> bool:
-        return not self._is_processing
-
-    @property
     def icon(self):
         if self._is_processing:
             return "mdi:sync"
@@ -252,10 +244,6 @@ class SpaC8zSpeedSelect(SpaSelectBase):
         self._attr_translation_key = "c8z_speed"
         self.entity_id = self._attr_unique_id
         self._is_processing = False
-
-    @property
-    def available(self) -> bool:
-        return not self._is_processing
 
     @property
     def icon(self):
