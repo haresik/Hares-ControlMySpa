@@ -599,6 +599,13 @@
           "on": "On",
           "off": "Off"
         }
+      },
+      "panel_lock": {
+        "name": "Panel lock",
+        "state": {
+          "on": "Locked",
+          "off": "Unlocked"
+        }
       }
     },
     "fan": {
