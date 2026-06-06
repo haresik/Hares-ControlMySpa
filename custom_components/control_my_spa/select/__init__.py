@@ -9,7 +9,12 @@ from homeassistant.helpers import translation
 from ..const import DOMAIN
 from .base import SpaSelectBase
 from .temperature import SpaTempRangeSelect, SpaHeaterModeSelect
-from .c8z import SpaC8zHeaterSelect, SpaC8zModeSelect, SpaC8zSpeedSelect
+from .c8z import (
+    SpaC8zHeaterSelect,
+    SpaC8zModeSelect,
+    SpaC8zSpeedSelect,
+    is_c8z_installed,
+)
 from .components import SpaPumpSelect, SpaLightSelect, SpaBlowerSelect
 from .filter import SpaFilterTimeSelect, SpaFilterDurationSelect
 from .tzl import (
@@ -84,7 +89,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     entities.append(SpaTempRangeSelect(shared_data, device_info, unique_id_suffix, hass, config_options))  # Přidat entitu
     entities.append(SpaHeaterModeSelect(shared_data, device_info, unique_id_suffix))  # Přidat entitu pro heater mode
     c8z = shared_data.data.get("c8zCurrentState")
-    if isinstance(c8z, dict):
+    if isinstance(c8z, dict) and is_c8z_installed(c8z):
         # Každý select jen pokud API vrátí daný klíč v c8zCurrentState (může chybět jen část)
         if "c8zHeater" in c8z:
             entities.append(SpaC8zHeaterSelect(shared_data, device_info, unique_id_suffix))

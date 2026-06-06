@@ -18,6 +18,7 @@ from .energy import (
 )
 from .alerts import SpaFaultMessageSensor, SpaTotalAlertsSensor
 from .c8z_heater_sensor import SpaC8zHeaterStateSensor, SpaC8zStatusSensor
+from ..select.c8z import is_c8z_installed
 from .clock import SpaClockSensor
 import logging
 
@@ -108,10 +109,10 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     entities.append(SpaTotalAlertsSensor(shared_data, device_info, unique_id_suffix))
     c8z = shared_data.data.get("c8zCurrentState")
     if isinstance(c8z, dict):
-        if "c8zHeaterState" in c8z:
-            entities.append(SpaC8zHeaterStateSensor(shared_data, device_info, unique_id_suffix))
         if "c8zStatus" in c8z:
             entities.append(SpaC8zStatusSensor(shared_data, device_info, unique_id_suffix))
+        if is_c8z_installed(c8z) and "c8zHeaterState" in c8z:
+            entities.append(SpaC8zHeaterStateSensor(shared_data, device_info, unique_id_suffix))
     entities.append(SpaClockSensor(shared_data, device_info, unique_id_suffix))
 
     async_add_entities(entities, True)
