@@ -48,7 +48,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     )
 
     entities = [SpaLightSwitch(shared_data, device_info, unique_id_suffix, light, len(lights)) for light in lights]
-    entities += [SpaPumpSwitch(shared_data, device_info, pump, len(pumps), unique_id_suffix) for pump in pumps]
+    # Pump/jet control moved to fan.py (fan.spa_pump). Switch pump entity intentionally not created.
     entities += [SpaBlowerSwitch(shared_data, device_info, unique_id_suffix, blower, len(blowers)) for blower in blowers]
 
     if len(filters) >= 2:
