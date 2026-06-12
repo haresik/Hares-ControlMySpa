@@ -1,9 +1,10 @@
 """Base class for all select entities."""
 
 from homeassistant.components.select import SelectEntity
+from ..entity import SpaSubscriberMixin
 
 
-class SpaSelectBase(SelectEntity):
+class SpaSelectBase(SpaSubscriberMixin, SelectEntity):
     """Base class for all spa select entities."""
     
     _attr_has_entity_name = True

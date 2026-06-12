@@ -2,6 +2,7 @@ from homeassistant.components.number import NumberEntity
 from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from .const import DOMAIN
+from .entity import SpaSubscriberMixin
 import logging
 import asyncio
 
@@ -30,7 +31,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     for entity in entities:
         shared_data.register_subscriber(entity)
 
-class SpaTargetDesiredTempNumber(NumberEntity):
+class SpaTargetDesiredTempNumber(SpaSubscriberMixin, NumberEntity):
     """Entity pro nastavení požadované teploty vířivky s debounce logikou."""
 
     _attr_has_entity_name = True

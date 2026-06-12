@@ -5,6 +5,7 @@ from homeassistant.components.climate.const import (
 )
 from homeassistant.const import UnitOfTemperature
 from .const import DOMAIN
+from .entity import SpaSubscriberMixin
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -29,7 +30,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     for entity in entities:
         shared_data.register_subscriber(entity)
 
-class SpaClimate(ClimateEntity):
+class SpaClimate(SpaSubscriberMixin, ClimateEntity):
     _attr_has_entity_name = True
 
     def __init__(self, shared_data, device_info, unique_id_suffix):

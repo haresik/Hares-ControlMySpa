@@ -2,6 +2,7 @@ from homeassistant.components.light import LightEntity, ColorMode, LightEntityFe
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 from .const import DOMAIN
+from .entity import SpaSubscriberMixin
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -71,7 +72,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
     for entity in entities:
         shared_data.register_subscriber(entity)
 
-class SpaTzlZoneLight(LightEntity):
+class SpaTzlZoneLight(SpaSubscriberMixin, LightEntity):
     _attr_has_entity_name = True
     _attr_supported_color_modes = {ColorMode.RGB}  # RGB pro výběrové barvy (jas je součástí RGB)
     _attr_color_mode = ColorMode.RGB

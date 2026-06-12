@@ -2,6 +2,7 @@ from ast import Await
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.const import EntityCategory
 from .const import DOMAIN
+from .entity import SpaSubscriberMixin
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -81,7 +82,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         shared_data.register_subscriber(entity)
         _LOGGER.debug("Created Switch (%s) (%s)", entity._attr_unique_id, entity.entity_id)
 
-class SpaSwitchBase(SwitchEntity):
+class SpaSwitchBase(SpaSubscriberMixin, SwitchEntity):
     _attr_has_entity_name = True
 
     @property

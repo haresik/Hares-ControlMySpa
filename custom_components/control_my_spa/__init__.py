@@ -69,6 +69,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
 
     if not balboa_data.data:
         _LOGGER.error("Failed to initialize ControlMySpa client, no data")
+        balboa_data.pause_updates()
         return False
 
     serial_number = spa_id if TEST_SPAOWNER else (balboa_data.data.get("serialNumber") if balboa_data and balboa_data.data else "unknown")
@@ -101,8 +102,15 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     # Odebrání služeb
     await async_unload_services(hass)
 
+    entry_data = hass.data.get(DOMAIN, {}).get(config_entry.entry_id)
+    if entry_data:
+        balboa_data = entry_data.get("data")
+        if balboa_data:
+            balboa_data.pause_updates()
+            balboa_data.clear_subscribers()
+
     # Odregistrovat platformy
     if unload_ok := await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS):
-        hass.data[DOMAIN].pop(config_entry.entry_id)
+        hass.data[DOMAIN].pop(config_entry.entry_id, None)
 
     return unload_ok

@@ -4,6 +4,7 @@ from homeassistant.const import UnitOfTemperature
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.core import HomeAssistant
 from .const import DOMAIN
+from .entity import SpaSubscriberMixin
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,7 +32,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entitie
         shared_data.register_subscriber(entity)
 
 
-class SpaBinarySensorBase(BinarySensorEntity):
+class SpaBinarySensorBase(SpaSubscriberMixin, BinarySensorEntity):
     _attr_has_entity_name = True
 
 class SpaIsOnlineSensor(SpaBinarySensorBase):
