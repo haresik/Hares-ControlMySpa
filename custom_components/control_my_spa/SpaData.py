@@ -61,7 +61,7 @@ class SpaData:
         """Notifikace všech odběratelů."""
         for subscriber in self._subscribers:
             try:
-                if hasattr(subscriber, 'hass'):
+                if hasattr(subscriber, 'hass') and subscriber.hass is not None:
                     await subscriber.async_update()
                     subscriber.async_write_ha_state()  # zajisti ulozeni hodnoty do HA
                 else:
