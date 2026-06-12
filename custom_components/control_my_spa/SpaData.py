@@ -55,7 +55,19 @@ class SpaData:
 
     def register_subscriber(self, subscriber):
         """Registrace odběratele."""
-        self._subscribers.append(subscriber)
+        if subscriber not in self._subscribers:
+            self._subscribers.append(subscriber)
+
+    def unregister_subscriber(self, subscriber):
+        """Odregistrace odběratele."""
+        try:
+            self._subscribers.remove(subscriber)
+        except ValueError:
+            pass
+
+    def clear_subscribers(self):
+        """Odstraní všechny odběratele."""
+        self._subscribers.clear()
 
     async def _notify_subscribers(self):
         """Notifikace všech odběratelů."""
@@ -65,7 +77,7 @@ class SpaData:
                     await subscriber.async_update()
                     subscriber.async_write_ha_state()  # zajisti ulozeni hodnoty do HA
                 else:
-                    _LOGGER.warning("Subscriber %s has no hass attribute initialized", subscriber)
+                    _LOGGER.debug("Skipping subscriber %s - hass not available", subscriber)
             except Exception as e:
                 _LOGGER.error("Error notifying subscriber %s: %s", subscriber, e)
 
