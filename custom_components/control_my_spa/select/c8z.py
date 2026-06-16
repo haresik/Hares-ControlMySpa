@@ -28,9 +28,6 @@ async def c8z_set_speed(shared_data: Any, option: str) -> dict | None:
 # --- Čtení stavu ----------------------------------------------------------------------
 
 
-C8Z_STATUS_NOT_PRESENT = "C8Z_STATUS_NOT_PRESENT"
-
-
 def _read_c8z_dict(shared_data: Any) -> dict | None:
     """Vrátí slovník c8zCurrentState nebo None, pokud chybí nebo není dict."""
     data = shared_data.data
@@ -45,8 +42,8 @@ def _read_c8z_dict(shared_data: Any) -> dict | None:
 
 
 def is_c8z_installed(c8z: dict) -> bool:
-    """True pokud cloud hlásí fyzicky přítomné Clim8Zone (ne NOT_PRESENT)."""
-    return c8z.get("c8zStatus") != C8Z_STATUS_NOT_PRESENT
+    """True pokud je C8Z podporováno (c8zCurrentState existuje a c8zMode není null)."""
+    return c8z.get("c8zMode") is not None
 
 
 def _new_state_from_response(response_data: dict | None, field: str) -> str | None:
