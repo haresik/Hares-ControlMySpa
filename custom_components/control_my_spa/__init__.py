@@ -4,6 +4,7 @@ from datetime import timedelta
 from .const import DOMAIN, TEST_SPAOWNER
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.service import async_register_admin_service
 from .ControlMySpa import ControlMySpa
 from .SpaData import SpaData  
@@ -63,9 +64,18 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     _LOGGER.info("ControlMySpa INIT async_setup_entry. Interval:%s, SpaId:%s", minUpdate, spa_id)
 
     if not balboa_data.data:
-        _LOGGER.error("Failed to initialize ControlMySpa client, no data")
+        # No initial data — almost always a transient ControlMySpa cloud
+        # outage (login returns 5xx). Tear down the polling loop and HTTP
+        # session we just started so retries don't leak background tasks or
+        # aiohttp sessions, then let HA retry setup with exponential backoff
+        # instead of marking the entry permanently failed.
+        _LOGGER.warning(
+            "ControlMySpa returned no data (likely a cloud-side outage); "
+            "will retry setup"
+        )
         balboa_data.pause_updates()
-        return False
+        await spa_client.close()
+        raise ConfigEntryNotReady("ControlMySpa cloud unreachable, no data received")
 
     serial_number = spa_id if TEST_SPAOWNER else (balboa_data.data.get("serialNumber") if balboa_data and balboa_data.data else "unknown")
     sw_version = balboa_data.data.get("controllerSoftwareVersion") if balboa_data and balboa_data.data else "unknown"
