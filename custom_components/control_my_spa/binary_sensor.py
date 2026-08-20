@@ -95,9 +95,6 @@ class SpaClockOutOfSyncSensor(SpaBinarySensorBase):
 
     def __init__(self, shared_data, device_info, unique_id_suffix):
         self._shared_data = shared_data
-        self._spa_time = None
-        self._drift_minutes = None
-        self._last_written_is_on = object()  # první zápis vždy projde
         self._attr_should_poll = False
         self._attr_device_class = BinarySensorDeviceClass.PROBLEM
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
@@ -115,31 +112,27 @@ class SpaClockOutOfSyncSensor(SpaBinarySensorBase):
 
     @property
     def extra_state_attributes(self) -> dict:
+        """Aktuální čas panelu — jen pro zobrazení, ne do historie."""
+        data = self._shared_data.data or {}
+        spa_time = data.get("time")
         return {
-            "spa_time": self._spa_time,
-            "drift_minutes": self._drift_minutes,
+            "spa_time": spa_time,
+            "drift_minutes": _spa_clock_drift_minutes(spa_time),
         }
-
-    def async_write_ha_state(self):
-        """Do historie zapisuj jen když se změní on/off, ne každou minutu."""
-        if self._attr_is_on == self._last_written_is_on:
-            return
-        self._last_written_is_on = self._attr_is_on
-        super().async_write_ha_state()
 
     async def async_update(self):
         data = self._shared_data.data
         if not data:
             return
-        self._spa_time = data.get("time")
-        self._drift_minutes = _spa_clock_drift_minutes(self._spa_time)
+        spa_time = data.get("time")
+        drift_minutes = _spa_clock_drift_minutes(spa_time)
         self._attr_is_on = (
-            self._drift_minutes is not None
-            and self._drift_minutes > CLOCK_DRIFT_THRESHOLD_MINUTES
+            drift_minutes is not None
+            and drift_minutes > CLOCK_DRIFT_THRESHOLD_MINUTES
         )
         _LOGGER.debug(
             "Updated clock drift: spa_time=%s drift=%s on=%s",
-            self._spa_time,
-            self._drift_minutes,
+            spa_time,
+            drift_minutes,
             self._attr_is_on,
         )
