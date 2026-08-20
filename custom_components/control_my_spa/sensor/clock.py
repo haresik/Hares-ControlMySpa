@@ -16,6 +16,7 @@ class SpaClockSensor(SpaSensorBase):
         self._attr_should_poll = False
         self._attr_icon = "mdi:clock-outline"
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
+        self._attr_entity_registry_enabled_by_default = False
         self._attr_device_info = device_info
         self._attr_unique_id = f"sensor.spa_clock{unique_id_suffix}"
         self._attr_translation_key = "spa_clock"

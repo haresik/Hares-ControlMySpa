@@ -7,6 +7,9 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN
 import logging
 
+# Čas vany se mění často — do recorderu ho neukládáme
+_UNRECORDED_BUTTON_ATTRIBUTES = frozenset({"spa_time"})
+
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(
@@ -30,16 +33,20 @@ async def async_setup_entry(
         #    buttons.append(SpaTzlLightOffButton(hass, device_info, unique_id_suffix))
 
     async_add_entities(buttons, True)
+    for button in buttons:
+        shared_data.register_subscriber(button)
 
 class SpaUpdateTimeButton(ButtonEntity):
     """Tlačítko pro aktualizaci času v Control My Spa."""
 
     _attr_has_entity_name = True
+    _unrecorded_attributes = _UNRECORDED_BUTTON_ATTRIBUTES
 
     def __init__(self, hass: HomeAssistant, shared_data, device_info, unique_id_suffix):
         """Inicializace tlačítka."""
         self.hass = hass
         self._shared_data = shared_data
+        self._attr_should_poll = False
         self._attr_device_info = device_info
         self._attr_entity_category = EntityCategory.CONFIG  # sekce Nastavení na kartě zařízení
         self._attr_unique_id = f"button.spa_update_time{unique_id_suffix}"
@@ -51,6 +58,16 @@ class SpaUpdateTimeButton(ButtonEntity):
     def available(self) -> bool:
         """Indikuje, zda je entita dostupná pro ovládání."""
         return self._shared_data.is_remote_control_allowed
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        """Aktuální čas panelu — jen pro zobrazení, ne do historie."""
+        data = self._shared_data.data or {}
+        return {"spa_time": data.get("time")}
+
+    async def async_update(self):
+        """Stav tlačítka se nemění, atribut spa_time se bere živě z dat."""
+        return
 
     async def async_press(self) -> None:
         """Zpracování stisku tlačítka."""

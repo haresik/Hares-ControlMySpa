@@ -489,6 +489,17 @@
     "binary_sensor": {
       "isOnline": {
         "name": "Is online"
+      },
+      "clock_out_of_sync": {
+        "name": "Spa clock out of sync",
+        "state_attributes": {
+          "spa_time": {
+            "name": "Spa time"
+          },
+          "drift_minutes": {
+            "name": "Drift (min)"
+          }
+        }
       }
     },
     "switch": {
@@ -667,6 +678,11 @@
         "name": "Update time",
         "state": {
           "pressed": "Pressed"
+        },
+        "state_attributes": {
+          "spa_time": {
+            "name": "Spa time"
+          }
         }
       },
       "tzl_light_off": {

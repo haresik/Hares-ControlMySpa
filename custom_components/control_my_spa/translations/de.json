@@ -485,6 +485,17 @@
     "binary_sensor": {
       "isOnline": {
         "name": "Ist online"
+      },
+      "clock_out_of_sync": {
+        "name": "Whirlpool-Zeit nicht synchron",
+        "state_attributes": {
+          "spa_time": {
+            "name": "Whirlpool-Zeit"
+          },
+          "drift_minutes": {
+            "name": "Abweichung (min)"
+          }
+        }
       }
     },
     "switch": {
@@ -663,6 +674,11 @@
         "name": "Zeit aktualisieren",
         "state": {
           "pressed": "Gedrückt"
+        },
+        "state_attributes": {
+          "spa_time": {
+            "name": "Whirlpool-Zeit"
+          }
         }
       },
       "tzl_light_off": {

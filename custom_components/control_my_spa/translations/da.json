@@ -489,6 +489,17 @@
     "binary_sensor": {
       "isOnline": {
         "name": "Er online"
+      },
+      "clock_out_of_sync": {
+        "name": "Spa-ur ude af sync",
+        "state_attributes": {
+          "spa_time": {
+            "name": "Spa tid"
+          },
+          "drift_minutes": {
+            "name": "Afvigelse (min)"
+          }
+        }
       }
     },
     "switch": {
@@ -667,6 +678,11 @@
         "name": "Opdater tid",
         "state": {
           "pressed": "Trykket"
+        },
+        "state_attributes": {
+          "spa_time": {
+            "name": "Spa tid"
+          }
         }
       },
       "tzl_light_off": {

@@ -503,6 +503,17 @@
     "binary_sensor": {
       "isOnline": {
         "name": "Je online"
+      },
+      "clock_out_of_sync": {
+        "name": "Čas vířivky mimo sync",
+        "state_attributes": {
+          "spa_time": {
+            "name": "Čas vířivky"
+          },
+          "drift_minutes": {
+            "name": "Odchylka (min)"
+          }
+        }
       }
     },
     "switch": {
@@ -681,6 +692,11 @@
         "name": "Aktualizovat čas",
         "state": {
           "pressed": "Stisknuto"
+        },
+        "state_attributes": {
+          "spa_time": {
+            "name": "Čas vířivky"
+          }
         }
       },
       "tzl_light_off": {
