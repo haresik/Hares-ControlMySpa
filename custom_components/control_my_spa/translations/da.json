@@ -3,14 +3,19 @@
   "config": {
     "abort": {
       "already_configured": "Enheden er allerede konfigureret",
-      "already_in_progress": "Konfiguration er allerede i gang"
+      "already_in_progress": "Konfiguration er allerede i gang",
+      "reconfigure_successful": "SPA-valget blev opdateret",
+      "cannot_login": "Kan ikke logge ind, tjek dit brugernavn og adgangskode",
+      "unknown": "Uventet fejl"
     },
     "error": {
-      "connection_error": "Kunne ikke forbinde",
+      "connection_error": "Kunne ikke indlæse SPA-listen. Du kan indtaste SPA-ID manuelt.",
       "cannot_login": "Kan ikke logge ind, tjek dit brugernavn og adgangskode",
       "cannot_connect": "Kunne ikke forbinde",
       "invalid_auth": "Ugyldig godkendelse",
-      "unknown": "Uventet fejl"
+      "unknown": "Uventet fejl",
+      "dashboard_error": "Dashboard svarede ikke på dette SPA-ID. Vælg et andet SPA eller indtast ID'et manuelt.",
+      "spa_id_required": "Vælg et SPA fra listen, eller indtast SPA-ID manuelt."
     },
     "flow_title": "ControlMySpa",
     "step": {
@@ -25,17 +30,29 @@
       },
       "select_spa": {
         "data": {
-          "spa_id": "Vælg din SPA"
+          "spa_id": "Vælg din SPA",
+          "spa_id_manual": "SPA-ID manuelt (hvis det mangler på listen)"
         },
-        "description": "Vælg din SPA fra listen",
+        "data_description": {
+          "spa_id_manual": "Udfyld kun, hvis listen er forkert, eller cloud-ID'et er ændret."
+        },
+        "description": "Vælg dit SPA fra listen. Dashboardet verificeres før gemning. Hvis ID'et er ændret, skal du indtaste det manuelt.",
         "title": "Vælg SPA"
       }
     }
   },
   "options": {
+    "error": {
+      "cannot_login": "Kan ikke logge ind, tjek dit brugernavn og adgangskode",
+      "dashboard_error": "Dashboard svarede ikke på dette SPA-ID. Vælg et andet SPA eller indtast ID'et manuelt.",
+      "spa_id_required": "Vælg et SPA fra listen, eller indtast SPA-ID manuelt.",
+      "connection_error": "Kunne ikke indlæse SPA-listen. Du kan indtaste SPA-ID manuelt."
+    },
     "step": {
       "init": {
         "data": {
+          "spa_id": "SPA",
+          "spa_id_manual": "SPA-ID manuelt (hvis det mangler på listen)",
           "pump_1_power_watts": "Pumpe 1 effektforbrug (W)",
           "pump_2_power_watts": "Pumpe 2 effektforbrug (W)",
           "pump_3_power_watts": "Pumpe 3 effektforbrug (W)",
@@ -50,7 +67,10 @@
           "circulation_pump_3_power_watts": "Cirkulationspumpe 3 effektforbrug (W)",
           "enable_temp_change_notification": "Notifikation"
         },
-        "description": "Konfigurer pumpe- og varmelegeme-effektforbrug og energipris til omkostningsberegning.",
+        "data_description": {
+          "spa_id_manual": "Udfyld kun, hvis listen er forkert, eller cloud-ID'et er ændret."
+        },
+        "description": "Du kan vælge SPA igen (f.eks. efter et ID-skift) og konfigurere pumpe- og varmelegeme-effekt.",
         "title": "Effektforbrugsindstillinger"
       }
     }

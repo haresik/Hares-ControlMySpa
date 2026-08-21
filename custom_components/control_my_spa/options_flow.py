@@ -3,6 +3,14 @@ from homeassistant import config_entries
 from homeassistant.helpers import config_validation as cv
 
 from .const import DOMAIN
+from .flow_helpers import (
+    async_create_logged_in_client,
+    async_verify_spa_dashboard,
+    build_available_spas,
+    pop_spa_selection_fields,
+    resolve_spa_id,
+    spa_selection_schema_dict,
+)
 
 
 class ControlMySpaOptionsFlowHandler(config_entries.OptionsFlow):
@@ -50,21 +58,56 @@ class ControlMySpaOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_init(self, user_input=None):
         """Manage the options."""
         errors = {}
-        
-        if user_input is not None:
-            # Uložení konfigurace
-            return self.async_create_entry(title="", data=user_input)
-
-        # Získání aktuálních hodnot z konfigurace
         current_config = self.config_entry.options or {}
-        
+        current_spa_id = self.config_entry.data.get("spa_id")
+        available_spas = {}
+        client = None
+
+        try:
+            client = await async_create_logged_in_client(
+                self.config_entry.data.get("username"),
+                self.config_entry.data.get("password"),
+            )
+            if client:
+                spas = await client.getSpaOwner()
+                available_spas = build_available_spas(spas, current_spa_id)
+            else:
+                available_spas = build_available_spas(None, current_spa_id)
+                if user_input is None:
+                    errors["base"] = "cannot_login"
+
+            if user_input is not None:
+                spa_id = resolve_spa_id(user_input)
+                options_data = pop_spa_selection_fields(user_input)
+
+                if not spa_id:
+                    errors["base"] = "spa_id_required"
+                elif spa_id != current_spa_id:
+                    # Nové ID jdeme ověřit dashboardem, ať se zase neuloží mrtvý klíč
+                    if client is None:
+                        errors["base"] = "cannot_login"
+                    elif not await async_verify_spa_dashboard(client, spa_id):
+                        errors["base"] = "dashboard_error"
+                    else:
+                        self.hass.config_entries.async_update_entry(
+                            self.config_entry,
+                            data={**self.config_entry.data, "spa_id": spa_id},
+                        )
+                        return self.async_create_entry(title="", data=options_data)
+                else:
+                    return self.async_create_entry(title="", data=options_data)
+        finally:
+            if client:
+                await client.close()
+
         # Dynamické vytvoření schématu podle počtu pump, heaterů, blowerů a circulation pumps
         pump_count = self._get_component_count("PUMP", "pump_", 3)
         heater_count = self._get_component_count("HEATER", "heater_", 2)
         blower_count = self._get_component_count("BLOWER", "blower_", 2)
         circulation_pump_count = self._get_component_count("CIRCULATION_PUMP", "circulation_pump_", 1)
-        
-        schema_dict = {}
+
+        # Nejdřív výběr vany, pod tím původní options
+        schema_dict = spa_selection_schema_dict(available_spas, current_spa_id)
         
         # Přidat položky pro pumpy
         # Home Assistant automaticky použije překlady z translations/{lang}.json

@@ -3,14 +3,19 @@
   "config": {
     "abort": {
       "already_configured": "Device is already configured",
-      "already_in_progress": "Configuration is already in progress"
+      "already_in_progress": "Configuration is already in progress",
+      "reconfigure_successful": "SPA selection was updated",
+      "cannot_login": "Cannot login, check your username and password",
+      "unknown": "Unexpected error"
     },
     "error": {
-      "connection_error": "Failed to connect",
+      "connection_error": "Could not load the SPA list. You can enter the SPA ID manually.",
       "cannot_login": "Cannot login, check your username and password",
       "cannot_connect": "Failed to connect",
       "invalid_auth": "Invalid authentication",
-      "unknown": "Unexpected error"
+      "unknown": "Unexpected error",
+      "dashboard_error": "Dashboard did not respond for this SPA ID. Choose another SPA or enter the ID manually.",
+      "spa_id_required": "Select a SPA from the list, or enter the SPA ID manually."
     },
     "flow_title": "ControlMySpa",
     "step": {
@@ -25,17 +30,29 @@
       },
       "select_spa": {
         "data": {
-          "spa_id": "Select your SPA"
+          "spa_id": "Select your SPA",
+          "spa_id_manual": "SPA ID manually (if missing from the list)"
         },
-        "description": "Select your SPA from the list",
+        "data_description": {
+          "spa_id_manual": "Fill in only when the list is wrong, or the cloud ID has changed."
+        },
+        "description": "Select your SPA from the list. The dashboard is verified before saving. If the ID changed, enter it manually.",
         "title": "Select SPA"
       }
     }
   },
   "options": {
+    "error": {
+      "cannot_login": "Cannot login, check your username and password",
+      "dashboard_error": "Dashboard did not respond for this SPA ID. Choose another SPA or enter the ID manually.",
+      "spa_id_required": "Select a SPA from the list, or enter the SPA ID manually.",
+      "connection_error": "Could not load the SPA list. You can enter the SPA ID manually."
+    },
     "step": {
       "init": {
         "data": {
+          "spa_id": "SPA",
+          "spa_id_manual": "SPA ID manually (if missing from the list)",
           "pump_1_power_watts": "Pump 1 power consumption (W)",
           "pump_2_power_watts": "Pump 2 power consumption (W)",
           "pump_3_power_watts": "Pump 3 power consumption (W)",
@@ -50,7 +67,10 @@
           "circulation_pump_3_power_watts": "Circulation pump 3 power consumption (W)",
           "enable_temp_change_notification": "Notification"
         },
-        "description": "Configure pump and heater power consumption and energy price for cost calculation.",
+        "data_description": {
+          "spa_id_manual": "Fill in only when the list is wrong, or the cloud ID has changed."
+        },
+        "description": "You can select the SPA again (for example after an ID change) and configure pump and heater power.",
         "title": "Power consumption settings"
       }
     }

@@ -1,18 +1,29 @@
+import logging
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 from .ControlMySpa import ControlMySpa
 from .const import DOMAIN
 from .options_flow import ControlMySpaOptionsFlowHandler
+from .flow_helpers import (
+    async_verify_spa_dashboard,
+    build_available_spas,
+    resolve_spa_id,
+    spa_selection_schema_dict,
+)
+
+_LOGGER = logging.getLogger(__name__)
+
 
 class ControlMySpaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
-    
+
     def __init__(self):
         self._username = None
         self._password = None
         self._update_interval = None
         self._spa_client = None
+        self._reconfigure_entry = None
 
     async def async_step_user(self, user_input=None):
         errors = {}
@@ -43,42 +54,82 @@ class ControlMySpaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors=errors
         )
 
+    async def async_step_reconfigure(self, user_input=None):
+        """Znovu vybrat vanu u existující integrace."""
+        self._reconfigure_entry = self._resolve_reconfigure_entry()
+        if not self._reconfigure_entry:
+            return self.async_abort(reason="unknown")
+
+        self._username = self._reconfigure_entry.data["username"]
+        self._password = self._reconfigure_entry.data["password"]
+        self._update_interval = self._reconfigure_entry.data.get("updateintervalminutes", 1)
+
+        if self._spa_client is None:
+            self._spa_client = ControlMySpa(self._username, self._password)
+            await self._spa_client.init_session()
+            if not await self._spa_client.login():
+                return self.async_abort(reason="cannot_login")
+
+        return await self.async_step_select_spa(user_input)
+
+    def _resolve_reconfigure_entry(self):
+        """Najde entry pro reconfigure i na starších verzích HA."""
+        try:
+            return self._get_reconfigure_entry()
+        except (AttributeError, ValueError, KeyError):
+            _LOGGER.debug("async_get_reconfigure_entry failed, falling back to context")
+        entry_id = self.context.get("entry_id")
+        if entry_id:
+            return self.hass.config_entries.async_get_entry(entry_id)
+        return None
+
     async def async_step_select_spa(self, user_input=None):
         errors = {}
 
-        # Získáme seznam spa zařízení
+        # Seznam van z cloudu; None znamená výpadek API, prázdný list je platný
         spas = await self._spa_client.getSpaOwner()
-        
+        current_spa_id = None
+        if self._reconfigure_entry:
+            current_spa_id = self._reconfigure_entry.data.get("spa_id")
+        available_spas = build_available_spas(spas, current_spa_id)
+
         if spas is None:
             errors["base"] = "connection_error"
-            return self.async_show_form(
-                step_id="select_spa",
-                errors=errors
-            )
 
         if user_input is not None:
-            # Uložíme vybrané spa ID a vytvoříme konfigurační záznam
-            return self.async_create_entry(
-                title="ControlMySpa",
-                data={
-                    "username": self._username,
-                    "password": self._password,
-                    "updateintervalminutes": self._update_interval,
-                    "spa_id": user_input["spa_id"]
-                }
-            )
-
-        # Vytvoříme seznam dostupných spa zařízení pro výběr
-        available_spas = {
-            spa["_id"]: f"{spa['serialNumber']} {spa['alias'] if spa['alias'] else ''}"
-            for spa in spas
-        }
+            spa_id = resolve_spa_id(user_input)
+            if not spa_id:
+                errors["base"] = "spa_id_required"
+            elif not await async_verify_spa_dashboard(self._spa_client, spa_id):
+                errors["base"] = "dashboard_error"
+            else:
+                return await self._async_finish_spa_selection(spa_id)
 
         return self.async_show_form(
             step_id="select_spa",
-            data_schema=vol.Schema({
-                vol.Required("spa_id"): vol.In(available_spas)
-            })
+            data_schema=vol.Schema(spa_selection_schema_dict(available_spas, current_spa_id)),
+            errors=errors,
+        )
+
+    async def _async_finish_spa_selection(self, spa_id: str):
+        """Vytvoří novou entry, nebo při reconfigure přepíše spa_id."""
+        if self._reconfigure_entry:
+            # Update + reload zvlášť, ať to naskočí i když předchozí setup spadl na starém ID
+            self.hass.config_entries.async_update_entry(
+                self._reconfigure_entry,
+                data={**self._reconfigure_entry.data, "spa_id": spa_id},
+            )
+            await self.hass.config_entries.async_reload(self._reconfigure_entry.entry_id)
+            return self.async_abort(reason="reconfigure_successful")
+
+        return self.async_create_entry(
+            title="ControlMySpa",
+            data={
+                "username": self._username,
+                "password": self._password,
+                "updateintervalminutes": self._update_interval,
+                "spa_id": spa_id,
+            },
         )
 
     @staticmethod
@@ -88,4 +139,3 @@ class ControlMySpaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> ControlMySpaOptionsFlowHandler:
         """Get the options flow for this handler."""
         return ControlMySpaOptionsFlowHandler()
-

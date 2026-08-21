@@ -3,14 +3,19 @@
   "config": {
     "abort": {
       "already_configured": "Zařízení je již nakonfigurováno",
-      "already_in_progress": "Nastavení již probíhá"
+      "already_in_progress": "Nastavení již probíhá",
+      "reconfigure_successful": "Výběr vířivé vany byl aktualizován",
+      "cannot_login": "Nelze se přihlásit, zkontrolujte uživatelské jméno a heslo.",
+      "unknown": "Neočekávaná chyba"
     },
     "error": {
-      "connection_error": "Nepodařilo se připojit",
+      "connection_error": "Nepodařilo se načíst seznam van. Můžete zadat SPA ID ručně.",
       "cannot_login": "Nelze se přihlásit, zkontrolujte uživatelské jméno a heslo.",
       "cannot_connect": "Nepodařilo se připojit",
       "invalid_auth": "Neplatné přihlašovací údaje",
-      "unknown": "Neočekávaná chyba"
+      "unknown": "Neočekávaná chyba",
+      "dashboard_error": "Dashboard na tomto SPA ID neodpovídá. Zvolte jinou vanu nebo zadejte ID ručně.",
+      "spa_id_required": "Vyberte vanu ze seznamu, nebo zadejte SPA ID ručně."
     },
     "flow_title": "ControlMySpa",
     "step": {
@@ -25,17 +30,29 @@
       },
       "select_spa": {
         "data": {
-          "spa_id": "Vyberte vířivou vanu"
+          "spa_id": "Vyberte vířivou vanu",
+          "spa_id_manual": "SPA ID ručně (pokud chybí v seznamu)"
         },
-        "description": "Vyberte vířivou vanu ze seznamu",
+        "data_description": {
+          "spa_id_manual": "Vyplňte jen když seznam van nesedí, nebo se cloudové ID změnilo."
+        },
+        "description": "Vyberte vířivou vanu ze seznamu. Dashboard se ověří před uložením. Když se ID změnilo, zadejte ho ručně.",
         "title": "Výběr vířivé vany"
       }
     }
   },
   "options": {
+    "error": {
+      "cannot_login": "Nelze se přihlásit, zkontrolujte uživatelské jméno a heslo.",
+      "dashboard_error": "Dashboard na tomto SPA ID neodpovídá. Zvolte jinou vanu nebo zadejte ID ručně.",
+      "spa_id_required": "Vyberte vanu ze seznamu, nebo zadejte SPA ID ručně.",
+      "connection_error": "Nepodařilo se načíst seznam van. Můžete zadat SPA ID ručně."
+    },
     "step": {
       "init": {
         "data": {
+          "spa_id": "Vířivá vana",
+          "spa_id_manual": "SPA ID ručně (pokud chybí v seznamu)",
           "pump_1_power_watts": "Příkon čerpadla 1 (W)",
           "pump_2_power_watts": "Příkon čerpadla 2 (W)",
           "pump_3_power_watts": "Příkon čerpadla 3 (W)",
@@ -50,7 +67,10 @@
           "circulation_pump_3_power_watts": "Příkon cirkulačního čerpadla 3 (W)",
           "enable_temp_change_notification": "Notifikace"
         },
-        "description": "Nastavte příkon čerpadel, topení a cenu elektřiny pro výpočet spotřeby a nákladů.",
+        "data_description": {
+          "spa_id_manual": "Vyplňte jen když seznam van nesedí, nebo se cloudové ID změnilo."
+        },
+        "description": "Můžete znovu vybrat vanu (třeba po změně SPA ID) a nastavit příkon čerpadel a topení.",
         "title": "Nastavení spotřeby"
       }
     }

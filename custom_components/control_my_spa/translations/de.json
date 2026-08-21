@@ -3,14 +3,19 @@
   "config": {
     "abort": {
       "already_configured": "Gerät ist bereits konfiguriert",
-      "already_in_progress": "Konfiguration läuft bereits"
+      "already_in_progress": "Konfiguration läuft bereits",
+      "reconfigure_successful": "Die Whirlpool-Auswahl wurde aktualisiert",
+      "cannot_login": "Anmeldung nicht möglich, bitte überprüfen Sie Benutzername und Passwort.",
+      "unknown": "Unerwarteter Fehler"
     },
     "error": {
-      "connection_error": "Verbindung fehlgeschlagen",
+      "connection_error": "Die Whirlpool-Liste konnte nicht geladen werden. Sie können die SPA-ID manuell eingeben.",
       "cannot_login": "Anmeldung nicht möglich, bitte überprüfen Sie Benutzername und Passwort.",
       "cannot_connect": "Verbindung fehlgeschlagen",
       "invalid_auth": "Ungültige Authentifizierung",
-      "unknown": "Unerwarteter Fehler"
+      "unknown": "Unerwarteter Fehler",
+      "dashboard_error": "Das Dashboard hat für diese SPA-ID nicht geantwortet. Wählen Sie einen anderen Whirlpool oder geben Sie die ID manuell ein.",
+      "spa_id_required": "Wählen Sie einen Whirlpool aus der Liste oder geben Sie die SPA-ID manuell ein."
     },
     "flow_title": "ControlMySpa",
     "step": {
@@ -25,17 +30,29 @@
       },
       "select_spa": {
         "data": {
-          "spa_id": "Wählen Sie Ihren Whirlpool"
+          "spa_id": "Wählen Sie Ihren Whirlpool",
+          "spa_id_manual": "SPA-ID manuell (falls nicht in der Liste)"
         },
-        "description": "Wählen Sie Ihren Whirlpool aus der Liste",
+        "data_description": {
+          "spa_id_manual": "Nur ausfüllen, wenn die Liste nicht stimmt oder sich die Cloud-ID geändert hat."
+        },
+        "description": "Wählen Sie Ihren Whirlpool aus der Liste. Das Dashboard wird vor dem Speichern geprüft. Wenn sich die ID geändert hat, geben Sie sie manuell ein.",
         "title": "Whirlpool auswählen"
       }
     }
   },
   "options": {
+    "error": {
+      "cannot_login": "Anmeldung nicht möglich, bitte überprüfen Sie Benutzername und Passwort.",
+      "dashboard_error": "Das Dashboard hat für diese SPA-ID nicht geantwortet. Wählen Sie einen anderen Whirlpool oder geben Sie die ID manuell ein.",
+      "spa_id_required": "Wählen Sie einen Whirlpool aus der Liste oder geben Sie die SPA-ID manuell ein.",
+      "connection_error": "Die Whirlpool-Liste konnte nicht geladen werden. Sie können die SPA-ID manuell eingeben."
+    },
     "step": {
       "init": {
         "data": {
+          "spa_id": "Whirlpool",
+          "spa_id_manual": "SPA-ID manuell (falls nicht in der Liste)",
           "pump_1_power_watts": "Pumpenleistungsaufnahme 1 (W)",
           "pump_2_power_watts": "Pumpenleistungsaufnahme 2 (W)",
           "pump_3_power_watts": "Pumpenleistungsaufnahme 3 (W)",
@@ -50,7 +67,10 @@
           "circulation_pump_3_power_watts": "Umwälzpumpenleistungsaufnahme 3 (W)",
           "enable_temp_change_notification": "Benachrichtigung"
         },
-        "description": "Konfigurieren Sie die Pumpenleistungsaufnahme und den Energiepreis für die Kostenberechnung.",
+        "data_description": {
+          "spa_id_manual": "Nur ausfüllen, wenn die Liste nicht stimmt oder sich die Cloud-ID geändert hat."
+        },
+        "description": "Sie können den Whirlpool erneut auswählen (z. B. nach einer ID-Änderung) und die Leistungsaufnahme von Pumpen und Heizung einstellen.",
         "title": "Einstellungen für Pumpenleistungsaufnahme"
       }
     }
