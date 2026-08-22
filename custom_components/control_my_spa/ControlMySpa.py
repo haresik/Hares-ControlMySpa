@@ -140,7 +140,9 @@ class ControlMySpa:
             async with self.session.get(f'{self.BASE_URL}/spas/owned', headers=headers, ssl=const.VERIFY_SSL) as resp:
                 if resp.status == 200:
                     res_json = await resp.json()
-                    return res_json.get('data', {}).get('spas', [])
+                    spas = res_json.get('data', {}).get('spas', [])
+                    _LOGGER.info("getSpaOwner OK, count=%s", len(spas) if spas is not None else 0)
+                    return spas
                 else:
                     _LOGGER.error(f"getSpaOwner Error, HTTP status {resp.status}: {await resp.text()}")
         except Exception as e:

@@ -1,3 +1,4 @@
+import logging
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.helpers import config_validation as cv
@@ -7,10 +8,13 @@ from .flow_helpers import (
     async_create_logged_in_client,
     async_verify_spa_dashboard,
     build_available_spas,
+    log_spa_list,
     pop_spa_selection_fields,
     resolve_spa_id,
     spa_selection_schema_dict,
 )
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class ControlMySpaOptionsFlowHandler(config_entries.OptionsFlow):
@@ -70,6 +74,7 @@ class ControlMySpaOptionsFlowHandler(config_entries.OptionsFlow):
             )
             if client:
                 spas = await client.getSpaOwner()
+                log_spa_list("options", spas, current_spa_id)
                 available_spas = build_available_spas(spas, current_spa_id)
             else:
                 available_spas = build_available_spas(None, current_spa_id)
@@ -81,8 +86,10 @@ class ControlMySpaOptionsFlowHandler(config_entries.OptionsFlow):
                 options_data = pop_spa_selection_fields(user_input)
 
                 if not spa_id:
+                    _LOGGER.error("Options submitted without spa_id")
                     errors["base"] = "spa_id_required"
                 elif spa_id != current_spa_id:
+                    _LOGGER.info("Options changing spa_id %s -> %s", current_spa_id, spa_id)
                     # Nové ID jdeme ověřit dashboardem, ať se zase neuloží mrtvý klíč
                     if client is None:
                         errors["base"] = "cannot_login"
@@ -95,6 +102,7 @@ class ControlMySpaOptionsFlowHandler(config_entries.OptionsFlow):
                         )
                         return self.async_create_entry(title="", data=options_data)
                 else:
+                    _LOGGER.info("Options saved, spa_id unchanged (%s)", current_spa_id)
                     return self.async_create_entry(title="", data=options_data)
         finally:
             if client:
@@ -107,6 +115,12 @@ class ControlMySpaOptionsFlowHandler(config_entries.OptionsFlow):
         circulation_pump_count = self._get_component_count("CIRCULATION_PUMP", "circulation_pump_", 1)
 
         # Nejdřív výběr vany, pod tím původní options
+        _LOGGER.info(
+            "Showing options form: %s spa option(s), current spa_id=%s, errors=%s",
+            len(available_spas),
+            current_spa_id,
+            errors or None,
+        )
         schema_dict = spa_selection_schema_dict(available_spas, current_spa_id)
         
         # Přidat položky pro pumpy
