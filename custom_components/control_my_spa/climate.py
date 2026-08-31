@@ -92,8 +92,9 @@ class SpaClimate(SpaSubscriberMixin, ClimateEntity):
                     
             _LOGGER.debug("Climate update (%s): current=%s, desired=%s, target=%s", unit_symbol, self._current_temperature, self._desired_temperature, self._target_temperature)
             
-            # Informovat Home Assistant o změně stavu entity
-            self.async_write_ha_state()
+            # Při update_before_add ještě nemusí viset hass / entity_id
+            if self.hass is not None and self.entity_id:
+                self.async_write_ha_state()
 
     @property
     def available(self) -> bool:

@@ -83,6 +83,10 @@ class SpaTargetDesiredTempNumber(SpaSubscriberMixin, NumberEntity):
                         "Updated target temperature: %s °F", self._state
                     )
 
+            # Při update_before_add ještě nemusí viset hass / entity_id
+            if self.hass is not None and self.entity_id:
+                self.async_write_ha_state()
+
     @property
     def available(self) -> bool:
         """Indikuje, zda je entita dostupná pro ovládání."""

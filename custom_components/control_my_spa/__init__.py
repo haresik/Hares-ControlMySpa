@@ -35,11 +35,6 @@ async def options_update_listener(hass: HomeAssistant, config_entry: ConfigEntry
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     # Nastavení služeb
     await async_setup_services(hass)
-    
-    # Registrace options update listener
-    config_entry.async_on_unload(
-        config_entry.add_update_listener(options_update_listener)
-    )
 
     username = config_entry.data["username"]
     password = config_entry.data["password"]
@@ -74,7 +69,12 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
 
     serial_number = spa_id if TEST_SPAOWNER else (balboa_data.data.get("serialNumber") if balboa_data and balboa_data.data else "unknown")
     sw_version = balboa_data.data.get("controllerSoftwareVersion") if balboa_data and balboa_data.data else "unknown"
-    unique_id_suffix = await get_unique_id_suffix(hass, config_entry, serial_number)
+    # Suffix persistovat ještě před update listenerem, ať async_update_entry nespustí reload
+    unique_id_suffix = await get_unique_id_suffix(hass, config_entry, serial_number, spa_id)
+
+    config_entry.async_on_unload(
+        config_entry.add_update_listener(options_update_listener)
+    )
 
     device_info = {
         "identifiers": {(DOMAIN, serial_number)},  # Unikátní identifikátor zařízení

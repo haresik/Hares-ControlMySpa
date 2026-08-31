@@ -18,7 +18,7 @@ class SpaPanelLockSwitch(SpaSwitchBase):
         self._attr_icon = "mdi:lock"
         self._attr_should_poll = False
         self._is_processing = False
-        self.entity_id = "switch.spa_panel_lock"
+        self.entity_id = self._attr_unique_id
 
     @property
     def available(self) -> bool:
