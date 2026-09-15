@@ -48,6 +48,11 @@ class ControlMySpa:
             self.session = None
 
     def getAuthHeaders(self):
+        if not self.tokenData:
+            # Without this guard the subscript below raises the unhelpful
+            # "'NoneType' object is not subscriptable" instead of naming the
+            # real problem.
+            raise RuntimeError("no access token, login failed")
         return {
             'Authorization': f"Bearer {self.tokenData['access_token']}",
             **self.getCommonHeaders()
@@ -134,8 +139,10 @@ class ControlMySpa:
                     return None
             
             # Normální režim - načtení dat z API
-            if not self.isLoggedIn():
-                await self.login()
+            if not self.isLoggedIn() and not await self.login():
+                _LOGGER.error("getSpaOwner Error: authentication failed")
+                return None
+
             headers = self.getAuthHeaders()
             async with self.session.get(f'{self.BASE_URL}/spas/owned', headers=headers, ssl=const.VERIFY_SSL) as resp:
                 if resp.status == 200:
@@ -171,8 +178,9 @@ class ControlMySpa:
                     return None
             
             # Normální režim - načtení dat z API
-            if not self.isLoggedIn():
-                await self.login()
+            if not self.isLoggedIn() and not await self.login():
+                _LOGGER.error("GetSpa Error: authentication failed")
+                return None
             if not self.spaId:
                 return None
 
@@ -251,8 +259,10 @@ class ControlMySpa:
 
     async def _postAndRefresh(self, endpoint, payload):
         try:
-            if not self.isLoggedIn():
-                await self.login()
+            if not self.isLoggedIn() and not await self.login():
+                _LOGGER.error(f"Error in {endpoint}: authentication failed")
+                return None
+
             headers = {**self.getAuthHeaders(), 'Content-Type': 'application/json'}
             async with self.session.post(f'{self.BASE_URL}{endpoint}', json=payload, headers=headers, ssl=const.VERIFY_SSL) as resp:
                 if resp.status == 200:
