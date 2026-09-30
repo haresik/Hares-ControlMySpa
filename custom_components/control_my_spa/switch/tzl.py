@@ -1,6 +1,7 @@
 """TZL-related switch entities."""
 
 from .base import SpaSwitchBase
+from ..tzl_utils import tzl_zone_is_on
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -35,8 +36,9 @@ class SpaTzlPowerSwitch(SpaSwitchBase):
         tzl_zones = data.get("tzlZones", [])
         if not tzl_zones:
             return False
-        # Přepínač je ON, pokud alespoň jedna zóna není ve stavu OFF
-        return any(zone.get("state") != "OFF" for zone in tzl_zones)
+        # A zone can report OFF or NORMAL with intensity 0,
+        # depending on how it was switched off.
+        return any(tzl_zone_is_on(zone) for zone in tzl_zones)
 
     async def async_update(self):
         """Aktualizace stavu přepínače."""

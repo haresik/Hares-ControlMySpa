@@ -1,6 +1,7 @@
 """TZL (Therapeutic Zone Lighting) related select entities."""
 
 from .base import SpaSelectBase
+from ..tzl_utils import tzl_zone_is_off
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -50,7 +51,7 @@ class SpaTzlZoneModeSelect(SpaSelectBase):
                 None,
             )
             if tzl_zone:
-                self._attr_current_option = tzl_zone["state"]
+                self._attr_current_option = "OFF" if tzl_zone_is_off(tzl_zone) else tzl_zone["state"]
                 _LOGGER.debug("Updated TZL Zone Mode %s: %s", self._tzl_zone_data["zoneId"], self._attr_current_option)
 
     async def _try_set_tzl_zone_mode(self, target_state: str, is_retry: bool = False) -> bool:
@@ -59,8 +60,19 @@ class SpaTzlZoneModeSelect(SpaSelectBase):
         self.async_write_ha_state()
         
         try:
+            # The API rejects state=OFF for individual zones.
+            # Set intensity to zero to turn off the zone.
+            if target_state == "OFF":
+                response_data = await self._shared_data._client.setChromazoneBrightness(
+                    0,
+                    self._tzl_zone_data["zoneId"]
+                )
+
+                if response_data is None:
+                    _LOGGER.warning("Function setChromazoneBrightness (0) is not supported")
+                    return False
             # Pro NORMAL se volá setChromazoneColor s color_id=0
-            if target_state == "NORMAL":
+            elif target_state == "NORMAL":
                 response_data = await self._shared_data._client.setChromazoneColor(
                     0, 
                     self._tzl_zone_data["zoneId"]
@@ -70,7 +82,7 @@ class SpaTzlZoneModeSelect(SpaSelectBase):
                     _LOGGER.warning("Function setChromazoneColor, parameter 0 is not supported")
                     return False
             else:
-                # Pro ostatní stavy se volá setChromazoneFunction
+                # Use setChromazoneFunction for the remaining modes.
                 response_data = await self._shared_data._client.setChromazoneFunction(
                     target_state, 
                     self._tzl_zone_data["zoneId"]
@@ -92,7 +104,12 @@ class SpaTzlZoneModeSelect(SpaSelectBase):
                 )
                 new_state = tzl_zone["state"] if tzl_zone else None
                 
-                if new_state == target_state:
+                if target_state == "OFF":
+                    success = tzl_zone is not None and tzl_zone_is_off(tzl_zone)
+                else:
+                    success = new_state == target_state
+
+                if success:
                     self._attr_current_option = target_state
                     _LOGGER.info(
                         "Successfully set TZL zone %s to mode %s%s",
@@ -445,6 +462,13 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
                 green = tzl_zone.get("green", 0)
                 blue = tzl_zone.get("blue", 0)
                 
+                # Intensity 0 means the zone is off even if the API returns
+                # state NORMAL and the last RGB color.
+                if tzl_zone_is_off(tzl_zone):
+                    self._current_option = "OFF"
+                    _LOGGER.debug("Updated TZL Color Select %s: OFF", self._tzl_zone_data["zoneId"])
+                    return
+
                 # Prioritně najít shodu s definovanými barvami
                 found_match = False
                 for color in self._tzl_colors:
@@ -456,7 +480,7 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
                         found_match = True
                         break
                 
-                # Pokud se nenašla shoda a barva je černá (0,0,0) a stav je OFF, nastavit na OFF
+                # Preserve compatibility with responses that omit intensity.
                 if not found_match and red == 0 and green == 0 and blue == 0 and state == "OFF":
                     self._current_option = "OFF"
                 elif not found_match:
@@ -470,13 +494,13 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
     async def _try_set_tzl_zone_off(self, is_retry: bool = False) -> bool:
         """Pokus o vypnutí TZL zóny s možností opakování."""
         try:
-            response_data = await self._shared_data._client.setChromazoneFunction(
-                "OFF", 
+            response_data = await self._shared_data._client.setChromazoneBrightness(
+                0,
                 self._tzl_zone_data["zoneId"]
             )
             
             if response_data is None:
-                _LOGGER.warning("Function setChromazoneFunction (OFF), parameter is not supported")
+                _LOGGER.warning("Function setChromazoneBrightness (0), parameter is not supported")
                 return False
             
             if response_data:
@@ -489,9 +513,10 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
                     ),
                     None,
                 )
-                new_state = tzl_zone["state"] if tzl_zone else None
-                
-                if new_state == "OFF":
+                new_intensity = tzl_zone.get("intensity") if tzl_zone else None
+                new_state = tzl_zone.get("state") if tzl_zone else None
+
+                if tzl_zone is not None and tzl_zone_is_off(tzl_zone):
                     self._current_option = "OFF"
                     _LOGGER.info(
                         "Successfully turned off TZL zone %s%s",
@@ -501,8 +526,9 @@ class SpaTzlZoneColorSelect(SpaSelectBase):
                     return True
                 else:
                     _LOGGER.warning(
-                        "TZL zone %s was not turned off. Expected state: OFF, Current state: %s%s",
+                        "TZL zone %s was not turned off. Expected intensity: 0, Current intensity: %s, state: %s%s",
                         self._tzl_zone_data["zoneId"],
+                        new_intensity,
                         new_state,
                         " (2nd attempt)" if is_retry else ""
                     )

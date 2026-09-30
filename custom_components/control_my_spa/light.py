@@ -3,6 +3,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 from .const import DOMAIN
 from .entity import SpaSubscriberMixin
+from .tzl_utils import tzl_zone_is_off, tzl_zone_is_on
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -148,9 +149,9 @@ class SpaTzlZoneLight(SpaSubscriberMixin, LightEntity):
                 None,
             )
             if tzl_zone:
-                # Nastavit stav světla - zapnuto pokud není OFF
-                state = tzl_zone.get("state", "OFF")
-                self._attr_is_on = state not in ["OFF", "DISABLED"]
+                # A zone switched off individually can report intensity 0
+                # while its state remains NORMAL.
+                self._attr_is_on = tzl_zone_is_on(tzl_zone)
                 
                 # Nastavit RGB barvu
                 red = tzl_zone.get("red", 0)
@@ -160,6 +161,10 @@ class SpaTzlZoneLight(SpaSubscriberMixin, LightEntity):
                 
                 # Nastavit jas (intensity 0-8 -> brightness 0-255) - pokud je vypnuto, jas = 0
                 intensity = tzl_zone.get("intensity", 0)
+                try:
+                    intensity = int(intensity)
+                except (TypeError, ValueError):
+                    intensity = 0
                 if self._attr_is_on and intensity > 0:
                     # Převést intensity (0-8) na brightness (0-255)
                     # intensity 0 = brightness 0 (vypnuto)
@@ -326,8 +331,9 @@ class SpaTzlZoneLight(SpaSubscriberMixin, LightEntity):
             current_state = current_tzl_zone.get("state", "OFF") if current_tzl_zone else "OFF"
             _LOGGER.info("Current state of TZL Zone %s: %s", self._tzl_zone_data["zoneId"], current_state)
             
-            # Zapnout zónu na režim NORMAL pouze pokud je aktuálně OFF
-            if current_state == "OFF":
+            # After switching off, the API may keep state=NORMAL with intensity=0.
+            # Reactivate the zone in NORMAL mode for either off representation.
+            if current_tzl_zone is None or tzl_zone_is_off(current_tzl_zone):
                 _LOGGER.info("Zone is OFF, switching to NORMAL mode using setChromazoneColor with color_id=0")
                 response_data = await self._shared_data._client.setChromazoneColor(
                     0, 
@@ -436,14 +442,15 @@ class SpaTzlZoneLight(SpaSubscriberMixin, LightEntity):
         try:
             self._shared_data.pause_updates()
             
-            # Volání API pro vypnutí TZL zóny
-            response_data = await self._shared_data._client.setChromazoneFunction(
-                "OFF", 
+            # The API rejects state=OFF for individual zones.
+            # Set intensity to zero to turn off the zone.
+            response_data = await self._shared_data._client.setChromazoneBrightness(
+                0,
                 self._tzl_zone_data["zoneId"]
             )
             
             if response_data is None:
-                _LOGGER.warning("Function setChromazoneFunction (OFF), parameter is not supported")
+                _LOGGER.warning("Function setChromazoneBrightness (0), parameter is not supported")
                 return
             
             if response_data:
@@ -456,14 +463,16 @@ class SpaTzlZoneLight(SpaSubscriberMixin, LightEntity):
                     ),
                     None,
                 )
-                new_state = tzl_zone["state"] if tzl_zone else None
-                
-                if new_state == "OFF":
+                new_intensity = tzl_zone.get("intensity") if tzl_zone else None
+                new_state = tzl_zone.get("state") if tzl_zone else None
+
+                if tzl_zone is not None and tzl_zone_is_off(tzl_zone):
                     _LOGGER.info("Successfully turned off TZL zone %s", self._tzl_zone_data["zoneId"])
                 else:
                     _LOGGER.warning(
-                        "TZL zone %s was not turned off. Expected state: OFF, Current state: %s",
+                        "TZL zone %s was not turned off. Expected intensity: 0, Current intensity: %s, state: %s",
                         self._tzl_zone_data["zoneId"],
+                        new_intensity,
                         new_state
                     )
             else:

@@ -369,7 +369,8 @@ class ControlMySpa:
         })
 
     async def setChromazoneFunction(self, zone_state, zone):
-        # Nastaví funkci zóny (OFF, PARTY, RELAX, WHEEL, NORMAL)
+        # Set the zone mode (PARTY, RELAX, WHEEL). Turn off an individual
+        # zone using setChromazoneBrightness(0, zone).
         return await self._postAndRefresh("/spa-commands/chromozone/state", {
             "spaId": self.spaId,
             "via": "MOBILE",
@@ -469,6 +470,5 @@ class ControlMySpa:
 
 
     
-
 
 
