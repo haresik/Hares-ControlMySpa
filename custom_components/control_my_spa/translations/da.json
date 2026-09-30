@@ -637,6 +637,13 @@
           "on": "Låst",
           "off": "Ulåst"
         }
+      },
+      "microsilk": {
+        "name": "MicroSilk",
+        "state": {
+          "ON": "Til",
+          "OFF": "Fra"
+        }
       }
     },
     "fan": {

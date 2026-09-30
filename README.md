@@ -116,6 +116,7 @@ The integration creates a **Spa** device with entities that match what your tub 
 ### Jets, lights, blowers
 
 - **Switches** — simple on/off for lights, jet pumps, and blowers.
+- **MicroSilk** — an on/off switch appears automatically when the spa reports a MicroSilk system.
 - **Select** — multiple speed or brightness levels when your spa supports more than on/off.
 - **Fan** — some jet pumps with LOW / MED / HIGH appear as a fan with preset speeds.
 

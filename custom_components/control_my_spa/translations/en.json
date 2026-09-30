@@ -637,6 +637,13 @@
           "on": "Locked",
           "off": "Unlocked"
         }
+      },
+      "microsilk": {
+        "name": "MicroSilk",
+        "state": {
+          "ON": "On",
+          "OFF": "Off"
+        }
       }
     },
     "fan": {
