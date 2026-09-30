@@ -633,6 +633,13 @@
           "on": "Gesperrt",
           "off": "Entsperrt"
         }
+      },
+      "microsilk": {
+        "name": "MicroSilk",
+        "state": {
+          "ON": "Ein",
+          "OFF": "Aus"
+        }
       }
     },
     "fan": {
@@ -721,4 +728,4 @@
       "message": "Die Whirlpool-Zeit wurde erfolgreich von {old_time} auf {new_time} aktualisiert"
     }
   }
-} 
+}

@@ -314,14 +314,26 @@ class ControlMySpa:
     async def setBlowerState(self, deviceNumber, desiredState):
         return await self.setComponentState(deviceNumber, desiredState, 'blower')
 
+    async def setMicrosilkState(self, desiredState):
+        """Set the state of the spa's MicroSilk component.
+
+        MicroSilk is exposed by the dashboard as a logical component without
+        a port/device number, so its command does not include ``deviceNumber``.
+        """
+        return await self.setComponentState(None, desiredState, 'microsilk')
+
     async def setComponentState(self, deviceNumber, desiredState, componentType):
-        return await self._postAndRefresh("/spa-commands/component-state", {
-            "deviceNumber": deviceNumber,
+        payload = {
             "state": desiredState,
             "spaId": self.spaId,
             "via": "MOBILE",
             "componentType": componentType
-        })
+        }
+        # Logical components (currently MicroSilk) do not have a port.  Keep
+        # the existing payload for port-addressed components unchanged.
+        if deviceNumber is not None:
+            payload["deviceNumber"] = deviceNumber
+        return await self._postAndRefresh("/spa-commands/component-state", payload)
 
     async def setHeaterMode(self, mode):
         return await self._postAndRefresh("/spa-commands/temperature/heater-mode", {

@@ -651,6 +651,13 @@
           "on": "Zamčeno",
           "off": "Odemčeno"
         }
+      },
+      "microsilk": {
+        "name": "MicroSilk",
+        "state": {
+          "ON": "Zapnuto",
+          "OFF": "Vypnuto"
+        }
       }
     },
     "fan": {
@@ -740,4 +747,3 @@
     }
   }
 }
-   

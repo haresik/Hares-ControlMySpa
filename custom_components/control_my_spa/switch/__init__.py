@@ -8,6 +8,7 @@ from .pump_low import SpaPumpLowSwitch
 from .filter import SpaFilter2Switch
 from .tzl import SpaTzlPowerSwitch
 from .panel import SpaPanelLockSwitch
+from .microsilk import SpaMicrosilkSwitch
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -47,6 +48,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         component for component in shared_data.data["components"]
         if component["componentType"] == "FILTER"
     ]
+    microsilk = [
+        component for component in shared_data.data["components"]
+        if component.get("componentType") == "MICROSILK"
+    ]
     # Najít všechny PUMP komponenty s LOW nebo MED hodnotami (pro SpaPumpLowSwitch)
     # pumps_low = [
     #     component for component in shared_data.data["components"]
@@ -57,18 +62,20 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     # Logování informací o filtrování
     _LOGGER.debug(
-        "Filtered components for Switch - Lights: %d, Pumps: %d, Pumps Low: %d, Blowers: %d, Filters: %d",
+        "Filtered components for Switch - Lights: %d, Pumps: %d, Pumps Low: %d, Blowers: %d, Filters: %d, MicroSilk: %d",
         len(lights),
         len(pumps),
         0,
         len(blowers),
-        len(filters)
+        len(filters),
+        len(microsilk),
     )
 
     entities = [SpaLightSwitch(shared_data, device_info, unique_id_suffix, light, len(lights)) for light in lights]
     entities += [SpaPumpSwitch(shared_data, device_info, pump, len(pumps), unique_id_suffix) for pump in pumps]
     # entities += [SpaPumpLowSwitch(shared_data, device_info, pump, len(pumps_low), unique_id_suffix) for pump in pumps_low]
     entities += [SpaBlowerSwitch(shared_data, device_info, unique_id_suffix, blower, len(blowers)) for blower in blowers]
+    entities += [SpaMicrosilkSwitch(shared_data, device_info, unique_id_suffix, component) for component in microsilk]
 
     # Přidání switch pro druhý filtr pouze pokud existují dva filtry
     if len(filters) >= 2:
@@ -98,5 +105,6 @@ __all__ = [
     "SpaFilter2Switch",
     "SpaTzlPowerSwitch",
     "SpaPanelLockSwitch",
+    "SpaMicrosilkSwitch",
     "async_setup_entry",
 ]
