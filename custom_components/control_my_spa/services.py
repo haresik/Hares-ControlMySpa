@@ -1,8 +1,8 @@
 """Služby pro Control My Spa integraci."""
 import logging
 import voluptuous as vol
-from datetime import datetime
 from homeassistant.core import HomeAssistant, ServiceCall, callback
+from homeassistant.util import dt as dt_util
 from homeassistant.helpers import config_validation as cv, translation
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.components import persistent_notification
@@ -27,8 +27,8 @@ async def async_setup_services(hass: HomeAssistant) -> None:
                     # Získání aktuálního času ze spa před aktualizací
                     current_spa_time = shared_data.data.get("time", "Není k dispozici")
                     
-                    # Aktualizace času
-                    now = datetime.now()
+                    # Aktualizace času — pásmo z nastavení HA, ne systémové UTC kontejneru
+                    now = dt_util.now()
                     date_str = now.strftime("%Y-%m-%d")  # Formát YYYY-MM-DD
                     time_str = now.strftime("%H:%M")     # Formát HH:MM (24h)
                     
