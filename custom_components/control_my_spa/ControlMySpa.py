@@ -6,6 +6,7 @@ import logging
 import json
 import os
 from . import const
+from .test_simulator import SpaTestSimulator, is_test_mode
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,6 +35,7 @@ class ControlMySpa:
         self.scheduleFilterIntervalEnum = None
         self.spaId = None
         self.session = None
+        self._test_simulator = SpaTestSimulator()
 
     async def init_session(self):
         if self.session is None:
@@ -67,6 +69,8 @@ class ControlMySpa:
         }
 
     async def init(self):
+        if is_test_mode():
+            return self._test_simulator.activate(self)
         await self.init_session()
         return await self.login() and await self.getWhoAmI() 
 
@@ -158,25 +162,9 @@ class ControlMySpa:
 
     async def getSpa(self):
         try:
-            # Test mode - načtení dat ze souboru
-            if const.TEST_MODE and const.TEST_MODE.startswith("Data"):
-                test_file_path = os.path.join(os.path.dirname(__file__), 'testData', f'{const.TEST_MODE}.json')
-                try:
-                    async with aiofiles.open(test_file_path, 'r', encoding='utf-8') as f:
-                        data = await f.read()
-                        test_data = json.loads(data)
-                        _LOGGER.info(f"Loaded test data from {test_file_path}")
-                        return self.constructCurrentState(test_data.get('data'))
-                except FileNotFoundError:
-                    _LOGGER.error(f"Test file not found: {test_file_path}")
-                    return None
-                except json.JSONDecodeError as e:
-                    _LOGGER.error(f"Error parsing JSON file: {e}")
-                    return None
-                except Exception as e:
-                    _LOGGER.error(f"Error loading test data: {e}")
-                    return None
-            
+            if is_test_mode():
+                return await self._test_simulator.get_spa(self)
+
             # Normální režim - načtení dat z API
             if not self.isLoggedIn() and not await self.login():
                 _LOGGER.error("GetSpa Error: authentication failed")
@@ -258,6 +246,8 @@ class ControlMySpa:
             return None
 
     async def _postAndRefresh(self, endpoint, payload):
+        if is_test_mode():
+            return await self._test_simulator.post_and_refresh(self, endpoint, payload)
         try:
             if not self.isLoggedIn() and not await self.login():
                 _LOGGER.error(f"Error in {endpoint}: authentication failed")
