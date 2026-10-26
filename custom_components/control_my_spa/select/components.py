@@ -44,9 +44,12 @@ class SpaPumpSelect(SpaSelectBase):
                     # Pokud mezi dostupnými není MED ani HIGH ani HI → nastav OFF
                     if "MED" not in self._attr_options and "HIGH" not in self._attr_options and "HI" not in self._attr_options:
                         self._attr_current_option = "OFF"
-                    # Pokud není MED, ale je HIGH → nastav HIGH
+                    # Pokud není MED, ale je HIGH: LOW v nabídce zobrazit jako LOW, jinak sesypat na HIGH
                     elif "MED" not in self._attr_options and ("HIGH" in self._attr_options or "HI" in self._attr_options):
-                        self._attr_current_option = "HIGH" if "HIGH" in self._attr_options else "HI"
+                        if "LOW" in self._attr_options:
+                            self._attr_current_option = "LOW"
+                        else:
+                            self._attr_current_option = "HIGH" if "HIGH" in self._attr_options else "HI"
                     # Pokud je MED → nastav MED
                     elif "MED" in self._attr_options:
                         self._attr_current_option = "MED"
