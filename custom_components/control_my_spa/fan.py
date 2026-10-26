@@ -34,11 +34,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     entities = [SpaPumpFan(shared_data, device_info, unique_id_suffix, pump, len(pumps)) for pump in pumps]
     
     async_add_entities(entities, True)
-    _LOGGER.debug("START Fan control_my_spa - no entities created")
+    _LOGGER.debug("START Fan control_my_spa")
 
-    # for entity in entities:
-    #     shared_data.register_subscriber(entity)
-    #     _LOGGER.debug("Created Fan (%s) (%s)", entity._attr_unique_id, entity.entity_id)
+    for entity in entities:
+        shared_data.register_subscriber(entity)
+        _LOGGER.debug("Created Fan (%s) (%s)", entity._attr_unique_id, entity.entity_id)
 
 class SpaPumpFan(FanEntity):
    
